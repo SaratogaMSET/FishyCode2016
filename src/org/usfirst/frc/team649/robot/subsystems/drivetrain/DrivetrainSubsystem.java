@@ -21,6 +21,8 @@ public class DrivetrainSubsystem extends Subsystem {
 	public static final double highGearEncoderDistancePerPulse = 34;
 	public static final double lowGearEncoderDistancePerPulse = 24;
 	
+	public static final double PIDAbsoluteTolerance = 0.8;
+	
 	
 	
 	public DrivetrainSubsystem() {
