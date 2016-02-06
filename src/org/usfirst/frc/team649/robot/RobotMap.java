@@ -17,6 +17,13 @@ public class RobotMap {
 		
 		
 	}
+	
+	public static class ShooterPivot {
+		//adjust all with actual values
+		public static final int[] MOTOR_PORTS = {4,5};
+		public static final int[] ENCODER1 = {0,1};
+		public static final int[] ENCODER2 = {2,3};
+	}
     // For example to map the left and right motors, you could define the
     // following variables to use with your drivetrain subsystem.
     // public static int leftMotor = 1;
