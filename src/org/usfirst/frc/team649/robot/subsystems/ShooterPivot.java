@@ -37,8 +37,10 @@ public class ShooterPivot extends PIDSubsystem {
     	super("shooter pivot", PivotPID.SHOOTER_P, PivotPID.SHOOTER_I, PivotPID.SHOOTER_D);
     	motor1 = new Victor(RobotMap.ShooterPivot.MOTOR_PORTS[0]);
     	motor2 = new Victor(RobotMap.ShooterPivot.MOTOR_PORTS[1]);
+    	
     	pid = this.getPIDController();
     	pid.setOutputRange(PivotPID.MIN_MOTOR_POWER, PivotPID.MAX_MOTOR_POWER);
+    	
     	encoder1 = new Encoder(RobotMap.ShooterPivot.ENCODER1[0], RobotMap.ShooterPivot.ENCODER1[1], false, EncodingType.k2X);
     	encoder2 = new Encoder(RobotMap.ShooterPivot.ENCODER2[0], RobotMap.ShooterPivot.ENCODER2[1], false, EncodingType.k2X);
     	encoder1.setDistancePerPulse(PivotPID.ENCODER_DISTANCE_PER_PULSE);
@@ -58,15 +60,7 @@ public class ShooterPivot extends PIDSubsystem {
     	motor2.set(power);
     }
     
-    public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        //setDefaultCommand(new MySpecialCommand());
-    }
-    
     protected double returnPIDInput() {
-        // Return your input value for the PID loop
-        // e.g. a sensor, like a potentiometer:
-        // yourPot.getAverageVoltage() / kYourMaxVoltage;
     	double dist1 = encoder1.getDistance();
     	double dist2 = encoder2.getDistance();
     	return (dist1 + dist2)/2;
@@ -77,5 +71,10 @@ public class ShooterPivot extends PIDSubsystem {
         // Use output to drive your system, like a motor
         // e.g. yourMotor.set(output);
     	runShooter(output);
+    }
+    
+    public void initDefaultCommand() {
+        // Set the default command for a subsystem here.
+        //setDefaultCommand(new MySpecialCommand());
     }
 }
