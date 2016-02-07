@@ -13,7 +13,7 @@ public class IntakeSubsystem extends Subsystem {
 	public static double PURGE_SPEED = -1.0;
 	public static double STOP_SPEED = 0;
 	Victor[] rollers;
-	private static  DoubleSolenoid leftSolenoids;
+	private static DoubleSolenoid leftSolenoids;
 	private static DoubleSolenoid rightSolenoids;
 
 	public IntakeSubsystem() {
