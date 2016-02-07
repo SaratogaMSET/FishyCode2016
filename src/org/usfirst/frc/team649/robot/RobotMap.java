@@ -18,12 +18,24 @@ public class RobotMap {
 		
 	}
 	
+	public static class Intake {
+		
+		public static final int[] MOTOR_PORTS = {4,5,6,7};
+		public static final int FWD_LEFT_CHANNEL = 0;
+		public static final int FWD_RIGHT_CHANNEL = 0;
+		public static final int BACK_LEFT_CHANNEL = 0;
+		public static final int BACK_RIGHT_CHANNEL = 0;
+		public static final int leftSolenoids = 0;
+		public static final int rightSolenoids = 0;
+	}
+	
 	public static class ShooterPivot {
 		//adjust all with actual values
 		public static final int[] MOTOR_PORTS = {4,5};
 		public static final int[] ENCODER1 = {0,1};
 		public static final int[] ENCODER2 = {2,3};
 	}
+	
     // For example to map the left and right motors, you could define the
     // following variables to use with your drivetrain subsystem.
     // public static int leftMotor = 1;
