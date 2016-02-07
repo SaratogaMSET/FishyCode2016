@@ -1,10 +1,6 @@
 package org.usfirst.frc.team649.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-
-/**
- *
- */
 public class ShooterPivotCommand extends Command {
 
     public ShooterPivotCommand() {
