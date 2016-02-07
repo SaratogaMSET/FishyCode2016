@@ -26,7 +26,9 @@ public class RobotMap {
 		public static final int BACK_RIGHT_CHANNEL = 0;
 		public static final int SOLENOID_FORWARD_CHANNEL = 0;
 		public static final int SOLENOID_REVERSE_CHANNEL = 0;
+		
 	}
+	
     // For example to map the left and right motors, you could define the
     // following variables to use with your drivetrain subsystem.
     // public static int leftMotor = 1;

@@ -12,10 +12,9 @@ public class IntakeSubsystem extends Subsystem {
 	public static double INTAKE_SPEED = 1.0;
 	public static double PURGE_SPEED = -1.0;
 	public static double STOP_SPEED = 0;
-	OI oi = new OI();
 	Victor[] rollers;
-	private DoubleSolenoid leftSolenoids;
-	private DoubleSolenoid rightSolenoids;
+	private static  DoubleSolenoid leftSolenoids;
+	private static DoubleSolenoid rightSolenoids;
 
 	public IntakeSubsystem() {
 		rollers = new Victor[4];
@@ -38,25 +37,26 @@ public class IntakeSubsystem extends Subsystem {
 		rollers[3].set(speed);
 	}
 
-//	public void setSolenoids() {
-//		if (oi.joy.getRawButton(RobotMap.Intake.SOLENOID_REVERSE_CHANNEL)) {
-//			ReverseSolenoids();
-//		}
-//		if (oi.joy.getRawButton(RobotMap.Intake.SOLENOID_FORWARD_CHANNEL)) {
-//			ForwardSolenoids();
-//		}
-//
-//	}
-//
-//	public void ReverseSolenoids() {
-//		leftSolenoids.set(DoubleSolenoid.Value.kReverse);
-//		rightSolenoids.set(DoubleSolenoid.Value.kReverse);
-//	}
-//
-//	public void ForwardSolenoids() {
-//		leftSolenoids.set(DoubleSolenoid.Value.kForward);
-//		rightSolenoids.set(DoubleSolenoid.Value.kForward);
-//	}
+	public static boolean setSolenoids(boolean b) {
+		if (!b) {
+			ReverseSolenoids();
+		}
+		if (b) {
+			ForwardSolenoids();
+		}
+		return b;
+
+	}
+
+	public static void ReverseSolenoids() {
+		leftSolenoids.set(DoubleSolenoid.Value.kReverse);
+		rightSolenoids.set(DoubleSolenoid.Value.kReverse);
+	}
+
+	public static void ForwardSolenoids() {
+		leftSolenoids.set(DoubleSolenoid.Value.kForward);
+		rightSolenoids.set(DoubleSolenoid.Value.kForward);
+	}
 
 	protected void initDefaultCommand() {
 

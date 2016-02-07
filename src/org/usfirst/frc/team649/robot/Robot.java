@@ -1,6 +1,7 @@
 
 package org.usfirst.frc.team649.robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -8,6 +9,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import org.usfirst.frc.team649.robot.commands.ExampleCommand;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.intake.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -95,7 +97,14 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        Scheduler.getInstance().run();
+    	if(Robot.oi.joy.getRawButton(RobotMap.Intake.SOLENOID_FORWARD_CHANNEL))
+    	{
+    		IntakeSubsystem.setSolenoids(true);
+    	}
+    	if(Robot.oi.joy.getRawButton(RobotMap.Intake.SOLENOID_REVERSE_CHANNEL))
+    	{
+    		IntakeSubsystem.setSolenoids(false);
+    	}
     }
     
     /**
