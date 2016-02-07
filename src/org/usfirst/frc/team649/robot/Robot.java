@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import org.usfirst.frc.team649.robot.commands.ExampleCommand;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.intake.IntakeSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -99,11 +99,11 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
     	if(Robot.oi.joy.getRawButton(RobotMap.Intake.SOLENOID_FORWARD_CHANNEL))
     	{
-    		IntakeSubsystem.setSolenoids(true);
+    		IntakeSubsystem.setSolenoids(DoubleSolenoid.Value.kForward);
     	}
     	if(Robot.oi.joy.getRawButton(RobotMap.Intake.SOLENOID_REVERSE_CHANNEL))
     	{
-    		IntakeSubsystem.setSolenoids(false);
+    		IntakeSubsystem.setSolenoids(DoubleSolenoid.Value.kReverse);
     	}
     }
     
