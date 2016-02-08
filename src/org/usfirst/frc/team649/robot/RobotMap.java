@@ -15,7 +15,6 @@ public class RobotMap {
 		public static final int LEFT_ENCODER_REVERSE_CHANNEL = 0;
 		public static final int RIGHT_ENCODER_FORWARD_CHANNEL = 0;
 		public static final int RIGHT_ENCODER_REVERSE_CHANNEL = 0;
-
 	}
 
 	public static class Intake {
@@ -27,6 +26,7 @@ public class RobotMap {
 		public static final int SOLENOID_FORWARD_CHANNEL = 0;
 		public static final int SOLENOID_REVERSE_CHANNEL = 0;
 	}
+
 	public static class ShooterPivot {
 		// adjust all with actual values
 		public static final int[] MOTOR_PORTS = { 4, 5 };
