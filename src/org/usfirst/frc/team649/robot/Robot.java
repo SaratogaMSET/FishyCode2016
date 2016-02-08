@@ -1,13 +1,11 @@
 
 package org.usfirst.frc.team649.robot;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
-import org.usfirst.frc.team649.robot.commands.ExampleCommand;
+import org.usfirst.frc.team649.robot.commands.DeployIntakeCommand;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 
@@ -25,6 +23,7 @@ public class Robot extends IterativeRobot {
 
 	public static OI oi;
 	public static DrivetrainSubsystem drivetrain;
+	public static IntakeSubsystem intake;
 
     SendableChooser chooser;
 
@@ -35,10 +34,10 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
 		oi = new OI();
         chooser = new SendableChooser();
-        chooser.addDefault("Default Auto", new ExampleCommand());
 //        chooser.addObject("My Auto", new MyAutoCommand());
         SmartDashboard.putData("Auto mode", chooser);
         drivetrain = new DrivetrainSubsystem();
+        intake = new IntakeSubsystem();
     }
 	
 	/**
@@ -99,11 +98,11 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
     	if(Robot.oi.joy.getRawButton(RobotMap.Intake.SOLENOID_FORWARD_CHANNEL))
     	{
-    		IntakeSubsystem.setSolenoids(DoubleSolenoid.Value.kForward);
+    		new DeployIntakeCommand().start();
     	}
     	if(Robot.oi.joy.getRawButton(RobotMap.Intake.SOLENOID_REVERSE_CHANNEL))
     	{
-    		IntakeSubsystem.setSolenoids(DoubleSolenoid.Value.kReverse);
+    		//TODO retract intake command.
     	}
     }
     

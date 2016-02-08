@@ -1,29 +1,24 @@
 package org.usfirst.frc.team649.robot.commands;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.RobotMap;
-import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class DeployIntakeSubsystemCommand extends Command {
+public class DeployIntakeCommand extends Command {
 
-	IntakeSubsystem intake = new IntakeSubsystem();
 
-	public DeployIntakeSubsystemCommand() {
+	public DeployIntakeCommand() {
 		// Use requires() here to declare subsystem dependencies
 		// eg. requires(chassis);
-		super("Deploy Intake using Double Solenoids and Rollers");
-		requires(intake);
+		
 	}
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
-		intake.setFwdRolSpd(0);
-		intake.setCenteringModuleSpeed(0);
+		Robot.intake.setSolenoids(DoubleSolenoid.Value.kForward);
 	}
 
 	// Called repeatedly when this Command is scheduled to run
@@ -33,13 +28,12 @@ public class DeployIntakeSubsystemCommand extends Command {
 
 	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
-		return false;
+		return true;
 	}
 
 	// Called once after isFinished returns true
 	protected void end() {
-		intake.setFwdRolSpd(0);
-		intake.setCenteringModuleSpeed(0);
+
 		
 	}
 
