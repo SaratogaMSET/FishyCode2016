@@ -8,16 +8,16 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class DeployRetractCommand extends Command {
+public class RetractIntakeCommand extends Command {
 
-    public DeployRetractCommand() {
+    public RetractIntakeCommand() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.retract.setSolenoids(DoubleSolenoid.Value.kReverse);
+		Robot.intake.setSolenoids(DoubleSolenoid.Value.kForward);
     }
 
     // Called repeatedly when this Command is scheduled to run
