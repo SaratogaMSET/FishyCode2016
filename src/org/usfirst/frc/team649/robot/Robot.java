@@ -5,10 +5,9 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import org.usfirst.frc.team649.robot.commands.DeployIntakeCommand;
-import org.usfirst.frc.team649.robot.commands.DeployRetractCommand;
+import org.usfirst.frc.team649.robot.commands.RetractIntakeCommand;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.RetractSubsystem;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,7 +24,6 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	public static DrivetrainSubsystem drivetrain;
 	public static IntakeSubsystem intake;
-	public static RetractSubsystem retract;
 
     SendableChooser chooser;
 
@@ -40,7 +38,6 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putData("Auto mode", chooser);
         drivetrain = new DrivetrainSubsystem();
         intake = new IntakeSubsystem();
-        retract = new RetractSubsystem();
     }
 	
 	/**
@@ -105,7 +102,7 @@ public class Robot extends IterativeRobot {
     	}
     	if(Robot.oi.joy.getRawButton(RobotMap.Intake.SOLENOID_REVERSE_CHANNEL))
     	{
-    		new DeployRetractCommand().start();
+    		new RetractIntakeCommand().start();
     	}
     }
     
