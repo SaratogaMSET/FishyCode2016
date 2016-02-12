@@ -32,5 +32,6 @@ public class RobotMap {
 		public static final int[] MOTOR_PORTS = { 4, 5 };
 		public static final int[] ENCODER1 = { 0, 1 };
 		public static final int[] ENCODER2 = { 2, 3 };
+		public static final int HALL_EFFECT_SENSOR = 0;
 	}
 }

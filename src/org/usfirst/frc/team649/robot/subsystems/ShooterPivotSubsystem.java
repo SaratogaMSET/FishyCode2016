@@ -2,7 +2,9 @@ package org.usfirst.frc.team649.robot.subsystems;
 
 import org.usfirst.frc.team649.robot.RobotMap;
 
+import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Victor;
@@ -11,13 +13,14 @@ import edu.wpi.first.wpilibj.command.PIDSubsystem;
 /**
  *
  */
-public class ShooterPivot extends PIDSubsystem {
+public class ShooterPivotSubsystem extends PIDSubsystem {
 	
 	public Victor motor1;
 	public Victor motor2;
 	public Encoder encoder1;
 	public Encoder encoder2;
 	public PIDController pid;
+	public Counter counter; //unsure about validity of counter/hall effect
 	
 	public static class PivotPID {
 		
@@ -28,15 +31,17 @@ public class ShooterPivot extends PIDSubsystem {
 		public static final double ABS_TOLERANCE = 0.05;
 		public static double MAX_MOTOR_POWER = 0.5;
 		public static double MIN_MOTOR_POWER = 0.15;
+		public static double SHOOTER_POWER = 0.1; //idk
 		
 	}
 
 
-    public ShooterPivot() {
+    public ShooterPivotSubsystem() {
 
     	super("shooter pivot", PivotPID.SHOOTER_P, PivotPID.SHOOTER_I, PivotPID.SHOOTER_D);
     	motor1 = new Victor(RobotMap.ShooterPivot.MOTOR_PORTS[0]);
     	motor2 = new Victor(RobotMap.ShooterPivot.MOTOR_PORTS[1]);
+    	counter = new Counter(RobotMap.ShooterPivot.HALL_EFFECT_SENSOR); //according to wpi.lib?
     	
     	pid = this.getPIDController();
     	pid.setOutputRange(PivotPID.MIN_MOTOR_POWER, PivotPID.MAX_MOTOR_POWER);
@@ -45,13 +50,24 @@ public class ShooterPivot extends PIDSubsystem {
     	encoder2 = new Encoder(RobotMap.ShooterPivot.ENCODER2[0], RobotMap.ShooterPivot.ENCODER2[1], false, EncodingType.k2X);
     	encoder1.setDistancePerPulse(PivotPID.ENCODER_DISTANCE_PER_PULSE);
     	encoder2.setDistancePerPulse(PivotPID.ENCODER_DISTANCE_PER_PULSE);
-    	
+    	counter.setReverseDirection(false);
+    	counter.setDistancePerPulse(PivotPID.ENCODER_DISTANCE_PER_PULSE);
     }
     
     public void resetEncoders() {
     	
     	encoder1.reset();
     	encoder2.reset();
+    }
+    
+    public void resetCounter() {
+    	
+    	counter.reset();
+    }
+    
+    public boolean reachedLimit() {
+    	
+    	return counter.get() > 0;
     }
     
     public void runShooter(double power) {
