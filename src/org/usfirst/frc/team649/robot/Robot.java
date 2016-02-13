@@ -97,11 +97,11 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-    	if(Robot.oi.joy.getRawButton(RobotMap.Intake.SOLENOID_FORWARD_CHANNEL))
+    	if(Robot.oi.operator.isIntakeDeploy())
     	{
     		new DeployIntakeCommand().start();
     	}
-    	if(Robot.oi.joy.getRawButton(RobotMap.Intake.SOLENOID_REVERSE_CHANNEL))
+    	if(Robot.oi.operator.isIntakeRetract())
     	{
     		new RetractIntakeCommand().start();
     	}
