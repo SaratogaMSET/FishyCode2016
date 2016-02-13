@@ -5,8 +5,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
-import org.usfirst.frc.team649.robot.commands.DeployIntakeCommand;
-import org.usfirst.frc.team649.robot.commands.RetractIntakeCommand;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
@@ -103,14 +101,7 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-    	if(Robot.oi.operator.isIntakeDeploy())
-    	{
-    		new DeployIntakeCommand().start();
-    	}
-    	if(Robot.oi.operator.isIntakeRetract())
-    	{
-    		new RetractIntakeCommand().start();
-    	}
+
     }
     
     /**
