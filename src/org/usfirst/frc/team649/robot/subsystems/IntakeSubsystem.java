@@ -36,7 +36,7 @@ public class IntakeSubsystem extends Subsystem {
 		rollers[3].set(speed);
 	}
 
-	public static void setSolenoids(DoubleSolenoid.Value set) {
+	public void setSolenoids(DoubleSolenoid.Value set) {
 		leftSolenoid.set(set);
 		rightSolenoid.set(set);
 

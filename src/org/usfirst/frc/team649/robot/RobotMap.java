@@ -8,6 +8,8 @@ package org.usfirst.frc.team649.robot;
  */
 public class RobotMap {
 
+	public static final int OPERATOR_JOYSTICK = 0;
+	
 	public static class Drivetrain {
 		// FR,BR,BL,BR
 		public static final int[] MOTOR_PORTS = { 0, 1, 2, 3 };
@@ -15,7 +17,6 @@ public class RobotMap {
 		public static final int LEFT_ENCODER_REVERSE_CHANNEL = 0;
 		public static final int RIGHT_ENCODER_FORWARD_CHANNEL = 0;
 		public static final int RIGHT_ENCODER_REVERSE_CHANNEL = 0;
-
 	}
 
 	public static class Intake {
@@ -27,6 +28,7 @@ public class RobotMap {
 		public static final int SOLENOID_FORWARD_CHANNEL = 0;
 		public static final int SOLENOID_REVERSE_CHANNEL = 0;
 	}
+
 	public static class ShooterPivot {
 		// adjust all with actual values
 		public static final int[] MOTOR_PORTS = { 4, 5 };
@@ -34,4 +36,6 @@ public class RobotMap {
 		public static final int[] ENCODER2 = { 2, 3 };
 		public static final int HALL_EFFECT_SENSOR = 0;
 	}
+
+
 }

@@ -1,17 +1,20 @@
 
 package org.usfirst.frc.team649.robot;
 
-import org.usfirst.frc.team649.robot.commands.ExampleCommand;
-import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
-
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+
+import org.usfirst.frc.team649.robot.commands.DeployIntakeCommand;
+import org.usfirst.frc.team649.robot.commands.RetractIntakeCommand;
+import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -24,6 +27,7 @@ public class Robot extends IterativeRobot {
 
 	public static OI oi;
 	public static DrivetrainSubsystem drivetrain;
+	public static IntakeSubsystem intake;
 	public static ShooterPivotSubsystem shooterPivotSubsystem;
 
     SendableChooser chooser;
@@ -35,11 +39,12 @@ public class Robot extends IterativeRobot {
     public void robotInit() {
 		oi = new OI();
         chooser = new SendableChooser();
-        chooser.addDefault("Default Auto", new ExampleCommand());
 //        chooser.addObject("My Auto", new MyAutoCommand());
         SmartDashboard.putData("Auto mode", chooser);
         drivetrain = new DrivetrainSubsystem();
-        shooterPivotSubsystem = new ShooterPivotSubsystem();
+        intake = new IntakeSubsystem();
+		shooterPivotSubsystem = new ShooterPivotSubsystem();
+
     }
 	
 	/**
@@ -98,13 +103,13 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-    	if(Robot.oi.joy.getRawButton(RobotMap.Intake.SOLENOID_FORWARD_CHANNEL))
+    	if(Robot.oi.operator.isIntakeDeploy())
     	{
-    		IntakeSubsystem.setSolenoids(DoubleSolenoid.Value.kForward);
+    		new DeployIntakeCommand().start();
     	}
-    	if(Robot.oi.joy.getRawButton(RobotMap.Intake.SOLENOID_REVERSE_CHANNEL))
+    	if(Robot.oi.operator.isIntakeRetract())
     	{
-    		IntakeSubsystem.setSolenoids(DoubleSolenoid.Value.kReverse);
+    		new RetractIntakeCommand().start();
     	}
     }
     
