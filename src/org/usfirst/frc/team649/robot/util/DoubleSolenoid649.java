@@ -11,9 +11,9 @@ public class DoubleSolenoid649 {
 		sol2 = new Solenoid(m2, p2);
 	}
 	
-	public static void set(boolean on){
-		sol1.set(on);
-		sol2.set(!on);
+	public static void set(boolean curState){
+		sol1.set(curState);
+		sol2.set(!curState);
 	}
 	public static boolean get(){
 		return sol1.get();
