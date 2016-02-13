@@ -1,6 +1,7 @@
 package org.usfirst.frc.team649.robot.subsystems.drivetrain;
 
 import org.usfirst.frc.team649.robot.RobotMap;
+import org.usfirst.frc.team649.robot.util.DoubleSolenoid649;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Victor;
@@ -17,6 +18,8 @@ public class DrivetrainSubsystem extends Subsystem {
 	
 	Victor [] motors;
 	Encoder leftEncoder, rightEncoder;
+	
+	public DoubleSolenoid649 driveSol;
 	
 	public static final double highGearEncoderDistancePerPulse = 34;
 	public static final double lowGearEncoderDistancePerPulse = 24;
@@ -35,6 +38,8 @@ public class DrivetrainSubsystem extends Subsystem {
 				RobotMap.Drivetrain.LEFT_ENCODER_REVERSE_CHANNEL, true);
 		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_ENCODER_FORWARD_CHANNEL, 
 				RobotMap.Drivetrain.RIGHT_ENCODER_REVERSE_CHANNEL, true);
+		
+		driveSol  = new DoubleSolenoid649(0,0,1,0);
 	}
 
 	public void driveFwdRot(double fwd, double rot) {
@@ -66,6 +71,9 @@ public class DrivetrainSubsystem extends Subsystem {
     public void resetEncoders() {
         rightEncoder.reset();
         leftEncoder.reset();
+    }
+    public void shift(boolean lowSpeed) {
+    	driveSol.set(lowSpeed);
     }
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
