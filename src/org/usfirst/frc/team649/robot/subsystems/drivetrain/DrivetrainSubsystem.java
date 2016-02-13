@@ -19,7 +19,7 @@ public class DrivetrainSubsystem extends Subsystem {
 	Victor [] motors;
 	Encoder leftEncoder, rightEncoder;
 	
-	DoubleSolenoid649 driveSol;
+	public DoubleSolenoid649 driveSol;
 	
 	public static final double highGearEncoderDistancePerPulse = 34;
 	public static final double lowGearEncoderDistancePerPulse = 24;
