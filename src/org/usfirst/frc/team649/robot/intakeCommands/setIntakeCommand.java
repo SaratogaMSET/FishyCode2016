@@ -1,23 +1,25 @@
-package org.usfirst.frc.team649.robot.commands;
+package org.usfirst.frc.team649.robot.intakeCommands;
 
-import org.usfirst.frc.team649.robot.Robot;
+import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class RetractIntakeCommand extends Command {
+public class setIntakeCommand extends Command {
 
-    public RetractIntakeCommand() {
+	DrivetrainSubsystem drive;
+    public setIntakeCommand() {
+    	drive = new DrivetrainSubsystem();
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-		Robot.intake.setSolenoids(DoubleSolenoid.Value.kForward);
+    	drive.driveSol.set(!drive.driveSol.get());
+    	
     }
 
     // Called repeatedly when this Command is scheduled to run
