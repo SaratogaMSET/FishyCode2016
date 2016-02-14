@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.DigitalSource;
 public class RobotMap {
 
 	public static final int OPERATOR_JOYSTICK = 0;
+	public static final int DRIVE_LEFT_JOYSTICK = 1;
+	public static final int DRIVE_RIGHT_JOYSTICK = 2;
 	
 	public static class Drivetrain {
 		// FR,BR,BL,BR

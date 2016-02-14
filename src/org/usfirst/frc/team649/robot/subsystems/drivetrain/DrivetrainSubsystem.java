@@ -3,6 +3,7 @@ package org.usfirst.frc.team649.robot.subsystems.drivetrain;
 import org.usfirst.frc.team649.robot.RobotMap;
 import org.usfirst.frc.team649.robot.util.DoubleSolenoid649;
 
+import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -16,7 +17,7 @@ public class DrivetrainSubsystem extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 	
-	Victor [] motors;
+	CANTalon [] motors;
 	Encoder leftEncoder, rightEncoder;
 	
 	public DoubleSolenoid649 driveSol;
@@ -29,10 +30,10 @@ public class DrivetrainSubsystem extends Subsystem {
 	
 	
 	public DrivetrainSubsystem() {
-		motors = new Victor[4];
+		motors = new CANTalon[4];
 		//FR,BR,BL,BR
 		for(int i =0; i < motors.length; i++) {
-			motors[i] = new Victor(RobotMap.Drivetrain.MOTOR_PORTS[i]);
+			motors[i] = new CANTalon(RobotMap.Drivetrain.MOTOR_PORTS[i]);
 		}
 		leftEncoder = new Encoder(RobotMap.Drivetrain.LEFT_ENCODER_FORWARD_CHANNEL, 
 				RobotMap.Drivetrain.LEFT_ENCODER_REVERSE_CHANNEL, true);
@@ -55,8 +56,8 @@ public class DrivetrainSubsystem extends Subsystem {
     public void rawDrive(double left, double right) {
         motors[0].set(right);
         motors[1].set(right);
-        motors[2].set(left);
-        motors[3].set(left);
+        motors[2].set(-left);
+        motors[3].set(-left);
         
         SmartDashboard.putNumber("DriveMotorLeft", left);
         SmartDashboard.putNumber("DriveMotorRight", right);

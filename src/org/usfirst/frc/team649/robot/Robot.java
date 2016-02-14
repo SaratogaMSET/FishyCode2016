@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
+import org.usfirst.frc.team649.robot.commands.DriveForwardRotateCommand;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 
@@ -39,8 +40,8 @@ public class Robot extends IterativeRobot {
 //        chooser.addObject("My Auto", new MyAutoCommand());
         SmartDashboard.putData("Auto mode", chooser);
         drivetrain = new DrivetrainSubsystem();
-        intake = new IntakeSubsystem();
-		shooterPivotSubsystem = new ShooterPivotSubsystem();
+        //intake = new IntakeSubsystem();
+		//shooterPivotSubsystem = new ShooterPivotSubsystem();
 
     }
 	
@@ -100,7 +101,8 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-
+    	//new DriveForwardRotateCommand(oi.driver.getForward(), oi.driver.getRotation()).start();
+    drivetrain.driveFwdRot(oi.driver.getForward(), oi.driver.getRotation());
     }
     
     /**
