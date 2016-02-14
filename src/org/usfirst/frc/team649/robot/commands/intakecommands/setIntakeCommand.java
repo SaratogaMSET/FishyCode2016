@@ -1,6 +1,6 @@
-package org.usfirst.frc.team649.robot.intakeCommands;
+package org.usfirst.frc.team649.robot.commands.intakecommands;
 
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
+import org.usfirst.frc.team649.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -9,17 +9,17 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class setIntakeCommand extends Command {
 
-	DrivetrainSubsystem drive;
-    public setIntakeCommand() {
-    	drive = new DrivetrainSubsystem();
+	boolean deployed;
+	
+    public setIntakeCommand(boolean toDeploy) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
+		deployed = toDeploy;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	drive.driveSol.set(!drive.driveSol.get());
-    	
+    	Robot.intake.setSolenoids(deployed); 
     }
 
     // Called repeatedly when this Command is scheduled to run

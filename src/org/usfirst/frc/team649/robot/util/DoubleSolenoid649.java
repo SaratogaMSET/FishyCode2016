@@ -11,11 +11,11 @@ public class DoubleSolenoid649 {
 		sol2 = new Solenoid(m2, p2);
 	}
 	
-	public static void set(boolean curState){
+	public void set(boolean curState){
 		sol1.set(curState);
 		sol2.set(!curState);
 	}
-	public static boolean get(){
+	public boolean get(){
 		return sol1.get();
 	}
 }

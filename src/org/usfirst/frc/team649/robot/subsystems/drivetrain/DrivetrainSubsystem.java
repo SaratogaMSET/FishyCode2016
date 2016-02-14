@@ -39,7 +39,9 @@ public class DrivetrainSubsystem extends Subsystem {
 		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_ENCODER_FORWARD_CHANNEL, 
 				RobotMap.Drivetrain.RIGHT_ENCODER_REVERSE_CHANNEL, true);
 		
-		driveSol  = new DoubleSolenoid649(0,0,1,0);
+		driveSol  = new DoubleSolenoid649(RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[0],
+				RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[1], RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[3],
+				RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[3]);
 	}
 
 	public void driveFwdRot(double fwd, double rot) {

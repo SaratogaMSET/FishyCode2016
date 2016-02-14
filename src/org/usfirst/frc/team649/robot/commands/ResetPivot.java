@@ -5,9 +5,9 @@ import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-public class PivotRunTilHallEffect extends Command {
+public class ResetPivot extends Command {
 	
-    public PivotRunTilHallEffect() {
+    public ResetPivot() {
     }
 
     // Called just before this Command runs the first time

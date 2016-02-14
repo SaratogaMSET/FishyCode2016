@@ -4,7 +4,7 @@ import org.usfirst.frc.team649.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import org.usfirst.frc.team649.robot.util.DoubleSolenoid649;
 
 public class IntakeSubsystem extends Subsystem {
 
@@ -12,15 +12,17 @@ public class IntakeSubsystem extends Subsystem {
 	public static double PURGE_SPEED = -1.0;
 	public static double STOP_SPEED = 0;
 	Victor[] rollers;
-	private static DoubleSolenoid leftSolenoid;
-	private static DoubleSolenoid rightSolenoid;
+	private DoubleSolenoid649 leftSolenoid;
+	private DoubleSolenoid649 rightSolenoid;
 
 	public IntakeSubsystem() {
 		rollers = new Victor[4];
-		leftSolenoid = new DoubleSolenoid(RobotMap.Intake.FWD_LEFT_CHANNEL,
-				RobotMap.Intake.BACK_LEFT_CHANNEL);
-		rightSolenoid = new DoubleSolenoid(RobotMap.Intake.FWD_RIGHT_CHANNEL,
-				RobotMap.Intake.BACK_RIGHT_CHANNEL);
+		leftSolenoid = new DoubleSolenoid649(RobotMap.Intake.LEFT_SOLENOID_PORTS[0],
+				RobotMap.Intake.LEFT_SOLENOID_PORTS[1],RobotMap.Intake.LEFT_SOLENOID_PORTS[2],
+				RobotMap.Intake.LEFT_SOLENOID_PORTS[3]);
+		rightSolenoid = new DoubleSolenoid649(RobotMap.Intake.RIGHT_SOLENOID_PORTS[0],
+				RobotMap.Intake.RIGHT_SOLENOID_PORTS[1],RobotMap.Intake.RIGHT_SOLENOID_PORTS[2],
+				RobotMap.Intake.RIGHT_SOLENOID_PORTS[3]);
 		for (int i = 0; i < rollers.length; i++) {
 			rollers[i] = new Victor(RobotMap.Intake.MOTOR_PORTS[i]);
 		}
@@ -36,7 +38,7 @@ public class IntakeSubsystem extends Subsystem {
 		rollers[3].set(speed);
 	}
 
-	public void setSolenoids(DoubleSolenoid.Value set) {
+	public void setSolenoids(boolean set) {
 		leftSolenoid.set(set);
 		rightSolenoid.set(set);
 
