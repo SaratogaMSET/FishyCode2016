@@ -50,7 +50,7 @@ public class Robot extends IterativeRobot {
         drivetrain = new DrivetrainSubsystem();
         intake = new IntakeSubsystem();
 		//shooterPivotSubsystem = new ShooterPivotSubsystem();
-        log = new ArrayList<>(0);
+        log = new ArrayList<>();
     	timer = new Timer();
 
 
@@ -99,6 +99,8 @@ public class Robot extends IterativeRobot {
         // continue until interrupted by another command, remove
         // this line or comment it out.
     	timer.reset();
+    	timer.start();
+    	log = new ArrayList<>();
     }
 
     /**

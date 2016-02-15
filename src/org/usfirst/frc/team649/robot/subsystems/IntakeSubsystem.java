@@ -16,7 +16,7 @@ public class IntakeSubsystem extends Subsystem {
 	private DoubleSolenoid649 rightSolenoid;
 
 	public IntakeSubsystem() {
-		//rollers = new Victor[4];
+		rollers = new Victor[3];
 		leftSolenoid = new DoubleSolenoid649(RobotMap.Intake.LEFT_SOLENOID_PORTS[0],
 				RobotMap.Intake.LEFT_SOLENOID_PORTS[1],RobotMap.Intake.LEFT_SOLENOID_PORTS[2],
 				RobotMap.Intake.LEFT_SOLENOID_PORTS[3]);
@@ -24,7 +24,7 @@ public class IntakeSubsystem extends Subsystem {
 				RobotMap.Intake.RIGHT_SOLENOID_PORTS[1],RobotMap.Intake.RIGHT_SOLENOID_PORTS[2],
 				RobotMap.Intake.RIGHT_SOLENOID_PORTS[3]);
 		for (int i = 0; i < rollers.length; i++) {
-			//rollers[i] = new Victor(RobotMap.Intake.MOTOR_PORTS[i]);
+			rollers[i] = new Victor(RobotMap.Intake.MOTOR_PORTS[i]);
 		}
 	}
 
