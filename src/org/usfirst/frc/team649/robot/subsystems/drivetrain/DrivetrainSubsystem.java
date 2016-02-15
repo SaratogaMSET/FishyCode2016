@@ -1,5 +1,8 @@
 package org.usfirst.frc.team649.robot.subsystems.drivetrain;
 
+import java.util.ArrayList;
+
+import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
 import org.usfirst.frc.team649.robot.util.DoubleSolenoid649;
 
@@ -17,15 +20,19 @@ public class DrivetrainSubsystem extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 	
-	CANTalon [] motors;
-	Encoder leftEncoder, rightEncoder;
+	public CANTalon [] motors;
+	private Encoder leftEncoder, rightEncoder;
 	
-	public DoubleSolenoid649 driveSol;
+	private DoubleSolenoid649 driveSol;
 	
 	public static final double highGearEncoderDistancePerPulse = 34;
 	public static final double lowGearEncoderDistancePerPulse = 24;
 	
-	public static final double PIDAbsoluteTolerance = 0.8;
+	
+	public static class PIDConstants {
+		public static final double PID_ABSOLUTE_TOLERANCE = 0.8;
+		public static  double k_P = .2;
+	}
 	
 	
 	
@@ -70,11 +77,22 @@ public class DrivetrainSubsystem extends Subsystem {
     public double getDistanceDTRight() {
       return rightEncoder.getDistance();
   }
-    
+    public ArrayList<Double> getLoggingData() {
+    	ArrayList<Double> temp = new ArrayList<Double>(5);
+   	   temp.add(Robot.timer.get());
+   	   temp.add(motors[0].get());
+   	   temp.add(motors[2].get());
+   	   temp.add(getDistanceDTLeft());
+   	   temp.add(getDistanceDTRight());
+   	   
+   	   return temp;
+   	 
+    }
     public void resetEncoders() {
         rightEncoder.reset();
         leftEncoder.reset();
     }
+    
     public void shift(boolean lowSpeed) {
     	driveSol.set(lowSpeed);
     }

@@ -27,7 +27,7 @@ public class RightDTPID extends PIDSubsystem {
 
 	       	
 	    	encoderDriveRightPID = this.getPIDController();
-	    	encoderDriveRightPID.setAbsoluteTolerance(DrivetrainSubsystem.PIDAbsoluteTolerance);
+	    	encoderDriveRightPID.setAbsoluteTolerance(DrivetrainSubsystem.PIDConstants.PID_ABSOLUTE_TOLERANCE);
 	    	encoderDriveRightPID.setOutputRange(MAX_MOTOR_POWER, MIN_MOTOR_POWER);
 	        
 	    }

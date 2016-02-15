@@ -34,7 +34,7 @@ public class LeftDTPID extends PIDSubsystem {
 
        	
     	encoderDriveLeftPID = this.getPIDController();
-    	encoderDriveLeftPID.setAbsoluteTolerance(DrivetrainSubsystem.PIDAbsoluteTolerance);
+    	encoderDriveLeftPID.setAbsoluteTolerance(DrivetrainSubsystem.PIDConstants.PID_ABSOLUTE_TOLERANCE);
     	encoderDriveLeftPID.setOutputRange(MAX_MOTOR_POWER, MIN_MOTOR_POWER);
         
     }
