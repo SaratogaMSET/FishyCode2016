@@ -1,10 +1,14 @@
 package org.usfirst.frc.team649.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
+
+import java.util.ArrayList;
+
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotateCommand;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
@@ -27,7 +31,9 @@ public class Robot extends IterativeRobot {
 	public static DrivetrainSubsystem drivetrain;
 	public static IntakeSubsystem intake;
 	public static ShooterPivotSubsystem shooterPivotSubsystem;
-
+	public ArrayList<ArrayList<Double>> log;
+	public static Timer timer;
+	
     SendableChooser chooser;
 
     /**
@@ -40,8 +46,10 @@ public class Robot extends IterativeRobot {
 //        chooser.addObject("My Auto", new MyAutoCommand());
         SmartDashboard.putData("Auto mode", chooser);
         drivetrain = new DrivetrainSubsystem();
-        //intake = new IntakeSubsystem();
+        intake = new IntakeSubsystem();
 		//shooterPivotSubsystem = new ShooterPivotSubsystem();
+        log = new ArrayList<>(0);
+    	timer = new Timer();
 
     }
 	
@@ -51,7 +59,11 @@ public class Robot extends IterativeRobot {
 	 * the robot is disabled.
      */
     public void disabledInit(){
-    	
+    	System.out.println("STARTING LOG: Time, MotorLeft, MotorRight ");
+ 	   for (int i = 0; i < log.size(); i++){
+ 		   ArrayList<Double> d = log.get(i);
+ 		   System.out.println("BEGINNING_TAG " + d.get(0) + ", " + d.get(1) + ", " + d.get(2) + ", " + d.get(3) + ", " + d.get(4) + " ENDING_TAG");
+ 	   }
     }
 	
 	public void disabledPeriodic() {
@@ -69,18 +81,6 @@ public class Robot extends IterativeRobot {
 	 */
     public void autonomousInit() {
         
-		/* String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
-		switch(autoSelected) {
-		case "My Auto":
-			autonomousCommand = new MyAutoCommand();
-			break;
-		case "Default Auto":
-		default:
-			autonomousCommand = new ExampleCommand();
-			break;
-		} */
-    	
-    	// schedule the autonomous command (example)
     }
 
     /**
@@ -95,14 +95,23 @@ public class Robot extends IterativeRobot {
         // teleop starts running. If you want the autonomous to 
         // continue until interrupted by another command, remove
         // this line or comment it out.
+    	timer.reset();
     }
 
     /**
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-    	//new DriveForwardRotateCommand(oi.driver.getForward(), oi.driver.getRotation()).start();
+    //	new DriveForwardRotateCommand(oi.driver.getForward(), oi.driver.getRotation()).start();
     drivetrain.driveFwdRot(oi.driver.getForward(), oi.driver.getRotation());
+    if(oi.operatorJoystick.getRawButton(1)) {
+    	intake.setSolenoids(true);
+    } else {
+    	intake.setSolenoids(false);
+    }
+    
+	   log.add(drivetrain.getLoggingData());
+	 
     }
     
     /**

@@ -46,7 +46,7 @@ public class OI {
 		}
     	
 		public double getRotation() {
-			return driveJoystickHorizontal.getX();
+			return -driveJoystickHorizontal.getX();
 		}
     }
     
