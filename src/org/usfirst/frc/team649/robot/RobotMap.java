@@ -45,6 +45,7 @@ public class RobotMap {
 		public static final int[] ENCODER1 = {0,0};
 		public static final int[] ENCODER2 = {0,0};
 		public static final int[] PUNCH_SOLENOID_PORTS = {0,0};
+	
 	}
 
 

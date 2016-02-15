@@ -42,6 +42,7 @@ public class ShooterSubsystem extends Subsystem {
 
 	public boolean reachedLimit() {
 		return counter.get() > 0;
+		
 	}
 
 	public void initDefaultCommand() {
