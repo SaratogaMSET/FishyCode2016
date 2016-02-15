@@ -39,6 +39,13 @@ public class RobotMap {
 		public static final int [] LEFT_SOLENOID_PORTS = {0,3,1,3};
 		public static final int [] RIGHT_SOLENOID_PORTS = {0,4,1,4};
 	}
+	public static class ShooterSubsystem
+	{
+		public static final int[] MOTOR_PORTS = {6,7};
+		public static final int[] ENCODER1 = {0,0};
+		public static final int[] ENCODER2 = {0,0};
+		public static final int[] PUNCH_SOLENOID_PORTS = {0,0};
+	}
 
 
 }
