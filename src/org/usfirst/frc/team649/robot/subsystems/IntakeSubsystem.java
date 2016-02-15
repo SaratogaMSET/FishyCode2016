@@ -11,7 +11,7 @@ public class IntakeSubsystem extends Subsystem {
 	public static double INTAKE_SPEED = 1.0;
 	public static double PURGE_SPEED = -1.0;
 	public static double STOP_SPEED = 0;
-	Victor[] rollers;
+	static Victor[] rollers;
 	private DoubleSolenoid649 leftSolenoid;
 	private DoubleSolenoid649 rightSolenoid;
 
@@ -28,12 +28,12 @@ public class IntakeSubsystem extends Subsystem {
 		}
 	}
 
-	public void setFwdRolSpd(double speed) {
+	public static void setFwdRolSpd(double speed) {
 		rollers[0].set(speed);
 		rollers[1].set(-speed);
 	}
 
-	public void setCenteringModuleSpeed(double speed) {
+	public static void setCenteringModuleSpeed(double speed) {
 		rollers[2].set(-speed);
 		rollers[3].set(speed);
 	}

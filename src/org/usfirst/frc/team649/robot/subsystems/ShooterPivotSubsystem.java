@@ -1,6 +1,7 @@
 package org.usfirst.frc.team649.robot.subsystems;
 
 import org.usfirst.frc.team649.robot.RobotMap;
+import org.usfirst.frc.team649.robot.util.DoubleSolenoid649;
 
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
@@ -21,6 +22,8 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	public Encoder encoder2;
 	public PIDController pid;
 	public Counter counter; //unsure about validity of counter/hall effect
+	public DoubleSolenoid649 leftSol;
+	public DoubleSolenoid649 rightSol;
 	
 	public static class PivotPID {
 		
@@ -42,7 +45,12 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
     	motor1 = new Victor(RobotMap.ShooterPivot.MOTOR_PORTS[0]);
     	motor2 = new Victor(RobotMap.ShooterPivot.MOTOR_PORTS[1]);
     	counter = new Counter(RobotMap.ShooterPivot.HALL_EFFECT_SENSOR); //according to wpi.lib?
-    	
+    	rightSol = new DoubleSolenoid649(RobotMap.ShooterPivot.RIGHT_SOLENOID_PORTS[0],
+    			RobotMap.ShooterPivot.RIGHT_SOLENOID_PORTS[1],RobotMap.ShooterPivot.RIGHT_SOLENOID_PORTS[2],
+    			RobotMap.ShooterPivot.RIGHT_SOLENOID_PORTS[3]);
+    	leftSol = new DoubleSolenoid649(RobotMap.ShooterPivot.LEFT_SOLENOID_PORTS[0],
+    			RobotMap.ShooterPivot.LEFT_SOLENOID_PORTS[1],RobotMap.ShooterPivot.LEFT_SOLENOID_PORTS[2],
+    			RobotMap.ShooterPivot.LEFT_SOLENOID_PORTS[3]);
     	pid = this.getPIDController();
     	pid.setOutputRange(PivotPID.MIN_MOTOR_POWER, PivotPID.MAX_MOTOR_POWER);
     	
@@ -81,6 +89,11 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
     	double dist2 = encoder2.getDistance();
     	return (dist1 + dist2)/2;
     	
+    }
+    
+    public void setSol(boolean set) {
+    	rightSol.set(set);
+    	leftSol.set(set);
     }
     
     protected void usePIDOutput(double output) {

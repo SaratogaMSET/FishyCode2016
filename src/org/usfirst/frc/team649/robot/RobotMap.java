@@ -36,6 +36,8 @@ public class RobotMap {
 		public static final int[] ENCODER1 = { 0, 1 };
 		public static final int[] ENCODER2 = { 2, 3 };
 		public static final int HALL_EFFECT_SENSOR = 0;
+		public static final int [] LEFT_SOLENOID_PORTS = {0,3,1,3};
+		public static final int [] RIGHT_SOLENOID_PORTS = {0,4,1,4};
 	}
 
 
