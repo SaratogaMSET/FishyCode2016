@@ -26,7 +26,7 @@ public class Robot extends IterativeRobot {
 	public static OI oi;
 	public static DrivetrainSubsystem drivetrain;
 	public static IntakeSubsystem intake;
-	public static ShooterPivotSubsystem shooterPivotSubsystem;
+	public static ShooterPivotSubsystem shooterPivot;
 
     SendableChooser chooser;
 
@@ -41,7 +41,7 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putData("Auto mode", chooser);
         drivetrain = new DrivetrainSubsystem();
         //intake = new IntakeSubsystem();
-		//shooterPivotSubsystem = new ShooterPivotSubsystem();
+		shooterPivot = new ShooterPivotSubsystem();
 
     }
 	

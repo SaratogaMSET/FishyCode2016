@@ -16,11 +16,11 @@ import edu.wpi.first.wpilibj.command.PIDSubsystem;
  */
 public class ShooterPivotSubsystem extends PIDSubsystem {
 	
-	public Victor motor1;
-	public Victor motor2;
-	public Encoder encoder1;
-	public Encoder encoder2;
-	public PIDController pid;
+	public Victor motorLeft;
+	public Victor motorRight;
+	public Encoder encoderLeft;
+	public Encoder encoderRight;
+	public PIDController pidLeft, pidRight;
 	public Counter counter; //unsure about validity of counter/hall effect
 	public DoubleSolenoid649 leftSol;
 	public DoubleSolenoid649 rightSol;
@@ -32,9 +32,17 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		public static final double SHOOTER_I = 0.15;
 		public static final double SHOOTER_D = 0.15;
 		public static final double ABS_TOLERANCE = 0.05;
-		public static double MAX_MOTOR_POWER = 0.5;
-		public static double MIN_MOTOR_POWER = 0.15;
+		public static final double MAX_MOTOR_POWER = 0.5;
+		public static final double MIN_MOTOR_POWER = 0.15;
 		public static double SHOOTER_POWER = 0.1; //idk
+		public static final int PICKUP_STATE = 0;
+		public static final int STORING_STATE = 1;
+		public static final int RELEASE_STATE = 2;
+		public static final double PIVOT_PICKUP = 2.02;//arbitrary value
+		public static final double PIVOT_STORING = 3.05;//arbitrary value
+		public static final double PIVOT_RELEASE = 1.8;//arbitrary value
+		
+		
 		
 	}
 
@@ -42,8 +50,8 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
     public ShooterPivotSubsystem() {
 
     	super("shooter pivot", PivotPID.SHOOTER_P, PivotPID.SHOOTER_I, PivotPID.SHOOTER_D);
-    	motor1 = new Victor(RobotMap.ShooterPivot.MOTOR_PORTS[0]);
-    	motor2 = new Victor(RobotMap.ShooterPivot.MOTOR_PORTS[1]);
+    	motorLeft = new Victor(RobotMap.ShooterPivot.MOTOR_PORTS[0]);
+    	motorRight = new Victor(RobotMap.ShooterPivot.MOTOR_PORTS[1]);
     	counter = new Counter(RobotMap.ShooterPivot.HALL_EFFECT_SENSOR); //according to wpi.lib?
     	rightSol = new DoubleSolenoid649(RobotMap.ShooterPivot.RIGHT_SOLENOID_PORTS[0],
     			RobotMap.ShooterPivot.RIGHT_SOLENOID_PORTS[1],RobotMap.ShooterPivot.RIGHT_SOLENOID_PORTS[2],
@@ -51,21 +59,21 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
     	leftSol = new DoubleSolenoid649(RobotMap.ShooterPivot.LEFT_SOLENOID_PORTS[0],
     			RobotMap.ShooterPivot.LEFT_SOLENOID_PORTS[1],RobotMap.ShooterPivot.LEFT_SOLENOID_PORTS[2],
     			RobotMap.ShooterPivot.LEFT_SOLENOID_PORTS[3]);
-    	pid = this.getPIDController();
-    	pid.setOutputRange(PivotPID.MIN_MOTOR_POWER, PivotPID.MAX_MOTOR_POWER);
+    	pidLeft = this.getPIDController();
+    	pidRight.setOutputRange(PivotPID.MIN_MOTOR_POWER, PivotPID.MAX_MOTOR_POWER);
     	
-    	encoder1 = new Encoder(RobotMap.ShooterPivot.ENCODER1[0], RobotMap.ShooterPivot.ENCODER1[1], false, EncodingType.k2X);
-    	encoder2 = new Encoder(RobotMap.ShooterPivot.ENCODER2[0], RobotMap.ShooterPivot.ENCODER2[1], false, EncodingType.k2X);
-    	encoder1.setDistancePerPulse(PivotPID.ENCODER_DISTANCE_PER_PULSE);
-    	encoder2.setDistancePerPulse(PivotPID.ENCODER_DISTANCE_PER_PULSE);
+    	encoderLeft = new Encoder(RobotMap.ShooterPivot.ENCODER1[0], RobotMap.ShooterPivot.ENCODER1[1], false, EncodingType.k2X);
+    	encoderRight = new Encoder(RobotMap.ShooterPivot.ENCODER2[0], RobotMap.ShooterPivot.ENCODER2[1], false, EncodingType.k2X);
+    	encoderLeft.setDistancePerPulse(PivotPID.ENCODER_DISTANCE_PER_PULSE);
+    	encoderRight.setDistancePerPulse(PivotPID.ENCODER_DISTANCE_PER_PULSE);
     	counter.setReverseDirection(false);
     	counter.setDistancePerPulse(PivotPID.ENCODER_DISTANCE_PER_PULSE);
     }
     
     public void resetEncoders() {
     	
-    	encoder1.reset();
-    	encoder2.reset();
+    	encoderLeft.reset();
+    	encoderRight.reset();
     }
     
     public void resetCounter() {
@@ -80,13 +88,13 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
     
     public void runShooter(double power) {
     	
-    	motor1.set(power);
-    	motor2.set(power);
+    	motorLeft.set(power);
+    	motorRight.set(power);
     }
     
     protected double returnPIDInput() {
-    	double dist1 = encoder1.getDistance();
-    	double dist2 = encoder2.getDistance();
+    	double dist1 = encoderLeft.getDistance();
+    	double dist2 = encoderRight.getDistance();
     	return (dist1 + dist2)/2;
     	
     }
