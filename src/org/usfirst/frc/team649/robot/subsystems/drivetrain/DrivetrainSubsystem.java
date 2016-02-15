@@ -20,7 +20,7 @@ public class DrivetrainSubsystem extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 	
-	private CANTalon [] motors;
+	public CANTalon [] motors;
 	private Encoder leftEncoder, rightEncoder;
 	
 	private DoubleSolenoid649 driveSol;
