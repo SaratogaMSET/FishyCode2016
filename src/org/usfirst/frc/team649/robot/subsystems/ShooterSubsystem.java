@@ -20,7 +20,7 @@ public class ShooterSubsystem extends Subsystem {
 	public Victor rightMotor;
 	public DoubleSolenoid punch;
 	public Counter counter;
-
+	
 	public ShooterSubsystem() {
 		super("shooter subsystem");
 		leftMotor = new Victor(RobotMap.ShooterSubsystem.MOTOR_PORTS[0]);
@@ -28,6 +28,7 @@ public class ShooterSubsystem extends Subsystem {
 		punch = new DoubleSolenoid(
 				RobotMap.ShooterSubsystem.PUNCH_SOLENOID_PORTS[0],
 				RobotMap.ShooterSubsystem.PUNCH_SOLENOID_PORTS[1]);
+		
 		counter.setDistancePerPulse(ENCODER_DISTANCE_PER_PULSE);
 		counter.setReverseDirection(false);
 	}
@@ -42,7 +43,6 @@ public class ShooterSubsystem extends Subsystem {
 
 	public boolean reachedLimit() {
 		return counter.get() > 0;
-		
 	}
 
 	public void initDefaultCommand() {
