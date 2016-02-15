@@ -1,5 +1,6 @@
 package org.usfirst.frc.team649.robot.commands.intakecommands;
 
+import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -7,22 +8,23 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class runIntakeCommand extends Command {
+public class SetIntakeSpeedCommand extends Command {
 double speed;
-    public runIntakeCommand() {
+    public SetIntakeSpeedCommand(double spd) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	speed = IntakeSubsystem.INTAKE_SPEED ;
+    	speed = spd;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.intake.setFwdRolSpd(speed);
+    	Robot.intake.setCenteringModuleSpeed(speed);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	IntakeSubsystem.setFwdRolSpd(speed);
-    	IntakeSubsystem.setCenteringModuleSpeed(speed);
+
     }
 
     // Make this return true when this Command no longer needs to run execute()

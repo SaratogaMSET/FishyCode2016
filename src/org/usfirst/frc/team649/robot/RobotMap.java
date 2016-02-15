@@ -25,9 +25,9 @@ public class RobotMap {
 	}
 
 	public static class Intake {
-		public static final int[] MOTOR_PORTS = { 4, 5, 6, 7 };
-		public static final int[] LEFT_SOLENOID_PORTS = {0,1,1,0};
-		public static final int[] RIGHT_SOLENOID_PORTS = {0,2,1,2};
+		public static final int[] MOTOR_PORTS = { 17, 18, 19};
+		public static final int[] LEFT_SOLENOID_PORTS = {0,6,1,6};
+		public static final int[] RIGHT_SOLENOID_PORTS = {0,7,1,7};
 	}
 
 	public static class ShooterPivot {

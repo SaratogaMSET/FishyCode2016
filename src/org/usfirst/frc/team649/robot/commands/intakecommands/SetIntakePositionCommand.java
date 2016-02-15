@@ -7,11 +7,11 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class setIntakeCommand extends Command {
+public class SetIntakePositionCommand extends Command {
 
 	boolean deployed;
 	
-    public setIntakeCommand(boolean toDeploy) {
+    public SetIntakePositionCommand(boolean toDeploy) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
 		deployed = toDeploy;
