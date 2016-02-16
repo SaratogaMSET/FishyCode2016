@@ -28,12 +28,12 @@ public class IntakeSubsystem extends Subsystem {
 	}
 
 	public void setFwdRolSpd(double speed) {
-		rollers[2].set(-speed);
+		rollers[2].set(speed);
 	}
 
 	public void setCenteringModuleSpeed(double speed) {
-		rollers[0].set(-speed);
-		rollers[1].set(speed);
+		rollers[0].set(speed);
+		rollers[1].set(-speed);
 	}
 	//true = up, false = down
 	public void setSolenoids(boolean set) {

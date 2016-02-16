@@ -110,18 +110,18 @@ public class Robot extends IterativeRobot {
 		} else {
 			intake.setSolenoids(intakeState);
 		}
-		/*
-		if(oi.operatorJoystick.getRawButton(3)) {
+		
+		if(oi.operatorJoystick.getRawButton(11)) {
 			intake.setCenteringModuleSpeed(1.0);
 			intake.setFwdRolSpd(1.0);
-		} else if (oi.operatorJoystick.getRawButton(4)) {
+		} else if (oi.operatorJoystick.getRawButton(12)) {
 			intake.setCenteringModuleSpeed(-1.0);
-			intake.setFwdRolSpd(-1.0);
+			intake.setFwdRolSpd(-.35);
 		} else {
 			intake.setCenteringModuleSpeed(0.0);
 			intake.setFwdRolSpd(0.0);
 		}
-		*/
+		
 		if((oi.driveJoystickHorizontal.getRawButton(1) && !prevStateDHorizontalTrigger) 
 				|| (oi.driveJoystickVertical.getRawButton(1) && !prevStateDVerticalTrigger)){
 			drivetrain.shift(!currentGear);
