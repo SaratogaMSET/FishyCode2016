@@ -8,6 +8,7 @@ import org.usfirst.frc.team649.robot.util.DoubleSolenoid649;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -25,7 +26,7 @@ public class DrivetrainSubsystem extends Subsystem {
 	public CANTalon [] motors;
 	public Encoder leftEncoder, rightEncoder;
 	
-	public DoubleSolenoid649 driveSol;
+	public DoubleSolenoid driveSol;
 	public ADXRS450_Gyro gyro;
 	
 	public static final double highGearEncoderDistancePerPulse = 18.85  * 14.0/60.0 / 128;
@@ -56,9 +57,8 @@ public class DrivetrainSubsystem extends Subsystem {
 				RobotMap.Drivetrain.RIGHT_ENCODER_REVERSE_CHANNEL, true);
 		leftEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
 		
-		driveSol  = new DoubleSolenoid649(RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[0],
-				RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[1], RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[2],
-				RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[3]);
+		driveSol  = new DoubleSolenoid(RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[0],
+				RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[1], RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[2]);
 		
 		leftEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
 		rightEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
@@ -106,8 +106,9 @@ public class DrivetrainSubsystem extends Subsystem {
         leftEncoder.reset();
     }
     
+    //true = forward, false = reverse
     public void shift(boolean lowSpeed) {
-    	driveSol.set(lowSpeed);
+    	driveSol.set(lowSpeed ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
     }
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.

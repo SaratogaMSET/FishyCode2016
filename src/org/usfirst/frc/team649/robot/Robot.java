@@ -40,29 +40,34 @@ public class Robot extends IterativeRobot {
 	public DoubleSolenoid ds;
 
 	SendableChooser chooser;
+	
+	//true = up, false = down
+	public static boolean intakeState = false;
+	//true = high gear, false = low gear
+	public static boolean currentGear = true;
+	
+	//prevStates
+	public boolean prevStateOpTrigger;
+	public boolean prevStateDHorizontalTrigger;
+	public boolean prevStateDVerticalTrigger;
 
-	/**
-	 * This function is run when the robot is first started up and should be
-	 * used for any initialization code.
-	 */
+	
 	public void robotInit() {
 		oi = new OI();
 		chooser = new SendableChooser();
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
 		drivetrain = new DrivetrainSubsystem();
-		//intake = new IntakeSubsystem();
+		intake = new IntakeSubsystem();
 		// shooterPivotSubsystem = new ShooterPivotSubsystem();
 		log = new ArrayList<>();
 		timer = new Timer();
-
+		
+		prevStateOpTrigger = false;
+		prevStateDHorizontalTrigger = false;
+		prevStateDVerticalTrigger = false;
 	}
 
-	/**
-	 * This function is called once each time the robot enters Disabled mode.
-	 * You can use it to reset any subsystem information you want to clear when
-	 * the robot is disabled.
-	 */
 	public void disabledInit() {
 		System.out.println("STARTING LOG: Time, MotorLeft, MotorRight ");
 		for (int i = 0; i < log.size(); i++) {
@@ -77,51 +82,33 @@ public class Robot extends IterativeRobot {
 		Scheduler.getInstance().run();
 	}
 
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString code to get the auto name from the text box below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional commands to the
-	 * chooser code above (like the commented example) or additional comparisons
-	 * to the switch structure below with additional strings & commands.
-	 */
+	
 	public void autonomousInit() {
 
 	}
 
-	/**
-	 * This function is called periodically during autonomous
-	 */
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
 	}
 
 	public void teleopInit() {
-		// This makes sure that the autonomous stops running when
-		// teleop starts running. If you want the autonomous to
-		// continue until interrupted by another command, remove
-		// this line or comment it out.
 		timer.reset();
 		timer.start();
 		log = new ArrayList<>();
 		drivetrain.gyro.reset();
 	}
 
-	/**
-	 * This function is called periodically during operator control
-	 */
 	public void teleopPeriodic() {
-		// new DriveForwardRotateCommand(oi.driver.getForward(),
-		// oi.driver.getRotation()).start();
+		Scheduler.getInstance().run();
+		
 		drivetrain.driveFwdRot(oi.driver.getForward(), oi.driver.getRotation());
 		
-		if (oi.operatorJoystick.getRawButton(1)) {
-			intake.leftSolenoid.set(true);
+		//INTAKE ----- toggle
+		if (oi.operatorJoystick.getRawButton(1) && !prevStateOpTrigger) {
+			intake.setSolenoids(!intakeState);
+			intakeState = !intakeState;
 		} else {
-			intake.leftSolenoid.set(false);
+			intake.setSolenoids(intakeState);
 		}
 		/*
 		if(oi.operatorJoystick.getRawButton(3)) {
@@ -135,14 +122,13 @@ public class Robot extends IterativeRobot {
 			intake.setFwdRolSpd(0.0);
 		}
 		*/
-		if(oi.operatorJoystick.getRawButton(10) || oi.driveJoystickVertical.getRawButton(10)){
-			drivetrain.shift(true);
+		if((oi.driveJoystickHorizontal.getRawButton(1) && !prevStateDHorizontalTrigger) 
+				|| (oi.driveJoystickVertical.getRawButton(1) && !prevStateDVerticalTrigger)){
+			drivetrain.shift(!currentGear);
+			currentGear = !currentGear;
 		} else {
-			drivetrain.shift(false);
+			drivetrain.shift(currentGear);
 		}
-		SmartDashboard.putData("Left Enc", drivetrain.leftEncoder);
-		SmartDashboard.putData("Right Enc", drivetrain.rightEncoder);
-		//SmartDashboard.putData("", );
 		
 		/*
 		if (oi.operatorJoystick.getRawButton(2)) {
@@ -157,6 +143,17 @@ public class Robot extends IterativeRobot {
 		log.add(drivetrain.getLoggingData());
 		SmartDashboard.putData("GYRO", drivetrain.gyro);
 		SmartDashboard.putNumber("GYRO ANGLE", drivetrain.gyro.getAngle());
+		
+		SmartDashboard.putData("Left Enc", drivetrain.leftEncoder);
+		SmartDashboard.putData("Right Enc", drivetrain.rightEncoder);
+		SmartDashboard.putBoolean("current gear", currentGear);
+		SmartDashboard.putBoolean("current intake state", intakeState);
+		//SmartDashboard.putData("", );
+		
+		//PREV STATES
+		prevStateOpTrigger = oi.operatorJoystick.getRawButton(1);
+		prevStateDHorizontalTrigger = oi.driveJoystickHorizontal.getRawButton(1);
+		prevStateDVerticalTrigger = oi.driveJoystickVertical.getRawButton(1);
 	}
 
 	/**
