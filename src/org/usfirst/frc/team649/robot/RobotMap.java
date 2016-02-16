@@ -17,7 +17,7 @@ public class RobotMap {
 	public static class Drivetrain {
 		// FR,BR,BL,BR
 		public static final int[] MOTOR_PORTS = { 0, 1, 2, 3 };
-		public static final int[] DRIVE_SOLENOID_PORTS = {0,5,1,5};
+		public static final int[] DRIVE_SOLENOID_PORTS = {0,0,1,0};
 		public static final int LEFT_ENCODER_FORWARD_CHANNEL = 6;
 		public static final int LEFT_ENCODER_REVERSE_CHANNEL = 7;
 		public static final int RIGHT_ENCODER_FORWARD_CHANNEL = 8;
@@ -26,8 +26,8 @@ public class RobotMap {
 
 	public static class Intake {
 		public static final int[] MOTOR_PORTS = { 0, 9, 1};
-		public static final int[] LEFT_SOLENOID_PORTS = {0,6,1,6};
-		public static final int[] RIGHT_SOLENOID_PORTS = {0,7,1,7};
+		public static final int[] LEFT_SOLENOID_PORTS = {0,2,1,2};
+		public static final int[] RIGHT_SOLENOID_PORTS = {0,1,1,1};
 	}
 
 	public static class ShooterPivot {

@@ -51,7 +51,7 @@ public class Robot extends IterativeRobot {
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
 		drivetrain = new DrivetrainSubsystem();
-		intake = new IntakeSubsystem();
+		//intake = new IntakeSubsystem();
 		// shooterPivotSubsystem = new ShooterPivotSubsystem();
 		log = new ArrayList<>();
 		timer = new Timer();
@@ -117,12 +117,13 @@ public class Robot extends IterativeRobot {
 		// new DriveForwardRotateCommand(oi.driver.getForward(),
 		// oi.driver.getRotation()).start();
 		drivetrain.driveFwdRot(oi.driver.getForward(), oi.driver.getRotation());
-		if (oi.operatorJoystick.getRawButton(1)) {
-			intake.setSolenoids(true);
-		} else {
-			intake.setSolenoids(false);
-		}
 		
+		if (oi.operatorJoystick.getRawButton(1)) {
+			intake.leftSolenoid.set(true);
+		} else {
+			intake.leftSolenoid.set(false);
+		}
+		/*
 		if(oi.operatorJoystick.getRawButton(3)) {
 			intake.setCenteringModuleSpeed(1.0);
 			intake.setFwdRolSpd(1.0);
@@ -133,8 +134,8 @@ public class Robot extends IterativeRobot {
 			intake.setCenteringModuleSpeed(0.0);
 			intake.setFwdRolSpd(0.0);
 		}
-		
-		if(oi.driveJoystickHorizontal.getRawButton(10) || oi.driveJoystickVertical.getRawButton(10)){
+		*/
+		if(oi.operatorJoystick.getRawButton(10) || oi.driveJoystickVertical.getRawButton(10)){
 			drivetrain.shift(true);
 		} else {
 			drivetrain.shift(false);

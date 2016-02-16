@@ -57,7 +57,7 @@ public class DrivetrainSubsystem extends Subsystem {
 		leftEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
 		
 		driveSol  = new DoubleSolenoid649(RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[0],
-				RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[1], RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[3],
+				RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[1], RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[2],
 				RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[3]);
 		
 		leftEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
