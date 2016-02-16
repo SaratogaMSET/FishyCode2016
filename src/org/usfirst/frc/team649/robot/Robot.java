@@ -1,5 +1,6 @@
 package org.usfirst.frc.team649.robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -11,6 +12,7 @@ import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
 import java.util.ArrayList;
 
+import org.usfirst.frc.team649.robot.RobotMap.Intake;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotateCommand;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
@@ -35,6 +37,7 @@ public class Robot extends IterativeRobot {
 	//public static ShooterSubsystem shooter;
 	public ArrayList<ArrayList<Double>> log;
 	public static Timer timer;
+	public DoubleSolenoid ds;
 
 	SendableChooser chooser;
 
@@ -66,7 +69,7 @@ public class Robot extends IterativeRobot {
 			ArrayList<Double> d = log.get(i);
 			System.out.println("BEGINNING_TAG " + d.get(0) + ", " + d.get(1)
 					+ ", " + d.get(2) + ", " + d.get(3) + ", " + d.get(4)
-					+ " ENDING_TAG");
+					+ ", " + d.get(5) + " ENDING_TAG");
 		}
 	}
 
@@ -119,6 +122,27 @@ public class Robot extends IterativeRobot {
 		} else {
 			intake.setSolenoids(false);
 		}
+		
+		if(oi.operatorJoystick.getRawButton(3)) {
+			intake.setCenteringModuleSpeed(1.0);
+			intake.setFwdRolSpd(1.0);
+		} else if (oi.operatorJoystick.getRawButton(4)) {
+			intake.setCenteringModuleSpeed(-1.0);
+			intake.setFwdRolSpd(-1.0);
+		} else {
+			intake.setCenteringModuleSpeed(0.0);
+			intake.setFwdRolSpd(0.0);
+		}
+		
+		if(oi.driveJoystickHorizontal.getRawButton(10) || oi.driveJoystickVertical.getRawButton(10)){
+			drivetrain.shift(true);
+		} else {
+			drivetrain.shift(false);
+		}
+		SmartDashboard.putData("Left Enc", drivetrain.leftEncoder);
+		SmartDashboard.putData("Right Enc", drivetrain.rightEncoder);
+		//SmartDashboard.putData("", );
+		
 		/*
 		if (oi.operatorJoystick.getRawButton(2)) {
 			shooter.runPunch(Value.kForward);
@@ -131,6 +155,7 @@ public class Robot extends IterativeRobot {
 		*/
 		log.add(drivetrain.getLoggingData());
 		SmartDashboard.putData("GYRO", drivetrain.gyro);
+		SmartDashboard.putNumber("GYRO ANGLE", drivetrain.gyro.getAngle());
 	}
 
 	/**

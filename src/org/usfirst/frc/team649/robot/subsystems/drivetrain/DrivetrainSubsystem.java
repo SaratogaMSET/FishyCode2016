@@ -28,8 +28,8 @@ public class DrivetrainSubsystem extends Subsystem {
 	public DoubleSolenoid649 driveSol;
 	public ADXRS450_Gyro gyro;
 	
-	public static final double highGearEncoderDistancePerPulse = 34;
-	public static final double lowGearEncoderDistancePerPulse = 24;
+	public static final double highGearEncoderDistancePerPulse = 18.85  * 14.0/60.0 / 128;
+	public static final double lowGearEncoderDistancePerPulse = 18.85 * 24.0/50.0 / 128;
 	
 	
 	public static class PIDConstants {
@@ -49,13 +49,19 @@ public class DrivetrainSubsystem extends Subsystem {
 			motors[i] = new CANTalon(RobotMap.Drivetrain.MOTOR_PORTS[i]);
 		}
 		leftEncoder = new Encoder(RobotMap.Drivetrain.LEFT_ENCODER_FORWARD_CHANNEL, 
-				RobotMap.Drivetrain.LEFT_ENCODER_REVERSE_CHANNEL, true);
+				RobotMap.Drivetrain.LEFT_ENCODER_REVERSE_CHANNEL, false);
+		leftEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
+		
 		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_ENCODER_FORWARD_CHANNEL, 
 				RobotMap.Drivetrain.RIGHT_ENCODER_REVERSE_CHANNEL, true);
+		leftEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
 		
 		driveSol  = new DoubleSolenoid649(RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[0],
 				RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[1], RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[3],
 				RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[3]);
+		
+		leftEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
+		rightEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
 	}
 
 	public void driveFwdRot(double fwd, double rot) {

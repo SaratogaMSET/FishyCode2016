@@ -18,14 +18,14 @@ public class RobotMap {
 		// FR,BR,BL,BR
 		public static final int[] MOTOR_PORTS = { 0, 1, 2, 3 };
 		public static final int[] DRIVE_SOLENOID_PORTS = {0,5,1,5};
-		public static final int LEFT_ENCODER_FORWARD_CHANNEL = 0;
-		public static final int LEFT_ENCODER_REVERSE_CHANNEL = 1;
-		public static final int RIGHT_ENCODER_FORWARD_CHANNEL = 2;
-		public static final int RIGHT_ENCODER_REVERSE_CHANNEL = 3;
+		public static final int LEFT_ENCODER_FORWARD_CHANNEL = 6;
+		public static final int LEFT_ENCODER_REVERSE_CHANNEL = 7;
+		public static final int RIGHT_ENCODER_FORWARD_CHANNEL = 8;
+		public static final int RIGHT_ENCODER_REVERSE_CHANNEL = 9;
 	}
 
 	public static class Intake {
-		public static final int[] MOTOR_PORTS = { 17, 18, 19};
+		public static final int[] MOTOR_PORTS = { 0, 9, 1};
 		public static final int[] LEFT_SOLENOID_PORTS = {0,6,1,6};
 		public static final int[] RIGHT_SOLENOID_PORTS = {0,7,1,7};
 	}
