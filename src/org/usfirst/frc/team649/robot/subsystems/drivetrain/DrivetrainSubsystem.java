@@ -6,10 +6,12 @@ import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
 import org.usfirst.frc.team649.robot.util.DoubleSolenoid649;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -21,9 +23,10 @@ public class DrivetrainSubsystem extends Subsystem {
     // here. Call these from Commands.
 	
 	public CANTalon [] motors;
-	private Encoder leftEncoder, rightEncoder;
+	public Encoder leftEncoder, rightEncoder;
 	
-	private DoubleSolenoid649 driveSol;
+	public DoubleSolenoid649 driveSol;
+	public ADXRS450_Gyro gyro;
 	
 	public static final double highGearEncoderDistancePerPulse = 34;
 	public static final double lowGearEncoderDistancePerPulse = 24;
@@ -38,6 +41,9 @@ public class DrivetrainSubsystem extends Subsystem {
 	
 	public DrivetrainSubsystem() {
 		motors = new CANTalon[4];
+		gyro = new ADXRS450_Gyro();
+		gyro.reset();
+		
 		//FR,BR,BL,BR
 		for(int i =0; i < motors.length; i++) {
 			motors[i] = new CANTalon(RobotMap.Drivetrain.MOTOR_PORTS[i]);
@@ -78,12 +84,13 @@ public class DrivetrainSubsystem extends Subsystem {
       return rightEncoder.getDistance();
   }
     public ArrayList<Double> getLoggingData() {
-    	ArrayList<Double> temp = new ArrayList<Double>(5);
+    	ArrayList<Double> temp = new ArrayList<Double>();
    	   temp.add(Robot.timer.get());
    	   temp.add(motors[0].get());
    	   temp.add(motors[2].get());
    	   temp.add(getDistanceDTLeft());
    	   temp.add(getDistanceDTRight());
+   	   temp.add(gyro.getAngle());
    	   
    	   return temp;
    	 

@@ -32,7 +32,7 @@ public class Robot extends IterativeRobot {
 	public static DrivetrainSubsystem drivetrain;
 	public static IntakeSubsystem intake;
 	public static ShooterPivotSubsystem shooterPivot;
-	public static ShooterSubsystem shooter;
+	//public static ShooterSubsystem shooter;
 	public ArrayList<ArrayList<Double>> log;
 	public static Timer timer;
 
@@ -104,6 +104,7 @@ public class Robot extends IterativeRobot {
 		timer.reset();
 		timer.start();
 		log = new ArrayList<>();
+		drivetrain.gyro.reset();
 	}
 
 	/**
@@ -118,7 +119,7 @@ public class Robot extends IterativeRobot {
 		} else {
 			intake.setSolenoids(false);
 		}
-		
+		/*
 		if (oi.operatorJoystick.getRawButton(2)) {
 			shooter.runPunch(Value.kForward);
 		} else if (oi.operatorJoystick.getRawButton(3)) {
@@ -127,8 +128,9 @@ public class Robot extends IterativeRobot {
 		} else {
 			shooter.runPunch(Value.kOff);
 		}
+		*/
 		log.add(drivetrain.getLoggingData());
-
+		SmartDashboard.putData("GYRO", drivetrain.gyro);
 	}
 
 	/**
