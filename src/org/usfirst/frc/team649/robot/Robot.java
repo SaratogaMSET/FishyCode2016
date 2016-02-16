@@ -1,12 +1,12 @@
-
 package org.usfirst.frc.team649.robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 
+import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
 import java.util.ArrayList;
@@ -14,11 +14,10 @@ import java.util.ArrayList;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotateCommand;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.ShooterSubsystem;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -33,98 +32,109 @@ public class Robot extends IterativeRobot {
 	public static DrivetrainSubsystem drivetrain;
 	public static IntakeSubsystem intake;
 	public static ShooterPivotSubsystem shooterPivot;
+	public static ShooterSubsystem shooter;
 	public ArrayList<ArrayList<Double>> log;
 	public static Timer timer;
-	
-    SendableChooser chooser;
 
-    /**
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
-     */
-    public void robotInit() {
-		oi = new OI();
-        chooser = new SendableChooser();
-//        chooser.addObject("My Auto", new MyAutoCommand());
-        SmartDashboard.putData("Auto mode", chooser);
-        drivetrain = new DrivetrainSubsystem();
-        intake = new IntakeSubsystem();
-		//shooterPivotSubsystem = new ShooterPivotSubsystem();
-        log = new ArrayList<>();
-    	timer = new Timer();
+	SendableChooser chooser;
 
-
-    }
-	
 	/**
-     * This function is called once each time the robot enters Disabled mode.
-     * You can use it to reset any subsystem information you want to clear when
+	 * This function is run when the robot is first started up and should be
+	 * used for any initialization code.
+	 */
+	public void robotInit() {
+		oi = new OI();
+		chooser = new SendableChooser();
+		// chooser.addObject("My Auto", new MyAutoCommand());
+		SmartDashboard.putData("Auto mode", chooser);
+		drivetrain = new DrivetrainSubsystem();
+		intake = new IntakeSubsystem();
+		// shooterPivotSubsystem = new ShooterPivotSubsystem();
+		log = new ArrayList<>();
+		timer = new Timer();
+
+	}
+
+	/**
+	 * This function is called once each time the robot enters Disabled mode.
+	 * You can use it to reset any subsystem information you want to clear when
 	 * the robot is disabled.
-     */
-    public void disabledInit(){
-    	System.out.println("STARTING LOG: Time, MotorLeft, MotorRight ");
- 	   for (int i = 0; i < log.size(); i++){
- 		   ArrayList<Double> d = log.get(i);
- 		   System.out.println("BEGINNING_TAG " + d.get(0) + ", " + d.get(1) + ", " + d.get(2) + ", " + d.get(3) + ", " + d.get(4) + " ENDING_TAG");
- 	   }
-    }
-	
-    
+	 */
+	public void disabledInit() {
+		System.out.println("STARTING LOG: Time, MotorLeft, MotorRight ");
+		for (int i = 0; i < log.size(); i++) {
+			ArrayList<Double> d = log.get(i);
+			System.out.println("BEGINNING_TAG " + d.get(0) + ", " + d.get(1)
+					+ ", " + d.get(2) + ", " + d.get(3) + ", " + d.get(4)
+					+ " ENDING_TAG");
+		}
+	}
+
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 	}
 
 	/**
-	 * This autonomous (along with the chooser code above) shows how to select between different autonomous modes
-	 * using the dashboard. The sendable chooser code works with the Java SmartDashboard. If you prefer the LabVIEW
-	 * Dashboard, remove all of the chooser code and uncomment the getString code to get the auto name from the text box
-	 * below the Gyro
+	 * This autonomous (along with the chooser code above) shows how to select
+	 * between different autonomous modes using the dashboard. The sendable
+	 * chooser code works with the Java SmartDashboard. If you prefer the
+	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
+	 * getString code to get the auto name from the text box below the Gyro
 	 *
-	 * You can add additional auto modes by adding additional commands to the chooser code above (like the commented example)
-	 * or additional comparisons to the switch structure below with additional strings & commands.
+	 * You can add additional auto modes by adding additional commands to the
+	 * chooser code above (like the commented example) or additional comparisons
+	 * to the switch structure below with additional strings & commands.
 	 */
-    public void autonomousInit() {
-        
-    }
+	public void autonomousInit() {
 
-    /**
-     * This function is called periodically during autonomous
-     */
-    public void autonomousPeriodic() {
-        Scheduler.getInstance().run();
-    }
+	}
 
-    public void teleopInit() {
+	/**
+	 * This function is called periodically during autonomous
+	 */
+	public void autonomousPeriodic() {
+		Scheduler.getInstance().run();
+	}
+
+	public void teleopInit() {
 		// This makes sure that the autonomous stops running when
-        // teleop starts running. If you want the autonomous to 
-        // continue until interrupted by another command, remove
-        // this line or comment it out.
-    	timer.reset();
-    	timer.start();
-    	log = new ArrayList<>();
-    }
+		// teleop starts running. If you want the autonomous to
+		// continue until interrupted by another command, remove
+		// this line or comment it out.
+		timer.reset();
+		timer.start();
+		log = new ArrayList<>();
+	}
 
-    /**
-     * This function is called periodically during operator control
-     */
-    public void teleopPeriodic() {
-    //	new DriveForwardRotateCommand(oi.driver.getForward(), oi.driver.getRotation()).start();
-    drivetrain.driveFwdRot(oi.driver.getForward(), oi.driver.getRotation());
-    if(oi.operatorJoystick.getRawButton(1)) {
-    	intake.setSolenoids(true);
-    } else {
-    	intake.setSolenoids(false);
-    }
-    
-	   log.add(drivetrain.getLoggingData());
-	 
-    }
-    
-    /**
-     * This function is called periodically during test mode
-     */
-    public void testPeriodic() {
-        LiveWindow.run();
-    }
+	/**
+	 * This function is called periodically during operator control
+	 */
+	public void teleopPeriodic() {
+		// new DriveForwardRotateCommand(oi.driver.getForward(),
+		// oi.driver.getRotation()).start();
+		drivetrain.driveFwdRot(oi.driver.getForward(), oi.driver.getRotation());
+		if (oi.operatorJoystick.getRawButton(1)) {
+			intake.setSolenoids(true);
+		} else {
+			intake.setSolenoids(false);
+		}
+		
+		if (oi.operatorJoystick.getRawButton(2)) {
+			shooter.runPunch(Value.kForward);
+		} else if (oi.operatorJoystick.getRawButton(3)) {
+			shooter.runPunch(Value.kReverse);
+
+		} else {
+			shooter.runPunch(Value.kOff);
+		}
+		log.add(drivetrain.getLoggingData());
+
+	}
+
+	/**
+	 * This function is called periodically during test mode
+	 */
+	public void testPeriodic() {
+		LiveWindow.run();
+	}
 }
-
