@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 import org.usfirst.frc.team649.robot.RobotMap.Intake;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotateCommand;
+import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePositionCommand;
+import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeedCommand;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterSubsystem;
@@ -48,8 +50,7 @@ public class Robot extends IterativeRobot {
 	
 	//prevStates
 	public boolean prevStateOpTrigger;
-	public boolean prevStateDHorizontalTrigger;
-	public boolean prevStateDVerticalTrigger;
+	public boolean prevStateDriveShifter;
 
 	
 	public void robotInit() {
@@ -64,8 +65,7 @@ public class Robot extends IterativeRobot {
 		timer = new Timer();
 		
 		prevStateOpTrigger = false;
-		prevStateDHorizontalTrigger = false;
-		prevStateDVerticalTrigger = false;
+		prevStateDriveShifter = false;
 	}
 
 	public void disabledInit() {
@@ -101,29 +101,28 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
-		drivetrain.driveFwdRot(oi.driver.getForward(), oi.driver.getRotation());
-		
+		//drivetrain.driveFwdRot(oi.driver.getForward(), oi.driver.getRotation());
+		new DriveForwardRotateCommand(oi.driver.getForward(), oi.driver.getRotation()).start();
 		//INTAKE ----- toggle
-		if (oi.operatorJoystick.getRawButton(1) && !prevStateOpTrigger) {
-			intake.setSolenoids(!intakeState);
+		if (oi.operator.toggleIntake() && !prevStateOpTrigger) {
+			new SetIntakePositionCommand(intakeState).start();
 			intakeState = !intakeState;
 		} else {
-			intake.setSolenoids(intakeState);
+			new SetIntakePositionCommand(intakeState).start();
 		}
 		
-		if(oi.operatorJoystick.getRawButton(11)) {
-			intake.setCenteringModuleSpeed(1.0);
-			intake.setFwdRolSpd(1.0);
-		} else if (oi.operatorJoystick.getRawButton(12)) {
-			intake.setCenteringModuleSpeed(-1.0);
-			intake.setFwdRolSpd(-.35);
+		if(oi.operator.purgeIntake()) {
+			new SetIntakeSpeedCommand(IntakeSubsystem.FORWARD_ROLLER_PURGE_SPEED,
+					IntakeSubsystem.CENTERING_MODULE_PURGE_SPEED).start(); 
+		} else if (oi.operator.runIntake()) {
+			new SetIntakeSpeedCommand(IntakeSubsystem.FORWARD_ROLLER_INTAKE_SPEED,
+					IntakeSubsystem.CENTERING_MODULE_INTAKE_SPEED).start();
 		} else {
-			intake.setCenteringModuleSpeed(0.0);
-			intake.setFwdRolSpd(0.0);
+			new SetIntakeSpeedCommand(IntakeSubsystem.INTAKE_OFF_SPEED,
+					IntakeSubsystem.INTAKE_OFF_SPEED).start();
 		}
 		
-		if((oi.driveJoystickHorizontal.getRawButton(1) && !prevStateDHorizontalTrigger) 
-				|| (oi.driveJoystickVertical.getRawButton(1) && !prevStateDVerticalTrigger)){
+		if(oi.driver.isDrivetrainLowGearButtonPressed() && !prevStateDriveShifter){
 			drivetrain.shift(!currentGear);
 			currentGear = !currentGear;
 		} else {
@@ -152,8 +151,7 @@ public class Robot extends IterativeRobot {
 		
 		//PREV STATES
 		prevStateOpTrigger = oi.operatorJoystick.getRawButton(1);
-		prevStateDHorizontalTrigger = oi.driveJoystickHorizontal.getRawButton(1);
-		prevStateDVerticalTrigger = oi.driveJoystickVertical.getRawButton(1);
+		prevStateDriveShifter = oi.driver.isDrivetrainLowGearButtonPressed();
 	}
 
 	/**

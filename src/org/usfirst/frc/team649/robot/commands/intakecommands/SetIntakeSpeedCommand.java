@@ -9,17 +9,18 @@ import edu.wpi.first.wpilibj.command.Command;
  *
  */
 public class SetIntakeSpeedCommand extends Command {
-double speed;
-    public SetIntakeSpeedCommand(double spd) {
+double forwardRollerSpeed, centeringModuleSpeed;
+    public SetIntakeSpeedCommand(double fwdRolSpd, double cModuleSpd) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	speed = spd;
+    	forwardRollerSpeed = fwdRolSpd;
+    	centeringModuleSpeed = cModuleSpd;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.intake.setFwdRolSpd(speed);
-    	Robot.intake.setCenteringModuleSpeed(speed);
+    	Robot.intake.setFwdRolSpd(forwardRollerSpeed);
+    	Robot.intake.setCenteringModuleSpeed(centeringModuleSpeed);
     }
 
     // Called repeatedly when this Command is scheduled to run

@@ -27,15 +27,18 @@ public class OI {
 	
     public class Operator {
 
-		public boolean isIntakeDeploy() {
+		public boolean toggleIntake() {
 			// TODO Auto-generated method stub
-			return false;
+			return operatorJoystick.getRawButton(1);
 		}
 		
-		public boolean isIntakeRetract() {
-			return false;
+		public boolean runIntake() {
+			return operatorJoystick.getRawButton(12);
 		}
     	
+		public boolean purgeIntake() {
+			return operatorJoystick.getRawButton(11);
+		}
     }
     
     public class Driver {
@@ -48,6 +51,10 @@ public class OI {
 		public double getRotation() {
 			return -driveJoystickHorizontal.getX();
 		}
+		
+		  public boolean isDrivetrainLowGearButtonPressed() {
+	            return driveJoystickHorizontal.getRawButton(1) || driveJoystickVertical.getRawButton(1);
+	        }
     }
     
     public class Manual {
