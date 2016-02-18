@@ -1,30 +1,28 @@
 package org.usfirst.frc.team649.robot.commands;
 
 import org.usfirst.frc.team649.robot.Robot;
+import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class DriveForwardRotateCommand extends Command {
+public class SetPivotPower extends Command {
 
-	double forward, rotation;
-    public DriveForwardRotateCommand(double fwd, double rot) {
+	double power;
+    public SetPivotPower(double pwr) {
         // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-    	forward = fwd;
-    	rotation = rot;
+        power = pwr;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.drivetrain.driveFwdRot(forward, rotation);
+    	Robot.shooterPivot.setPower(power);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-
     }
 
     // Make this return true when this Command no longer needs to run execute()

@@ -38,6 +38,27 @@ public class DrivetrainSubsystem extends Subsystem {
 		public static  double k_P = .2;
 	}
 	
+	public static class TurnConstants { 
+		public static final double P_VAL = 0;
+		public static final double I_VAL = 0;
+		public static final double D_VAL = 0;
+		
+		public static final double TOLERANCE = 3; //degrees
+	}
+	
+	public static class AutoConstants {
+		public static final int LOW_BAR = 0;
+		public static final int PORTCULLIS = 1;
+		public static final int CHEVAL_DE_FRISE = 2;
+		public static final int ROCK_WALL = 3;
+		public static final int ROUGH_TERRAIN = 4;
+		public static final int SALLY_PORT = 5;
+		public static final int DRAWBRIDGE = 6;
+		public static final int RAMPARTS = 7;
+		public static final int MOAT = 8;
+		
+	}
+	
 	
 	
 	public DrivetrainSubsystem() {

@@ -39,6 +39,10 @@ public class OI {
 		public boolean purgeIntake() {
 			return operatorJoystick.getRawButton(11);
 		}
+		
+		public double shooterPower() {
+			return operatorJoystick.getY();
+		}
     }
     
     public class Driver {
