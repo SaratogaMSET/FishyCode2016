@@ -40,9 +40,12 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		public static final int STORING_STATE = 1;
 		public static final int SHOOT_STATE = 2;
 		
-		public static final double PICKUP_POSITION = 20;//arbitrary value
-		public static final double STORE_POSITION = 90;//arbitrary value
-		public static final double SHOOT_POSITION = 150;//arbitrary value
+		public static final double PICKUP_POSITION = 0;//arbitrary value
+		public static final double STORE_POSITION = 10;//arbitrary value
+		public static final double SHOOT_POSITION = 75;//arbitrary value
+		
+		public static final double BOTTOM_OF_INTAKE_ZONE = 20;
+		public static final double TOP_OF_INTAKE_ZONE = 55;
 		
 	}
 
@@ -78,6 +81,9 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
     	
     }
     
+    public boolean isBelowIntakeZone() {
+    	return true;
+    }
     public void resetEncoders() {
     	encoderLeft.reset();
     	encoderRight.reset();

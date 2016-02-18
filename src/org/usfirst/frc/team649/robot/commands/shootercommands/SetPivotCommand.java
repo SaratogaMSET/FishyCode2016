@@ -15,7 +15,7 @@ public class SetPivotCommand extends Command {
 
 	PIDController pid;
 	
-//	boolean end;
+	boolean end, onlyUp, onlyDown;
 	double setPoint;
 	Timer timer;
     
@@ -41,20 +41,26 @@ public class SetPivotCommand extends Command {
     protected void initialize() {
     	timer = new Timer();
     	timer.start();
+    	end = false;
     	Robot.shooterPivot.engageBrake(false);
     	pid.setSetpoint(setPoint);
     	pid.enable();
+    	
     	
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	SmartDashboard.putString("Current Command", "Set Pivot");
+    	
+    	if(!Robot.intake.isIntakeDeployed() && Robot.shooterPivot.){
+    		end = true;
+    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return (pid.onTarget() || timer.get() >3.0);
+        return (end || pid.onTarget() || timer.get() >3.0);
     }
 
     // Called once after isFinished returns true

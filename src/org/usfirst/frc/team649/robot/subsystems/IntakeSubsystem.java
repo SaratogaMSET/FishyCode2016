@@ -53,6 +53,11 @@ public class IntakeSubsystem extends Subsystem {
 
 	}
 
+	public boolean isIntakeDeployed() {
+		//TODO, update when sol's for intake are actually plugged in
+		return true;
+	}
+	
 	protected void initDefaultCommand() {
 
 	}
