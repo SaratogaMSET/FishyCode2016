@@ -8,11 +8,17 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class MatchAutoDrive extends Command {
 
-	public int index;
+	public int index, pos;
+	public double diff;
 	public double[][] array;
 	
-	public MatchAutoDrive(double[][] arr){
+	public MatchAutoDrive(double[][] arr, int pos){
 		array = arr;
+		this.pos = pos;
+		
+		//calculate difference with opencv based on pos
+		//just a thought: Robot.cameraSubystem.calculatePictureDifference();
+		diff = 0;
 	}
 	
 	@Override
@@ -27,8 +33,8 @@ public class MatchAutoDrive extends Command {
 		
 		//HELLA COOL
 		try{
-			double left = array[index][1] + DrivetrainSubsystem.PIDConstants.k_P * getEncoderErrorLeft(index);
-			double right = array[index][2] + DrivetrainSubsystem.PIDConstants.k_P * getEncoderErrorRight(index);
+			double left = array[index][1] + DrivetrainSubsystem.PIDConstants.k_P * getEncoderErrorLeft(index) + AutonomousSequences.visionOffset(pos, diff, index)[0];
+			double right = array[index][2] + DrivetrainSubsystem.PIDConstants.k_P * getEncoderErrorRight(index) + AutonomousSequences.visionOffset(pos, diff, index)[1];
 			Robot.drivetrain.rawDrive(left, right);
 		}
 		catch (Exception e){
