@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.ShooterSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class Robot extends IterativeRobot {
 	public static DrivetrainSubsystem drivetrain;
 	public static IntakeSubsystem intake;
 	public static ShooterPivotSubsystem shooterPivot;
-	//public static ShooterSubsystem shooter;
+	public static ShooterSubsystem shooter;
 	public ArrayList<ArrayList<Double>> log;
 	public static Timer timer;
 	public DoubleSolenoid ds;
@@ -62,6 +63,7 @@ public class Robot extends IterativeRobot {
 		drivetrain = new DrivetrainSubsystem();
 		intake = new IntakeSubsystem();
 		shooterPivot = new ShooterPivotSubsystem();
+		shooter = new ShooterSubsystem();
 		log = new ArrayList<>();
 		timer = new Timer();
 		pdp = new PowerDistributionPanel();
@@ -109,16 +111,29 @@ public class Robot extends IterativeRobot {
 		new DriveForwardRotateCommand(oi.driver.getForward(), oi.driver.getRotation()).start();
 		
 		//INTAKE ----- toggle
-		if (oi.operator.toggleIntake() && !prevStateOpTrigger) {
-		///	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
+		if (oi.operator.toggleIntake()) { //&& !prevStateOpTrigger) {
+			shooter.loadBall(DoubleSolenoid.Value.kForward);
+			///	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
 			//new SetIntakePositionCommand(intakeState).start();
 			intakeState = !intakeState;
-		} 
+		} else {
+			shooter.loadBall(DoubleSolenoid.Value.kReverse);
+
+		}
 		
 		
 		
-		if(oi.operatorJoystick.getRawButton(4)&& !tempPrevState){
-		//	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.SHOOT_STATE).start();
+		
+		if(oi.operatorJoystick.getRawButton(4)) {//&& !tempPrevState){
+			shooter.setLeftFlywheelPower(0.50);
+			shooter.setRightFlywheelPower(-0.50);
+			//	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.SHOOT_STATE).start();
+		} else if(oi.operatorJoystick.getRawButton(6)) {
+			shooter.setLeftFlywheelPower(-1.0);
+			shooter.setRightFlywheelPower(1.0);
+		} else {
+			shooter.setLeftFlywheelPower(0.0);
+			shooter.setRightFlywheelPower(0.0);
 		}
 		
 		if(oi.operator.purgeIntake()) {
@@ -150,7 +165,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Shooter Picot Right", shooterPivot.encoderRight.getDistance());
 		
 		SmartDashboard.putNumber("Shooter Picot current right", pdp.getCurrent(0));
-		SmartDashboard.putNumber("Shooter pviot current left", pdp.getCurrent(14));
+		SmartDashboard.putNumber("Shooter pviot current left", pdp.getCurrent(15));
 		/*
 		SmartDashboard.putData("GYRO", drivetrain.gyro);
 		SmartDashboard.putNumber("GYRO ANGLE", drivetrain.gyro.getAngle());
