@@ -13,11 +13,13 @@ import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
 import java.util.ArrayList;
 
-import org.usfirst.frc.team649.robot.commands.DriveForwardRotateCommand;
-import org.usfirst.frc.team649.robot.commands.SetPivotPowerCommand;
-import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePositionCommand;
+import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
+import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
+import org.usfirst.frc.team649.robot.commands.SetPivotPower;
+import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeedCommand;
-import org.usfirst.frc.team649.robot.commands.shootercommands.SetPivotCommand;
+import org.usfirst.frc.team649.robot.commands.shootercommands.ResetPivot;
+import org.usfirst.frc.team649.robot.commands.shootercommands.SetPivotState;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -44,10 +46,13 @@ public class Robot extends IterativeRobot {
 
 	SendableChooser chooser;
 	
+	public static double DEAD_ZONE_TOLERANCE = 0.025;
+	
 	//true = down, false = up
 	public static boolean intakeState = false;
 	//true = high gear, false = low gear
 	public static boolean currentGear = true;
+	public static boolean shooterPIDIsRunning = false;
 	
 	//prevStates
 	public boolean prevStateOpTrigger;
@@ -108,7 +113,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
-		new DriveForwardRotateCommand(oi.driver.getForward(), oi.driver.getRotation()).start();
+		new DriveForwardRotate(oi.driver.getForward(), oi.driver.getRotation()).start();
 		
 		//INTAKE ----- toggle
 		if (oi.operator.toggleIntake()) { //&& !prevStateOpTrigger) {
@@ -154,18 +159,25 @@ public class Robot extends IterativeRobot {
 			drivetrain.shift(currentGear);
 		}
 		
-		if(oi.operatorJoystick.getRawButton(2)) {
-		new SetPivotPowerCommand(oi.operatorJoystick.getY()/2).start();
+		if(oi.operatorJoystick.getRawButton(2) && !shooterPIDIsRunning) {
+			double pivotPower = correctForDeadZone(oi.operatorJoystick.getY()/2.0);
+			
+			if (pivotPower > 0 && shooterPivot.pastMax() || pivotPower < 0 && shooterPivot.bumpersTriggered()){
+				pivotPower = 0;
+			}
+			
+			new SetPivotPower(pivotPower).start();
 		}
 		//LOGGING AND DASHBOARD
 		log.add(drivetrain.getLoggingData());
 		
-		SmartDashboard.putNumber("Shooter Pivot left", shooterPivot.encoderLeft.getDistance());
+		SmartDashboard.putData("Shooter Pivot left", shooterPivot.encoderLeft);
+		SmartDashboard.putData("Shooter Pivot Right", shooterPivot.encoderRight);
 		
-		SmartDashboard.putNumber("Shooter Picot Right", shooterPivot.encoderRight.getDistance());
+		SmartDashboard.putBoolean("Shooter bumper", shooterPivot.resetBumperLeft.get());
 		
-		SmartDashboard.putNumber("Shooter Picot current right", pdp.getCurrent(0));
-		SmartDashboard.putNumber("Shooter pviot current left", pdp.getCurrent(15));
+		SmartDashboard.putNumber("Shooter Pivot current right", pdp.getCurrent(0));
+		SmartDashboard.putNumber("Shooter pivot current left", pdp.getCurrent(15));
 		/*
 		SmartDashboard.putData("GYRO", drivetrain.gyro);
 		SmartDashboard.putNumber("GYRO ANGLE", drivetrain.gyro.getAngle());
@@ -176,13 +188,32 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("current intake state", intakeState);
 */
 		SmartDashboard.putString("Current Command", " ");
+		
+		SmartDashboard.putBoolean("Shooter Hall", shooterPivot.reachedResetLimit());//shooterPivot.resetHalEffect.getDirection());
+		//SmartDashboard.putNumber("Shooter Hall Effect", shooterPivot.resetHalEffect.get());//shooterPivot.resetHalEffect.getDirection());
 
 		//PREV STATES
 		prevStateOpTrigger = oi.operatorJoystick.getRawButton(1);
 		prevStateDriveShifter = oi.driver.isDrivetrainLowGearButtonPressed();
 		tempPrevState = oi.operatorJoystick.getRawButton(4);
+		
+		//********updating subsystem*******//
+		
+		//shooter hal effect counter
+		shooterPivot.updateHalEffect();
+		//brake
+		if (shooterPivot.motorLeft.get() == 0 && shooterPivot.motorRight.get() == 0){
+			shooterPivot.engageBrake(true);
+		}
+		else{
+			shooterPivot.engageBrake(false);
+		}
 	}
 
+	
+	public double correctForDeadZone(double joyVal){
+		   return Math.abs(joyVal) >= DEAD_ZONE_TOLERANCE ? joyVal : 0;
+   }
 	/**
 	 * This function is called periodically during test mode
 	 */

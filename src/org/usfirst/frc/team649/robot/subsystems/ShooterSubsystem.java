@@ -29,10 +29,10 @@ public class ShooterSubsystem extends Subsystem {
 		loader = new DoubleSolenoid(RobotMap.ShooterSubsystem.PUNCH_SOLENOID_PORTS[0],
 				RobotMap.ShooterSubsystem.PUNCH_SOLENOID_PORTS[1], RobotMap.ShooterSubsystem.PUNCH_SOLENOID_PORTS[2]);
 		
-		leftPhotoeletric = new Counter(RobotMap.ShooterSubsystem.LEFT_EINSTINE);
+		leftPhotoeletric = new Counter(RobotMap.ShooterSubsystem.LEFT_EINSTEIN);
 		leftPhotoeletric.setReverseDirection(true);;
 		
-		rightPhotoeletric = new Counter(RobotMap.ShooterSubsystem.RIGHT_EINSTINE);
+		rightPhotoeletric = new Counter(RobotMap.ShooterSubsystem.RIGHT_EINSTEIN);
 		rightPhotoeletric.setReverseDirection(false);
 	}
 

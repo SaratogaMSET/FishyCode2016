@@ -1,25 +1,24 @@
-package org.usfirst.frc.team649.robot.commands.intakecommands;
+package org.usfirst.frc.team649.robot.commands;
 
 import org.usfirst.frc.team649.robot.Robot;
+import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class SetIntakePositionCommand extends Command {
+public class SetPivotPower extends Command {
 
-	boolean deployed;
-	
-    public SetIntakePositionCommand(boolean toDeploy) {
+	double power;
+    public SetPivotPower(double pwr) {
         // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-		deployed = toDeploy;
+        power = pwr;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.intake.setSolenoids(deployed); 
+    	Robot.shooterPivot.setPower(power);
     }
 
     // Called repeatedly when this Command is scheduled to run

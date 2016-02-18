@@ -7,10 +7,10 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class DriveForwardRotateCommand extends Command {
+public class DriveForwardRotate extends Command {
 
 	double forward, rotation;
-    public DriveForwardRotateCommand(double fwd, double rot) {
+    public DriveForwardRotate(double fwd, double rot) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	forward = fwd;

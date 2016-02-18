@@ -11,15 +11,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *
  */
-public class SetPivotCommand extends Command {
+public class SetPivotState extends Command {
 
 	PIDController pid;
 	
-	boolean end, onlyUp, onlyDown;
+	boolean end, up;
 	double setPoint;
 	Timer timer;
     
-	public SetPivotCommand(int state) {
+	public SetPivotState(int state) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	pid = Robot.shooterPivot.getPIDController();
@@ -34,6 +34,7 @@ public class SetPivotCommand extends Command {
     		setPoint = Robot.shooterPivot.getPosition();
     	}
     	
+    	up = setPoint > Robot.shooterPivot.getPosition();
     	
     }
 
@@ -43,6 +44,7 @@ public class SetPivotCommand extends Command {
     	timer.start();
     	end = false;
     	Robot.shooterPivot.engageBrake(false);
+    	Robot.shooterPIDIsRunning = true;
     	pid.setSetpoint(setPoint);
     	pid.enable();
     	
@@ -52,20 +54,28 @@ public class SetPivotCommand extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	SmartDashboard.putString("Current Command", "Set Pivot");
-    	
-    	if(!Robot.intake.isIntakeDeployed() && Robot.shooterPivot.){
-    		end = true;
-    	}
+    	Robot.shooterPIDIsRunning = true;
+//    	if(!Robot.intake.isIntakeDeployed() && Robot.shooterPivot.){
+//    		end = true;
+//    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return (end || pid.onTarget() || timer.get() >3.0);
+    	
+    	end = Robot.intake.isIntakeDeployed(); //TODO any ending cases not below
+        //end if (TODO end cases), if going up and past max, if going down and at bumpers, if pid is done, or if it's been going for too long, END
+    	return (end
+    			|| up && Robot.shooterPivot.pastMax() 
+    			|| !up && Robot.shooterPivot.bumpersTriggered() 
+    			|| pid.onTarget() 
+    			|| timer.get() > 7.0);
     }
 
     // Called once after isFinished returns true
     protected void end() {
     	pid.disable();
+    	Robot.shooterPIDIsRunning = false;
 		SmartDashboard.putString("Current Command", " ");
     	Robot.shooterPivot.setPower(0);
     	Robot.shooterPivot.engageBrake(true);

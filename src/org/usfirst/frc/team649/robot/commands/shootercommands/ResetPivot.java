@@ -27,7 +27,7 @@ public class ResetPivot extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.shooterPivot.resetCounter();
+    	//Robot.shooterPivot.resetCounter();
     	Robot.shooterPivot.resetEncoders();
     	Robot.shooterPivot.setPower(0);
     	Robot.shooterPivot.engageBrake(true);

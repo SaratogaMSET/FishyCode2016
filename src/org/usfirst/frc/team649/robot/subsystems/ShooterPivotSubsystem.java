@@ -21,18 +21,20 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	public Victor motorLeft, motorRight;
 	public Encoder encoderLeft, encoderRight;
 	public PIDController pid;
-	public Counter resetHalEffect; //unsure about validity of counter/hall effect
+	public Counter intermediateHalEffect; //unsure about validity of counter/hall effect
+	public DigitalInput resetBumperLeft;
+	public DigitalInput resetBumperRight;
 	public DoubleSolenoid leftSol, rightSol;
 	
 	public static class PivotPID {
 		
-		public static final double ENCODER_DEGREES_PER_PULSE = 360.0/256.0 * 20.0/50.0 * 20.0/48.0; //change of course
+		public static final double ENCODER_DEGREES_PER_PULSE = 360.0/256.0 * 20.0/50.0 * 20.0/48.0 * 16.0/34.0; //change of course
 		public static final double k_P = 0.10;
 		public static final double k_I = 0.00;
 		public static final double k_D = 0.0;
 		public static final double ABS_TOLERANCE = 3;
-		public static final double MAX_MOTOR_POWER = 0.5;
-		public static final double MIN_MOTOR_POWER = -0.5;
+		public static final double MAX_MOTOR_UP_POWER = 0.5;
+		public static final double MAX_MOTOR_DOWN_POWER = -0.2;
 		public static final double ZEROING_CONSTANT_MOVE_POWER = 0;
 
 
@@ -46,6 +48,11 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		
 		public static final double BOTTOM_OF_INTAKE_ZONE = 20;
 		public static final double TOP_OF_INTAKE_ZONE = 55;
+		
+		public static double MAX_ENCODER_VAL = 90;
+		public static double MIN_ENCODER_VAL = 10;
+		
+		public static double LEVER_TOLERANCE = 0.03;
 		
 	}
 
@@ -65,21 +72,46 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
     	
     	//Init Sensors
     	encoderLeft = new Encoder(RobotMap.ShooterPivot.RIGHT_ENCODER[0], 
-    			RobotMap.ShooterPivot.RIGHT_ENCODER[1], true);
+    			RobotMap.ShooterPivot.RIGHT_ENCODER[1], false);
     	encoderRight = new Encoder(RobotMap.ShooterPivot.LEFT_ENCODER[0], 
-    			RobotMap.ShooterPivot.LEFT_ENCODER[1], false);
+    			RobotMap.ShooterPivot.LEFT_ENCODER[1], true);
     
     	encoderLeft.setDistancePerPulse(PivotPID.ENCODER_DEGREES_PER_PULSE);
     	encoderRight.setDistancePerPulse(PivotPID.ENCODER_DEGREES_PER_PULSE);
     	
-    	resetHalEffect = new Counter(RobotMap.ShooterPivot.HALL_EFFECT_SENSOR); //according to wpi.lib?
-    	
+    	intermediateHalEffect = new Counter(RobotMap.ShooterPivot.HALL_EFFECT_SENSOR); //according to wpilib?
+    	resetBumperLeft = new DigitalInput(RobotMap.ShooterPivot.RESET_BUMPER_LEFT);
+    	resetBumperRight = new DigitalInput(RobotMap.ShooterPivot.RESET_BUMPER_RIGHT);
     	//PID 
     	pid = this.getPIDController();
-    	pid.setOutputRange(PivotPID.MIN_MOTOR_POWER, PivotPID.MAX_MOTOR_POWER);
+    	pid.setOutputRange(PivotPID.MAX_MOTOR_DOWN_POWER, PivotPID.MAX_MOTOR_UP_POWER);
     	pid.setAbsoluteTolerance(PivotPID.ABS_TOLERANCE);
     	
     }
+    ////////////BUMPERS
+    public boolean bumpersTriggered(){
+    	return resetBumperLeft.get() || resetBumperRight.get();
+    }
+    
+    ////////////HAL EFFECTS
+    public void updateHalEffect(){
+    	if (reachedResetLimit()){
+    		resetCounter();
+    	}
+    }
+    
+    public void resetCounter() {
+    	intermediateHalEffect.reset();
+    }
+//    
+    public boolean reachedResetLimit() {
+    	return intermediateHalEffect.get() > 0;
+    }
+    
+    /////////////ENCODERS
+    public boolean pastMax(){
+		return encoderLeft.getDistance() > PivotPID.MAX_ENCODER_VAL;
+	}
     
     public boolean isBelowIntakeZone() {
     	return true;
@@ -89,19 +121,11 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
     	encoderRight.reset();
     }
     
-    public void resetCounter() {
-    	resetHalEffect.reset();
-    }
-    
-    public boolean reachedResetLimit() {
-    	return resetHalEffect.get() > 0;
-    }
-    
     public void setPower(double power) {
     
-    	motorLeft.set(-power);
+    	motorLeft.set(power);
     	SmartDashboard.putNumber(" motor power", power);
-    	motorRight.set(power);
+    	motorRight.set(-power);
     }
     
     protected double returnPIDInput() {
@@ -122,6 +146,12 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
     }
     
     protected void usePIDOutput(double output) {
+    	if (output > PivotPID.MAX_MOTOR_UP_POWER){
+    		output = PivotPID.MAX_MOTOR_DOWN_POWER;
+    	}
+    	else if (output < PivotPID.MAX_MOTOR_DOWN_POWER){
+    		output = PivotPID.MAX_MOTOR_DOWN_POWER;
+    	}
     	setPower(output);
     }
     
