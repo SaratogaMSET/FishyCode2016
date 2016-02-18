@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  *
  */
 public class ShooterSubsystem extends Subsystem {
-
+//use bang bang (if below set speed to 1, and if above, set speed to 0, target rpm = 4000
 	private static final double ENCODER_DISTANCE_PER_PULSE = 0;
 	public Victor leftMotor;
 	public Victor rightMotor;
