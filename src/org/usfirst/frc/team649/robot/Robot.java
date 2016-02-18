@@ -1,8 +1,8 @@
 package org.usfirst.frc.team649.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -12,13 +12,12 @@ import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
 import java.util.ArrayList;
 
-import org.usfirst.frc.team649.robot.RobotMap.Intake;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotateCommand;
+import org.usfirst.frc.team649.robot.commands.SetPivotPowerCommand;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePositionCommand;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeedCommand;
+import org.usfirst.frc.team649.robot.commands.shootercommands.SetPivotCommand;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.ShooterSubsystem;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,10 +39,11 @@ public class Robot extends IterativeRobot {
 	public ArrayList<ArrayList<Double>> log;
 	public static Timer timer;
 	public DoubleSolenoid ds;
+	public PowerDistributionPanel pdp;
 
 	SendableChooser chooser;
 	
-	//true = up, false = down
+	//true = down, false = up
 	public static boolean intakeState = false;
 	//true = high gear, false = low gear
 	public static boolean currentGear = true;
@@ -51,6 +51,7 @@ public class Robot extends IterativeRobot {
 	//prevStates
 	public boolean prevStateOpTrigger;
 	public boolean prevStateDriveShifter;
+	public boolean tempPrevState;
 
 	
 	public void robotInit() {
@@ -60,12 +61,14 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Auto mode", chooser);
 		drivetrain = new DrivetrainSubsystem();
 		intake = new IntakeSubsystem();
-		// shooterPivotSubsystem = new ShooterPivotSubsystem();
+		shooterPivot = new ShooterPivotSubsystem();
 		log = new ArrayList<>();
 		timer = new Timer();
+		pdp = new PowerDistributionPanel();
 		
 		prevStateOpTrigger = false;
 		prevStateDriveShifter = false;
+		tempPrevState = false;
 	}
 
 	public void disabledInit() {
@@ -96,19 +99,26 @@ public class Robot extends IterativeRobot {
 		timer.start();
 		log = new ArrayList<>();
 		drivetrain.gyro.reset();
+		shooterPivot.resetEncoders();
+		//new SetPivotCommand(5).start();;
 	}
 
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
-		//drivetrain.driveFwdRot(oi.driver.getForward(), oi.driver.getRotation());
 		new DriveForwardRotateCommand(oi.driver.getForward(), oi.driver.getRotation()).start();
+		
 		//INTAKE ----- toggle
 		if (oi.operator.toggleIntake() && !prevStateOpTrigger) {
-			new SetIntakePositionCommand(intakeState).start();
+		///	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
+			//new SetIntakePositionCommand(intakeState).start();
 			intakeState = !intakeState;
-		} else {
-			new SetIntakePositionCommand(intakeState).start();
+		} 
+		
+		
+		
+		if(oi.operatorJoystick.getRawButton(4)&& !tempPrevState){
+		//	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.SHOOT_STATE).start();
 		}
 		
 		if(oi.operator.purgeIntake()) {
@@ -129,29 +139,33 @@ public class Robot extends IterativeRobot {
 			drivetrain.shift(currentGear);
 		}
 		
-		/*
-		if (oi.operatorJoystick.getRawButton(2)) {
-			shooter.runPunch(Value.kForward);
-		} else if (oi.operatorJoystick.getRawButton(3)) {
-			shooter.runPunch(Value.kReverse);
-
-		} else {
-			shooter.runPunch(Value.kOff);
+		if(oi.operatorJoystick.getRawButton(2)) {
+		new SetPivotPowerCommand(oi.operatorJoystick.getY()/2).start();
 		}
-		*/
+		//LOGGING AND DASHBOARD
 		log.add(drivetrain.getLoggingData());
+		
+		SmartDashboard.putNumber("Shooter Pivot left", shooterPivot.encoderLeft.getDistance());
+		
+		SmartDashboard.putNumber("Shooter Picot Right", shooterPivot.encoderRight.getDistance());
+		
+		SmartDashboard.putNumber("Shooter Picot current right", pdp.getCurrent(0));
+		SmartDashboard.putNumber("Shooter pviot current left", pdp.getCurrent(14));
+		/*
 		SmartDashboard.putData("GYRO", drivetrain.gyro);
 		SmartDashboard.putNumber("GYRO ANGLE", drivetrain.gyro.getAngle());
-		
+
 		SmartDashboard.putData("Left Enc", drivetrain.leftEncoder);
 		SmartDashboard.putData("Right Enc", drivetrain.rightEncoder);
 		SmartDashboard.putBoolean("current gear", currentGear);
 		SmartDashboard.putBoolean("current intake state", intakeState);
-		//SmartDashboard.putData("", );
-		
+*/
+		SmartDashboard.putString("Current Command", " ");
+
 		//PREV STATES
 		prevStateOpTrigger = oi.operatorJoystick.getRawButton(1);
 		prevStateDriveShifter = oi.driver.isDrivetrainLowGearButtonPressed();
+		tempPrevState = oi.operatorJoystick.getRawButton(4);
 	}
 
 	/**

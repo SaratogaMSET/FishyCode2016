@@ -17,20 +17,20 @@ public class ResetPivot extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     	SmartDashboard.putString("ACTIVE COMMAND", "Run Til Hall Effect");
-    	Robot.shooterPivot.runShooter(ShooterPivotSubsystem.PivotPID.SHOOTER_POWER);
+    	Robot.shooterPivot.setPower(ShooterPivotSubsystem.PivotPID.ZEROING_CONSTANT_MOVE_POWER);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.shooterPivot.reachedLimit();
+        return Robot.shooterPivot.reachedResetLimit();
     }
 
     // Called once after isFinished returns true
     protected void end() {
     	Robot.shooterPivot.resetCounter();
     	Robot.shooterPivot.resetEncoders();
-    	Robot.shooterPivot.runShooter(0);
-    	Robot.shooterPivot.setSol(true);
+    	Robot.shooterPivot.setPower(0);
+    	Robot.shooterPivot.engageBrake(true);
     }
 
     // Called when another command which requires one or more of the same

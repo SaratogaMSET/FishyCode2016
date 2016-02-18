@@ -1,5 +1,7 @@
 package org.usfirst.frc.team649.robot.subsystems;
 
+import java.rmi.server.RMIClassLoader;
+
 import org.usfirst.frc.team649.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.Counter;
@@ -15,36 +17,50 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class ShooterSubsystem extends Subsystem {
 
-	private static final double ENCODER_DISTANCE_PER_PULSE = 0;
-	public Victor leftMotor;
-	public Victor rightMotor;
-	public DoubleSolenoid punch;
-	public Counter counter;
+	public Victor leftMotor, rightMotor;
+	public DoubleSolenoid loader;
+	public Counter leftPhotoeletric, rightPhotoeletric;
 	
 	public ShooterSubsystem() {
 		super("shooter subsystem");
 		leftMotor = new Victor(RobotMap.ShooterSubsystem.MOTOR_PORTS[0]);
 		rightMotor = new Victor(RobotMap.ShooterSubsystem.MOTOR_PORTS[1]);
-		punch = new DoubleSolenoid(
-				RobotMap.ShooterSubsystem.PUNCH_SOLENOID_PORTS[0],
-				RobotMap.ShooterSubsystem.PUNCH_SOLENOID_PORTS[1]);
+	
+		loader = new DoubleSolenoid(RobotMap.ShooterSubsystem.PUNCH_SOLENOID_PORTS[0],
+				RobotMap.ShooterSubsystem.PUNCH_SOLENOID_PORTS[1], RobotMap.ShooterSubsystem.PUNCH_SOLENOID_PORTS[2]);
 		
-		counter.setDistancePerPulse(ENCODER_DISTANCE_PER_PULSE);
-		counter.setReverseDirection(false);
+		leftPhotoeletric = new Counter(RobotMap.ShooterSubsystem.LEFT_EINSTINE);
+		leftPhotoeletric.setReverseDirection(true);;
+		
+		rightPhotoeletric = new Counter(RobotMap.ShooterSubsystem.RIGHT_EINSTINE);
+		rightPhotoeletric.setReverseDirection(false);
 	}
 
-	public void runPunch(Value punchPower) {
-		punch.set(punchPower);
+	public double getLeftFlywheelRPM() {
+		return 60/leftPhotoeletric.getPeriod();
+	}
+
+	public double getRightFlywheelRPM() {
+		return 60/rightPhotoeletric.getPeriod();
+	}
+	
+	public void setLeftFlywheelPower(double pwr) {
+		leftMotor.set(pwr);
+	}
+	
+	public void setRightFlywheelPower(double pwr) {
+		rightMotor.set(pwr);
+	}
+	
+	public void loadBall(Value punchPower) {
+		loader.set(punchPower);
 	}
 
 	public void resetCounter() {
-		counter.reset();
+		rightPhotoeletric.reset();
+		leftPhotoeletric.reset();
 	}
-
-	public boolean reachedLimit() {
-		return counter.get() > 0;
-	}
-
+	
 	public void initDefaultCommand() {
 		// Set the default command for a subsystem here.
 		// setDefaultCommand(new MySpecialCommand());
