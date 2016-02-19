@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class SetIntakeSpeedCommand extends Command {
+public class SetIntakeSpeed extends Command {
 double forwardRollerSpeed, centeringModuleSpeed;
-    public SetIntakeSpeedCommand(double fwdRolSpd, double cModuleSpd) {
+    public SetIntakeSpeed(double fwdRolSpd, double cModuleSpd) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	forwardRollerSpeed = fwdRolSpd;

@@ -17,7 +17,7 @@ import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
 import org.usfirst.frc.team649.robot.commands.SetPivotPower;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
-import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeedCommand;
+import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeed;
 import org.usfirst.frc.team649.robot.commands.shootercommands.ResetPivot;
 import org.usfirst.frc.team649.robot.commands.shootercommands.SetPivotState;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
@@ -142,13 +142,13 @@ public class Robot extends IterativeRobot {
 		}
 		
 		if(oi.operator.purgeIntake()) {
-			new SetIntakeSpeedCommand(IntakeSubsystem.FORWARD_ROLLER_PURGE_SPEED,
+			new SetIntakeSpeed(IntakeSubsystem.FORWARD_ROLLER_PURGE_SPEED,
 					IntakeSubsystem.CENTERING_MODULE_PURGE_SPEED).start(); 
 		} else if (oi.operator.runIntake()) {
-			new SetIntakeSpeedCommand(IntakeSubsystem.FORWARD_ROLLER_INTAKE_SPEED,
+			new SetIntakeSpeed(IntakeSubsystem.FORWARD_ROLLER_INTAKE_SPEED,
 					IntakeSubsystem.CENTERING_MODULE_INTAKE_SPEED).start();
 		} else {
-			new SetIntakeSpeedCommand(IntakeSubsystem.INTAKE_OFF_SPEED,
+			new SetIntakeSpeed(IntakeSubsystem.INTAKE_OFF_SPEED,
 					IntakeSubsystem.INTAKE_OFF_SPEED).start();
 		}
 		
@@ -174,7 +174,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Shooter Pivot left", shooterPivot.encoderLeft);
 		SmartDashboard.putData("Shooter Pivot Right", shooterPivot.encoderRight);
 		
-		SmartDashboard.putBoolean("Shooter bumper", shooterPivot.resetBumperLeft.get());
+		SmartDashboard.putBoolean("Shooter bumper left", shooterPivot.resetBumperLeft.get());
+		SmartDashboard.putBoolean("Shooter bumper right", shooterPivot.resetBumperRight.get());
 		
 		SmartDashboard.putNumber("Shooter Pivot current right", pdp.getCurrent(0));
 		SmartDashboard.putNumber("Shooter pivot current left", pdp.getCurrent(15));
