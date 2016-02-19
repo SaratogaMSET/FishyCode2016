@@ -68,13 +68,13 @@ public class SetPivotState extends Command {
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
     	
-    	inDangerOfIntakes = Robot.intake.isIntakeDeployed(); //TODO any ending cases not below
+    	//inDangerOfIntakes = Robot.intake.isIntakeDeployed(); //TODO any ending cases not below
         //end if (TODO end cases), if going up and past max, if going down and at bumpers, if pid is done, or if it's been going for too long, END
     	return (inDangerOfIntakes
     			|| up && Robot.shooterPivot.pastMax() 
     			|| !up && Robot.shooterPivot.lowerLimitsTriggered() 
     			|| pid.onTarget() 
-    			|| timer.get() > 7.0);
+    			|| timer.get() > 5.0);
     }
 
     // Called once after isFinished returns true
@@ -82,14 +82,13 @@ public class SetPivotState extends Command {
     	pid.disable();
     	Robot.shooterPIDIsRunning = false;
 		SmartDashboard.putString("Current Command", " ");
-    	Robot.shooterPivot.setPower(0);
-    	Robot.shooterPivot.engageBrake(true);
+    	//Robot.shooterPivot.setPower(0);
+    	//Robot.shooterPivot.engageBrake(true);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	Robot.shooterPivot.motorLeft.set(0);
-    	Robot.shooterPivot.motorRight.set(0);
+    	end();
     }
 }
