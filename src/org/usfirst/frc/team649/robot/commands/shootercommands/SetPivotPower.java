@@ -1,4 +1,4 @@
-package org.usfirst.frc.team649.robot.commands;
+package org.usfirst.frc.team649.robot.commands.shootercommands;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;

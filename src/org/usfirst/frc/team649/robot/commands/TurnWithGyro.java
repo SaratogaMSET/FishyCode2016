@@ -23,7 +23,7 @@ public class TurnWithGyro extends Command {
 	protected void execute() {
 		// TODO Auto-generated method stub
 		double error = angle - Robot.drivetrain.gyro.getAngle();
-		Robot.drivetrain.driveFwdRot(error * TurnConstants.P_VAL, -error * TurnConstants.P_VAL);
+		Robot.drivetrain.rawDrive(error * TurnConstants.P_VAL, -error * TurnConstants.P_VAL);
 	}
 
 	@Override

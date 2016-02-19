@@ -88,8 +88,8 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
     	pid.setAbsoluteTolerance(PivotPID.ABS_TOLERANCE);
     	
     }
-    ////////////BUMPERS
-    public boolean bumpersTriggered(){
+    ////////// LOWER LIMITS
+    public boolean lowerLimitsTriggered(){
     	return resetBumperLeft.get() || resetBumperRight.get();
     }
     
@@ -114,7 +114,11 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	}
     
     public boolean isBelowIntakeZone() {
-    	return true;
+    	return getPosition() < PivotPID.BOTTOM_OF_INTAKE_ZONE;
+    }
+    
+    public boolean isAboveIntakeZone() {
+    	return getPosition() > PivotPID.TOP_OF_INTAKE_ZONE;
     }
     public void resetEncoders() {
     	encoderLeft.reset();
@@ -128,11 +132,13 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
     	motorRight.set(-power);
     }
     
-    protected double returnPIDInput() {
+    public double getPivotAngle() {
     	double dist1 = encoderLeft.getDistance();
     	double dist2 = encoderRight.getDistance();
     	return dist1;//(dist1 + dist2)/2;
-    	
+    }
+    protected double returnPIDInput() {
+    	return getPivotAngle();
     }
     
     public void engageBrake(boolean set) {
@@ -152,6 +158,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
     	else if (output < PivotPID.MAX_MOTOR_DOWN_POWER){
     		output = PivotPID.MAX_MOTOR_DOWN_POWER;
     	}
+    	
     	setPower(output);
     }
     

@@ -15,10 +15,10 @@ import java.util.ArrayList;
 
 import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
-import org.usfirst.frc.team649.robot.commands.SetPivotPower;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeed;
 import org.usfirst.frc.team649.robot.commands.shootercommands.ResetPivot;
+import org.usfirst.frc.team649.robot.commands.shootercommands.SetPivotPower;
 import org.usfirst.frc.team649.robot.commands.shootercommands.SetPivotState;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 
@@ -162,7 +162,7 @@ public class Robot extends IterativeRobot {
 		if(oi.operatorJoystick.getRawButton(2) && !shooterPIDIsRunning) {
 			double pivotPower = correctForDeadZone(oi.operatorJoystick.getY()/2.0);
 			
-			if (pivotPower > 0 && shooterPivot.pastMax() || pivotPower < 0 && shooterPivot.bumpersTriggered()){
+			if (pivotPower > 0 && shooterPivot.pastMax() || pivotPower < 0 && shooterPivot.lowerLimitsTriggered()){
 				pivotPower = 0;
 			}
 			

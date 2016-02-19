@@ -15,7 +15,7 @@ public class RobotMap {
 	public static class Drivetrain {
 		// FR,BR,BL,BR
 		public static final int[] MOTOR_PORTS = { 0, 1, 2, 3 };
-		public static final int[] DRIVE_SOLENOID_PORTS = {1,0,1};
+		public static final int[] DRIVE_SOLENOID_PORTS = {0,4,5};
 		public static final int LEFT_ENCODER_FORWARD_CHANNEL = 6;
 		public static final int LEFT_ENCODER_REVERSE_CHANNEL = 7;
 		public static final int RIGHT_ENCODER_FORWARD_CHANNEL = 8;
@@ -24,8 +24,9 @@ public class RobotMap {
 
 	public static class Intake {
 		public static final int[] MOTOR_PORTS = {0,9,1};
-		public static final int[] LEFT_SOLENOID_PORTS = {0,6,7};//{0,2,1,2};
 		public static final int[] RIGHT_SOLENOID_PORTS = {0,0,1};//{0,1,1,1};
+		//not used on pbot
+		public static final int[] LEFT_SOLENOID_PORTS = {1,6,7};//{0,2,1,2};
 	}
 
 	public static class ShooterPivot {
@@ -38,15 +39,17 @@ public class RobotMap {
 		public static final int HALL_EFFECT_SENSOR = 14;
 		public static final int RESET_BUMPER_LEFT = 12;
 		public static final int RESET_BUMPER_RIGHT = 13;
-		public static final int [] LEFT_SOLENOID_PORTS = {0,4,5};
+		public static final int [] LEFT_SOLENOID_PORTS = {0,6,7};
+		//not used on pbot
 		public static final int [] RIGHT_SOLENOID_PORTS = {1,2,3};
 	}
 	public static class ShooterSubsystem
 	{
-		public static final int[] MOTOR_PORTS = {2,7};
+		public static final int[] MOTOR_PORTS = {10,11};
 		public static final int LEFT_EINSTEIN = 10;
 		public static final int RIGHT_EINSTEIN = 11;
 		public static final int[] PUNCH_SOLENOID_PORTS = {0,2,3};
+		public static final int IR_GATE_PORT = 1;
 	
 	}
 

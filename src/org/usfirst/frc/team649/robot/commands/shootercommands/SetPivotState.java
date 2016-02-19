@@ -15,7 +15,7 @@ public class SetPivotState extends Command {
 
 	PIDController pid;
 	
-	boolean end, up;
+	boolean inDangerOfIntakes, up;
 	double setPoint;
 	Timer timer;
     
@@ -42,7 +42,7 @@ public class SetPivotState extends Command {
     protected void initialize() {
     	timer = new Timer();
     	timer.start();
-    	end = false;
+    	inDangerOfIntakes = false;
     	Robot.shooterPivot.engageBrake(false);
     	Robot.shooterPIDIsRunning = true;
     	pid.setSetpoint(setPoint);
@@ -55,19 +55,24 @@ public class SetPivotState extends Command {
     protected void execute() {
     	SmartDashboard.putString("Current Command", "Set Pivot");
     	Robot.shooterPIDIsRunning = true;
-//    	if(!Robot.intake.isIntakeDeployed() && Robot.shooterPivot.){
-//    		end = true;
-//    	}
+    	if(!Robot.intake.isIntakeDeployed()) {
+    	
+    	if((!Robot.shooterPivot.isAboveIntakeZone() 
+    			&& setPoint < ShooterPivotSubsystem.PivotPID.TOP_OF_INTAKE_ZONE)
+    			||(!Robot.shooterPivot.isBelowIntakeZone() 
+    			&& setPoint > ShooterPivotSubsystem.PivotPID.BOTTOM_OF_INTAKE_ZONE)){ 
+    		inDangerOfIntakes = true;
+    	}
     }
-
+    }
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
     	
-    	end = Robot.intake.isIntakeDeployed(); //TODO any ending cases not below
+    	inDangerOfIntakes = Robot.intake.isIntakeDeployed(); //TODO any ending cases not below
         //end if (TODO end cases), if going up and past max, if going down and at bumpers, if pid is done, or if it's been going for too long, END
-    	return (end
+    	return (inDangerOfIntakes
     			|| up && Robot.shooterPivot.pastMax() 
-    			|| !up && Robot.shooterPivot.bumpersTriggered() 
+    			|| !up && Robot.shooterPivot.lowerLimitsTriggered() 
     			|| pid.onTarget() 
     			|| timer.get() > 7.0);
     }
