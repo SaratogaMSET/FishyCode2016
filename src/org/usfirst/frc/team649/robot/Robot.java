@@ -253,6 +253,7 @@ public class Robot extends IterativeRobot {
 			pivotTimer.reset();
 			prevStateMotorPowerIs0 = false;
 		}
+		
 	}
 
 	
