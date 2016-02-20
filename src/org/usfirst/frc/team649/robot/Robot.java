@@ -106,8 +106,8 @@ public class Robot extends IterativeRobot {
 		timer.start();
 		log = new ArrayList<>();
 		drivetrain.gyro.reset();
-		shooterPivot.resetEncoders();
-		//new SetPivotCommand(5).start();;
+		//shooterPivot.resetEncoders();
+		new SetPivotState(5).start();;
 	}
 
 	public void teleopPeriodic() {
@@ -116,23 +116,24 @@ public class Robot extends IterativeRobot {
 		new DriveForwardRotate(oi.driver.getForward(), oi.driver.getRotation()).start();
 		
 		//INTAKE ----- toggle
-		if (oi.operator.toggleIntake()) { //&& !prevStateOpTrigger) {
-			shooter.loadBall(DoubleSolenoid.Value.kForward);
+		if (oi.operator.toggleIntake() && !prevStateOpTrigger) {
+			//shooter.loadBall(DoubleSolenoid.Value.kForward);
 			///	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
-			//new SetIntakePositionCommand(intakeState).start();
+			//new SetIntakePosition(intakeState).start();
+			new ResetPivot().start();
 			intakeState = !intakeState;
 		} else {
-			shooter.loadBall(DoubleSolenoid.Value.kReverse);
+		//	shooter.loadBall(DoubleSolenoid.Value.kReverse);
 
 		}
 		
 		
 		
 		
-		if(oi.operatorJoystick.getRawButton(4)) {//&& !tempPrevState){
-			shooter.setLeftFlywheelPower(0.50);
-			shooter.setRightFlywheelPower(-0.50);
-			//	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.SHOOT_STATE).start();
+		if(oi.operatorJoystick.getRawButton(4) && !tempPrevState){
+			//shooter.setLeftFlywheelPower(0.50);
+			//shooter.setRightFlywheelPower(-0.50);
+			new SetPivotState(ShooterPivotSubsystem.PivotPID.SHOOT_STATE).start();
 		} else if(oi.operatorJoystick.getRawButton(6)) {
 			shooter.setLeftFlywheelPower(-1.0);
 			shooter.setRightFlywheelPower(1.0);
@@ -166,7 +167,7 @@ public class Robot extends IterativeRobot {
 				pivotPower = 0;
 			}
 			
-			new SetPivotPower(pivotPower).start();
+			//new SetPivotPower(pivotPower).start();
 		}
 		//LOGGING AND DASHBOARD
 		log.add(drivetrain.getLoggingData());
