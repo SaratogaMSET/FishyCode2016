@@ -54,6 +54,7 @@ public class Robot extends IterativeRobot {
 	//true = high gear, false = low gear
 	public static boolean currentGear = true;
 	public static boolean shooterPIDIsRunning = false;
+	public static boolean readyToShoot = false;
 	
 	//prevStates
 	public boolean prevStateOpTrigger;
@@ -254,8 +255,24 @@ public class Robot extends IterativeRobot {
 			prevStateMotorPowerIs0 = false;
 		}
 		
+		if(shooter.getLeftFlywheelRPM() < shooter.flywheelTargetRPM){
+			shooter.setLeftFlywheelPower(shooter.flywheelMaxPower);
+		}	
+		if(shooter.getLeftFlywheelRPM() > shooter.flywheelTargetRPM){
+			shooter.setLeftFlywheelPower(shooter.flywheelMinPower);
+		}
+		
+		if(shooter.getRightFlywheelRPM() < shooter.flywheelTargetRPM){
+			shooter.setRightFlywheelPower(shooter.flywheelMaxPower);
+		}
+		if(shooter.getRightFlywheelRPM() > shooter.flywheelTargetRPM){
+			shooter.setRightFlywheelPower(shooter.flywheelMinPower);
+		}
+		
+		readyToShoot = ((Math.abs(shooter.getRightFlywheelRPM() - shooter.flywheelTargetRPM) < shooter.flywheelTolerance)
+						&& (Math.abs(shooter.getLeftFlywheelRPM() - shooter.flywheelTargetRPM) < shooter.flywheelTolerance));
+		
 	}
-
 	
 	public double correctForDeadZone(double joyVal){
 		   return Math.abs(joyVal) >= DEAD_ZONE_TOLERANCE ? joyVal : 0;
