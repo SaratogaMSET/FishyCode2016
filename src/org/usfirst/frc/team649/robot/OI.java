@@ -43,6 +43,37 @@ public class OI {
 		public double shooterPower() {
 			return operatorJoystick.getY();
 		}
+		public boolean shoot(){
+			return operatorJoystick.getRawButton(8);
+		}
+		public boolean halfFlywheelForwardPower()
+		{
+			return operatorJoystick.getRawButton(4);
+		}
+		public boolean fullFlywheelForwardPower()
+		{
+			return operatorJoystick.getRawButton(6);
+		}
+		public boolean pivotShootState()
+		{
+			return operatorJoystick.getRawButton(5);
+		}
+		public boolean resetPivot()
+		{
+			return operatorJoystick.getRawButton(3);
+		}
+		public boolean pivotStoreState()
+		{
+			return operatorJoystick.getRawButton(9);
+		}
+		public boolean isManualPivotRest()
+		{
+			return operatorJoystick.getRawButton(2);
+		}
+		public double getManualPower()
+		{
+			return operatorJoystick.getY();
+		}
     }
     
     public class Driver {

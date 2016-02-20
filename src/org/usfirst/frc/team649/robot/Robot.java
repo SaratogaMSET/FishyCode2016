@@ -141,14 +141,14 @@ public class Robot extends IterativeRobot {
 
 		}
 		
-		if (oi.operatorJoystick.getRawButton(8) && !prevStateShootButton){
+		if (oi.operator.shoot() && !prevStateShootButton){
 			shooter.loader.set(shooter.loader.get() == DoubleSolenoid.Value.kForward ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
 		}
 		
-		if(oi.operatorJoystick.getRawButton(4)){
+		if(oi.operator.halfFlywheelForwardPower()){
 			shooter.setLeftFlywheelPower(0.50);
 			shooter.setRightFlywheelPower(-0.50);
-		} else if(oi.operatorJoystick.getRawButton(6)) {
+		} else if(oi.operator.fullFlywheelForwardPower()) {
 			shooter.setLeftFlywheelPower(-1.0);
 			shooter.setRightFlywheelPower(1.0);
 		} else {
@@ -156,13 +156,13 @@ public class Robot extends IterativeRobot {
 			shooter.setRightFlywheelPower(0.0);
 		}
 		
-		if (oi.operatorJoystick.getRawButton(5) && !prevStatePivotUp){
+		if (oi.operator.pivotShootState() && !prevStatePivotUp){
 			new SetPivotState(ShooterPivotSubsystem.PivotPID.SHOOT_STATE).start();
 		}
-		else if(oi.operatorJoystick.getRawButton(3) && !prevStateResetButton) {
+		else if(oi.operator.resetPivot() && !prevStateResetButton) {
 			 new ResetPivot().start();
 		}
-		else if (oi.operatorJoystick.getRawButton(9) && !prevStatePivotMiddle){
+		else if (oi.operator.pivotStoreState() && !prevStatePivotMiddle){
 			new SetPivotState(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
 		}
 		
@@ -184,8 +184,8 @@ public class Robot extends IterativeRobot {
 			drivetrain.shift(currentGear);
 		}
 		
-		if(oi.operatorJoystick.getRawButton(2) && !shooterPIDIsRunning) {
-			double pivotPower = correctForDeadZone(oi.operatorJoystick.getY()/2.0);
+		if(oi.operator.isManualPivotRest() && !shooterPIDIsRunning) {
+			double pivotPower = correctForDeadZone(oi.operator.getManualPower()/2.0);
 			
 			if (pivotPower > 0 && shooterPivot.pastMax() || pivotPower < 0 && shooterPivot.lowerLimitsTriggered()){
 				pivotPower = 0;
@@ -223,13 +223,13 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("Is shooter PID running" , shooterPIDIsRunning);
 		
 		//PREV STATES
-		prevStateOpTrigger = oi.operatorJoystick.getRawButton(1);
+		prevStateOpTrigger = oi.operator.toggleIntake();
 		prevStateDriveShifter = oi.driver.isDrivetrainLowGearButtonPressed();
-		tempPrevState = oi.operatorJoystick.getRawButton(4);
-		prevStateShootButton = oi.operatorJoystick.getRawButton(8);
-		prevStatePivotUp = oi.operatorJoystick.getRawButton(5);
-		prevStatePivotMiddle = oi.operatorJoystick.getRawButton(9);
-		prevStateResetButton = oi.operatorJoystick.getRawButton(3);
+		tempPrevState = oi.operator.halfFlywheelForwardPower();
+		prevStateShootButton = oi.operator.shoot();
+		prevStatePivotUp = oi.operator.pivotShootState();
+		prevStatePivotMiddle = oi.operator.pivotStoreState();
+		prevStateResetButton = oi.operator.resetPivot();
 		//********updating subsystem*******//
 		
 		//shooter hal effect counter
