@@ -45,7 +45,7 @@ public class RobotMap {
 	}
 	public static class ShooterSubsystem
 	{
-		public static final int[] MOTOR_PORTS = {10,11};
+		public static final int[] MOTOR_PORTS = {2,7};
 		public static final int LEFT_EINSTEIN = 10;
 		public static final int RIGHT_EINSTEIN = 11;
 		public static final int[] PUNCH_SOLENOID_PORTS = {0,2,3};

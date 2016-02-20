@@ -188,6 +188,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("current gear", currentGear);
 		SmartDashboard.putBoolean("current intake state", intakeState);
 */
+		SmartDashboard.putNumber("LEFT FLYWHEEL", shooter.getLeftFlywheelRPM());
+		SmartDashboard.putNumber("RIGHT FLYWHEEL", shooter.getRightFlywheelRPM());
 		SmartDashboard.putString("Current Command", " ");
 		
 		SmartDashboard.putBoolean("Shooter Hall", shooterPivot.reachedResetLimit());//shooterPivot.resetHalEffect.getDirection());
