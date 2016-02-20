@@ -55,7 +55,7 @@ public class IntakeSubsystem extends Subsystem {
 
 	public boolean isIntakeDeployed() {
 		//TODO, update when sol's for intake are actually plugged in
-		return true;
+		return false;
 	}
 	
 	protected void initDefaultCommand() {

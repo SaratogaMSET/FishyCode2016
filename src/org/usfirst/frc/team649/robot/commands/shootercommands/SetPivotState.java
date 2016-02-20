@@ -4,6 +4,7 @@ import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
 import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -17,10 +18,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class SetPivotState extends Command {
 
 	PIDController pid;
-	PowerDistributionPanel pdp = new PowerDistributionPanel();
-	ShooterPivotSubsystem shooterPivot = new ShooterPivotSubsystem();
 	boolean inDangerOfIntakes, up;
 	double setPoint;
+	double averageMotorSpeed;
 	Timer timer;
 	boolean isStalling; // set to true if current is greater than constant
 
@@ -29,6 +29,7 @@ public class SetPivotState extends Command {
 	// per second. End command after.
 
 	public SetPivotState(int state) {
+		requires(Robot.shooterPivot);
 		// Use requires() here to declare subsystem dependencies
 		// eg. requires(chassis);
 		pid = Robot.shooterPivot.getPIDController();
@@ -44,7 +45,8 @@ public class SetPivotState extends Command {
 		}
 
 		up = setPoint > Robot.shooterPivot.getPosition();
-
+		
+		
 	}
 
 	// Called just before this Command runs the first time
@@ -67,35 +69,32 @@ public class SetPivotState extends Command {
 
 			if ((!Robot.shooterPivot.isAboveIntakeZone() && setPoint < ShooterPivotSubsystem.PivotPID.TOP_OF_INTAKE_ZONE)
 					|| (!Robot.shooterPivot.isBelowIntakeZone() && setPoint > ShooterPivotSubsystem.PivotPID.BOTTOM_OF_INTAKE_ZONE)) {
+				//what issue are you seeing, not doing down to top of danger zone.
 				inDangerOfIntakes = true;
 			}
-			if (Robot.shooterPivot.averageMotorCurrents() >= ShooterPivotSubsystem.PivotPID.CURRENT_LIMIT
-					&& Robot.shooterPivot.getRate() <= ShooterPivotSubsystem.PivotPID.MINIMUM_ENCODER_RATE)
-			{
-				isStalling = true;
-
-			}
-			else
-			{		
-				isStalling = false;
-			}
-
-			Robot.shooterPivot.averageMotorCurrents();
+	
+			
+			averageMotorSpeed = (Math.abs(Robot.shooterPivot.motorLeft.get()) + Math.abs(Robot.shooterPivot.motorRight.get())) / 2.0;
+		}
+		
+		if (Robot.shooterPivot.averageMotorCurrents() >= ShooterPivotSubsystem.PivotPID.CURRENT_LIMIT
+				&& Robot.shooterPivot.getEncoderRate() <= ShooterPivotSubsystem.PivotPID.MINIMUM_ENCODER_RATE){
+			isStalling = true;
 		}
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
 	protected boolean isFinished() {
-
 		// inDangerOfIntakes = Robot.intake.isIntakeDeployed(); //TODO any
 		// ending cases not below
-		// end if (TODO end cases), if going up and past max, if going down and
-		// at bumpers, if pid is done, or if it's been going for too long, END
-		return (inDangerOfIntakes || up && Robot.shooterPivot.pastMax() || !up
-				&& Robot.shooterPivot.lowerLimitsTriggered() || pid.onTarget() || timer
-				.get() > 5.0) || isStalling;
+		// end if (TODO end cases), if going up and past max, if going down and at bumpers, 
+		//if pid is done, or if it's been going for too long, if applying insignificant power
+		//END
+		return inDangerOfIntakes || up && Robot.shooterPivot.pastMax() || !up
+				&& Robot.shooterPivot.lowerLimitsTriggered() || pid.onTarget() ||
+				timer.get() > 2.5 || isStalling || (timer.get() > 0.8 && Math.abs(averageMotorSpeed) < PivotPID.MIN_PIVOT_SPEED);
 	}
-
+	
 	// Called once after isFinished returns true
 	protected void end() {
 		pid.disable();

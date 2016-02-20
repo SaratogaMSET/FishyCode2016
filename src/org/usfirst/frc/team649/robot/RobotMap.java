@@ -42,7 +42,7 @@ public class RobotMap {
 		public static final int [] LEFT_SOLENOID_PORTS = {0,6,7};
 		//not used on pbot
 		public static final int [] RIGHT_SOLENOID_PORTS = {1,2,3};
-		public static final int LEFT_PDP_PORT = 1;
+		public static final int LEFT_PDP_PORT = 14;
 		public static final int RIGHT_PDP_PORT = 0;
 	}
 	public static class ShooterSubsystem

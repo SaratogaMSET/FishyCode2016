@@ -28,18 +28,19 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	public DigitalInput resetBumperLeft;
 	public DigitalInput resetBumperRight;
 	public DoubleSolenoid leftSol, rightSol;
-	public PowerDistributionPanel pdp = new PowerDistributionPanel();
 
 	public static class PivotPID {
 
 		public static final double ENCODER_DEGREES_PER_PULSE = 360.0 / 256.0
 				* 20.0 / 50.0 * 20.0 / 48.0 * 16.0 / 34.0; // change of course
-		public static final double k_P = 0.20;
-		public static final double k_I = 0.00;
-		public static final double k_D = 0.0;
+		public static final double k_P = 0.13;
+		public static final double k_I = 0.00005;
+		public static final double k_D = 0.05;
 		public static final double ABS_TOLERANCE = 3.0;
-		public static final double MAX_MOTOR_UP_POWER = 0.5;
+		
+		public static final double MAX_MOTOR_UP_POWER = 0.6;
 		public static final double MAX_MOTOR_DOWN_POWER = -0.4;
+		public static final double MIN_PIVOT_SPEED = 0;
 		public static final double ZEROING_CONSTANT_MOVE_POWER = -0.2;
 
 		public static final int PICKUP_STATE = 0;
@@ -48,17 +49,17 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 
 		public static final double PICKUP_POSITION = 0;
 		public static final double STORE_POSITION = 40;// temp value
-		public static final double SHOOT_POSITION = 75;// arbitrary value
+		public static final double SHOOT_POSITION = 65;// arbitrary value
 
 		public static final double BOTTOM_OF_INTAKE_ZONE = 7;
-		public static final double TOP_OF_INTAKE_ZONE = 65;
+		public static final double TOP_OF_INTAKE_ZONE = 60;
 
 		public static double MAX_ENCODER_VAL = 90;
 		public static double MIN_ENCODER_VAL = 0;
 
 		public static double LEVER_TOLERANCE = 0.03;
 		
-		public static double CURRENT_LIMIT = 0.75;
+		public static double CURRENT_LIMIT = 1.0;
 		public static double MINIMUM_ENCODER_RATE = 0;
 		
 		
@@ -83,10 +84,10 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 				RobotMap.ShooterPivot.LEFT_SOLENOID_PORTS[2]);
 
 		// Init Sensors
-		encoderLeft = new Encoder(RobotMap.ShooterPivot.RIGHT_ENCODER[0],
-				RobotMap.ShooterPivot.RIGHT_ENCODER[1], false);
-		encoderRight = new Encoder(RobotMap.ShooterPivot.LEFT_ENCODER[0],
-				RobotMap.ShooterPivot.LEFT_ENCODER[1], true);
+		encoderLeft = new Encoder(RobotMap.ShooterPivot.LEFT_ENCODER[0],
+				RobotMap.ShooterPivot.LEFT_ENCODER[1], false);
+		encoderRight = new Encoder(RobotMap.ShooterPivot.RIGHT_ENCODER[0],
+				RobotMap.ShooterPivot.RIGHT_ENCODER[1], true);
 
 		encoderLeft.setDistancePerPulse(PivotPID.ENCODER_DEGREES_PER_PULSE);
 		encoderRight.setDistancePerPulse(PivotPID.ENCODER_DEGREES_PER_PULSE);
@@ -151,7 +152,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 
 		motorLeft.set(power);
 		SmartDashboard.putNumber(" motor power", power);
-		motorRight.set(-power);
+		motorRight.set(-power/0.92);
 	}
 
 	public double getPivotAngle() {
@@ -186,10 +187,10 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 
 	// method that returns the average of the current of the 2 motors
 	public double averageMotorCurrents() {
-		return ((pdp.getCurrent(RobotMap.ShooterPivot.LEFT_PDP_PORT) + pdp
-				.getCurrent(RobotMap.ShooterPivot.RIGHT_PDP_PORT)) / 2);
+		return ((Robot.pdp.getCurrent(RobotMap.ShooterPivot.LEFT_PDP_PORT) + Robot.pdp.getCurrent(RobotMap.ShooterPivot.RIGHT_PDP_PORT)) / 2);
 	}
-	public double getRate()
+	
+	public double getEncoderRate()
 	{
 		return ((Robot.shooterPivot.encoderLeft.getRate() + Robot.shooterPivot.encoderRight.getRate())/2);
 	}
