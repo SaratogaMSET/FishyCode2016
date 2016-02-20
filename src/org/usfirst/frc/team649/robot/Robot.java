@@ -63,6 +63,8 @@ public class Robot extends IterativeRobot {
 	
 	public boolean prevStateMotorPowerIs0;
 	public boolean prevStatePivotUp;
+	public boolean prevStateResetButton;
+	public boolean prevStatePivotMiddle;
 
 	
 	public void robotInit() {
@@ -85,6 +87,9 @@ public class Robot extends IterativeRobot {
 		prevStateMotorPowerIs0 = true;
 		prevStateShootButton = false;
 		prevStatePivotUp = false;
+		prevStateResetButton = false;
+		prevStatePivotMiddle = false;
+		
 	}
 
 	public void disabledInit() {
@@ -129,14 +134,12 @@ public class Robot extends IterativeRobot {
 		if (oi.operator.toggleIntake() && !prevStateOpTrigger) {
 			//shooter.loadBall(DoubleSolenoid.Value.kForward);
 			///	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
-			//new SetIntakePosition(intakeState).start();
-			new ResetPivot().start();
+			new SetIntakePosition(intakeState).start();
 			intakeState = !intakeState;
 		} else {
 		//	shooter.loadBall(DoubleSolenoid.Value.kReverse);
 
 		}
-		
 		
 		if (oi.operatorJoystick.getRawButton(8) && !prevStateShootButton){
 			shooter.loader.set(shooter.loader.get() == DoubleSolenoid.Value.kForward ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
@@ -155,6 +158,12 @@ public class Robot extends IterativeRobot {
 		
 		if (oi.operatorJoystick.getRawButton(5) && !prevStatePivotUp){
 			new SetPivotState(ShooterPivotSubsystem.PivotPID.SHOOT_STATE).start();
+		}
+		else if(oi.operatorJoystick.getRawButton(3) && !prevStateResetButton) {
+			 new ResetPivot().start();
+		}
+		else if (oi.operatorJoystick.getRawButton(9) && !prevStatePivotMiddle){
+			new SetPivotState(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
 		}
 		
 		if(oi.operator.purgeIntake()) {
@@ -219,7 +228,8 @@ public class Robot extends IterativeRobot {
 		tempPrevState = oi.operatorJoystick.getRawButton(4);
 		prevStateShootButton = oi.operatorJoystick.getRawButton(8);
 		prevStatePivotUp = oi.operatorJoystick.getRawButton(5);
-		
+		prevStatePivotMiddle = oi.operatorJoystick.getRawButton(9);
+		prevStateResetButton = oi.operatorJoystick.getRawButton(3);
 		//********updating subsystem*******//
 		
 		//shooter hal effect counter

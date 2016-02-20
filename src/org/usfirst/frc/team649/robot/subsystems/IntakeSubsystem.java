@@ -52,10 +52,17 @@ public class IntakeSubsystem extends Subsystem {
 		}
 
 	}
+	
+	public boolean getSolenoids() {
+		if(leftSolenoid.get() == DoubleSolenoid.Value.kForward || rightSolenoid.get() == DoubleSolenoid.Value.kForward) {
+			return true; 
+		}
+		return false;
+	}
 
 	public boolean isIntakeDeployed() {
 		//TODO, update when sol's for intake are actually plugged in
-		return false;
+		return !getSolenoids();
 	}
 	
 	protected void initDefaultCommand() {

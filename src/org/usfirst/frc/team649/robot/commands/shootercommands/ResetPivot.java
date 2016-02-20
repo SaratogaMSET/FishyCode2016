@@ -22,8 +22,8 @@ public class ResetPivot extends Command {
     	SmartDashboard.putString("ACTIVE COMMAND", "Run Til Hall Effect");
     	Robot.shooterPivot.setPower(ShooterPivotSubsystem.PivotPID.ZEROING_CONSTANT_MOVE_POWER);
     	Robot.shooterPIDIsRunning = true;
-    	if(!Robot.intake.isIntakeDeployed() && !Robot.shooterPivot.isBelowIntakeZone()
-    			&& !Robot.shooterPivot.isAboveIntakeZone()) {
+    	if(!Robot.intake.isIntakeDeployed()
+    			&& Robot.shooterPivot.getPosition() > ShooterPivotSubsystem.PivotPID.MIDDLE_OF_INTAKE_ZONE) {
     		inDangerOfIntakes = true;
     	}
     }

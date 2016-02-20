@@ -54,10 +54,26 @@ public class SetPivotState extends Command {
 		timer = new Timer();
 		timer.start();
 		inDangerOfIntakes = false;
-		Robot.shooterPivot.engageBrake(false);
 		Robot.shooterPIDIsRunning = true;
 		pid.setSetpoint(setPoint);
 		pid.enable();
+		
+		if (!Robot.intake.isIntakeDeployed()){
+			if (Robot.shooterPivot.getPosition() > PivotPID.TOP_OF_INTAKE_ZONE && setPoint < PivotPID.TOP_OF_INTAKE_ZONE){
+				inDangerOfIntakes = true;
+			}
+			
+			if (Robot.shooterPivot.getPosition() < PivotPID.BOTTOM_OF_INTAKE_ZONE && setPoint > PivotPID.BOTTOM_OF_INTAKE_ZONE){
+				inDangerOfIntakes = true;
+			}
+		}
+		
+		if (up && setPoint == PivotPID.STORE_POSITION){
+			PivotPID.max_motor_up_power = PivotPID.MIDDLE_STATE_MAX_UP_POWER;
+		}
+		else {
+			PivotPID.max_motor_up_power = PivotPID.REGULAR_MAX_UP_POWER;
+		}
 
 	}
 
@@ -67,20 +83,22 @@ public class SetPivotState extends Command {
 		Robot.shooterPIDIsRunning = true;
 		if (!Robot.intake.isIntakeDeployed()) {
 
-			if ((!Robot.shooterPivot.isAboveIntakeZone() && setPoint < ShooterPivotSubsystem.PivotPID.TOP_OF_INTAKE_ZONE)
-					|| (!Robot.shooterPivot.isBelowIntakeZone() && setPoint > ShooterPivotSubsystem.PivotPID.BOTTOM_OF_INTAKE_ZONE)) {
-				//what issue are you seeing, not doing down to top of danger zone.
+			if ((Robot.shooterPivot.isInIntakeZone() && Robot.shooterPivot.getPosition() > ShooterPivotSubsystem.PivotPID.MIDDLE_OF_INTAKE_ZONE
+					&& setPoint < ShooterPivotSubsystem.PivotPID.TOP_OF_INTAKE_ZONE && !up)
+					|| (Robot.shooterPivot.isInIntakeZone() && Robot.shooterPivot.getPosition() < ShooterPivotSubsystem.PivotPID.MIDDLE_OF_INTAKE_ZONE
+							&& setPoint > ShooterPivotSubsystem.PivotPID.BOTTOM_OF_INTAKE_ZONE && up)) {
+				//what issue are you seeing, not doing down to top of danger zone. or up when above
 				inDangerOfIntakes = true;
 			}
 	
-			
-			averageMotorSpeed = (Math.abs(Robot.shooterPivot.motorLeft.get()) + Math.abs(Robot.shooterPivot.motorRight.get())) / 2.0;
 		}
 		
 		if (Robot.shooterPivot.averageMotorCurrents() >= ShooterPivotSubsystem.PivotPID.CURRENT_LIMIT
 				&& Robot.shooterPivot.getEncoderRate() <= ShooterPivotSubsystem.PivotPID.MINIMUM_ENCODER_RATE){
-			isStalling = true;
+			//isStalling = true;
 		}
+		
+		averageMotorSpeed = (Math.abs(Robot.shooterPivot.motorLeft.get()) + Math.abs(Robot.shooterPivot.motorRight.get())) / 2.0;
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
