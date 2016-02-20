@@ -34,14 +34,16 @@ public class RobotMap {
 		//TODO break down by side
 		public static final int[] MOTOR_PORTS = { 3, 6 };
 		
-		public static final int[] RIGHT_ENCODER = { 2, 3 };
-		public static final int[] LEFT_ENCODER = { 4, 5 };
+		public static final int[] RIGHT_ENCODER = { 4, 5 };
+		public static final int[] LEFT_ENCODER = { 2, 3 };
 		public static final int HALL_EFFECT_SENSOR = 14;
 		public static final int RESET_BUMPER_LEFT = 12;
 		public static final int RESET_BUMPER_RIGHT = 13;
 		public static final int [] LEFT_SOLENOID_PORTS = {0,6,7};
 		//not used on pbot
 		public static final int [] RIGHT_SOLENOID_PORTS = {1,2,3};
+		public static final int LEFT_PDP_PORT = 1;
+		public static final int RIGHT_PDP_PORT = 0;
 	}
 	public static class ShooterSubsystem
 	{
