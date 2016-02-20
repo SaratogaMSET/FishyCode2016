@@ -53,6 +53,7 @@ public class Robot extends IterativeRobot {
 	//true = high gear, false = low gear
 	public static boolean currentGear = true;
 	public static boolean shooterPIDIsRunning = false;
+	public static boolean readyToShoot = false;
 	
 	//prevStates
 	public boolean prevStateOpTrigger;
@@ -126,9 +127,6 @@ public class Robot extends IterativeRobot {
 		//	shooter.loadBall(DoubleSolenoid.Value.kReverse);
 
 		}
-		
-		
-		
 		
 		if(oi.operatorJoystick.getRawButton(4) && !tempPrevState){
 			//shooter.setLeftFlywheelPower(0.50);
@@ -210,6 +208,23 @@ public class Robot extends IterativeRobot {
 		else{
 			shooterPivot.engageBrake(false);
 		}
+		
+		if(shooter.getLeftFlywheelRPM() < shooter.flywheelTargetRPM){
+			shooter.setLeftFlywheelPower(shooter.flywheelMaxPower);
+		}	
+		if(shooter.getLeftFlywheelRPM() > shooter.flywheelTargetRPM){
+			shooter.setLeftFlywheelPower(shooter.flywheelMinPower);
+		}
+		
+		if(shooter.getRightFlywheelRPM() < shooter.flywheelTargetRPM){
+			shooter.setRightFlywheelPower(shooter.flywheelMaxPower);
+		}
+		if(shooter.getRightFlywheelRPM() > shooter.flywheelTargetRPM){
+			shooter.setRightFlywheelPower(shooter.flywheelMinPower);
+		}
+		
+		readyToShoot = ((Math.abs(shooter.getRightFlywheelRPM() - shooter.flywheelTargetRPM) < shooter.flywheelTolerance)
+						&& (Math.abs(shooter.getLeftFlywheelRPM() - shooter.flywheelTargetRPM) < shooter.flywheelTolerance));
 	}
 
 	
