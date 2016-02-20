@@ -40,13 +40,14 @@ public class Robot extends IterativeRobot {
 	public static ShooterPivotSubsystem shooterPivot;
 	public static ShooterSubsystem shooter;
 	public ArrayList<ArrayList<Double>> log;
-	public static Timer timer;
+	public static Timer timer, pivotTimer;
 	public DoubleSolenoid ds;
-	public PowerDistributionPanel pdp;
+	public static PowerDistributionPanel pdp;
 
 	SendableChooser chooser;
 	
 	public static double DEAD_ZONE_TOLERANCE = 0.025;
+	public static double MIN_STOPPED_TIME = 0.25; //seconds
 	
 	//true = down, false = up
 	public static boolean intakeState = false;
@@ -59,6 +60,12 @@ public class Robot extends IterativeRobot {
 	public boolean prevStateOpTrigger;
 	public boolean prevStateDriveShifter;
 	public boolean tempPrevState;
+	public boolean prevStateShootButton;
+	
+	public boolean prevStateMotorPowerIs0;
+	public boolean prevStatePivotUp;
+	public boolean prevStateResetButton;
+	public boolean prevStatePivotMiddle;
 
 	
 	public void robotInit() {
@@ -72,11 +79,18 @@ public class Robot extends IterativeRobot {
 		shooter = new ShooterSubsystem();
 		log = new ArrayList<>();
 		timer = new Timer();
+		pivotTimer = new Timer();
 		pdp = new PowerDistributionPanel();
 		
 		prevStateOpTrigger = false;
 		prevStateDriveShifter = false;
 		tempPrevState = false;
+		prevStateMotorPowerIs0 = true;
+		prevStateShootButton = false;
+		prevStatePivotUp = false;
+		prevStateResetButton = false;
+		prevStatePivotMiddle = false;
+		
 	}
 
 	public void disabledInit() {
@@ -105,6 +119,7 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() {
 		timer.reset();
 		timer.start();
+		pivotTimer.reset();
 		log = new ArrayList<>();
 		drivetrain.gyro.reset();
 		//shooterPivot.resetEncoders();
@@ -120,24 +135,37 @@ public class Robot extends IterativeRobot {
 		if (oi.operator.toggleIntake() && !prevStateOpTrigger) {
 			//shooter.loadBall(DoubleSolenoid.Value.kForward);
 			///	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
-			//new SetIntakePosition(intakeState).start();
-			new ResetPivot().start();
+			new SetIntakePosition(intakeState).start();
 			intakeState = !intakeState;
 		} else {
 		//	shooter.loadBall(DoubleSolenoid.Value.kReverse);
 
 		}
 		
-		if(oi.operatorJoystick.getRawButton(4) && !tempPrevState){
-			//shooter.setLeftFlywheelPower(0.50);
-			//shooter.setRightFlywheelPower(-0.50);
-			new SetPivotState(ShooterPivotSubsystem.PivotPID.SHOOT_STATE).start();
+
+		if (oi.operatorJoystick.getRawButton(8) && !prevStateShootButton){
+			shooter.loader.set(shooter.loader.get() == DoubleSolenoid.Value.kForward ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
+		}
+		
+		if(oi.operatorJoystick.getRawButton(4)){
+			shooter.setLeftFlywheelPower(0.50);
+			shooter.setRightFlywheelPower(-0.50);
 		} else if(oi.operatorJoystick.getRawButton(6)) {
 			shooter.setLeftFlywheelPower(-1.0);
 			shooter.setRightFlywheelPower(1.0);
 		} else {
 			shooter.setLeftFlywheelPower(0.0);
 			shooter.setRightFlywheelPower(0.0);
+		}
+		
+		if (oi.operatorJoystick.getRawButton(5) && !prevStatePivotUp){
+			new SetPivotState(ShooterPivotSubsystem.PivotPID.SHOOT_STATE).start();
+		}
+		else if(oi.operatorJoystick.getRawButton(3) && !prevStateResetButton) {
+			 new ResetPivot().start();
+		}
+		else if (oi.operatorJoystick.getRawButton(9) && !prevStatePivotMiddle){
+			new SetPivotState(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
 		}
 		
 		if(oi.operator.purgeIntake()) {
@@ -165,7 +193,7 @@ public class Robot extends IterativeRobot {
 				pivotPower = 0;
 			}
 			
-			//new SetPivotPower(pivotPower).start();
+			new SetPivotPower(pivotPower).start();
 		}
 		//LOGGING AND DASHBOARD
 		log.add(drivetrain.getLoggingData());
@@ -187,26 +215,45 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("current gear", currentGear);
 		SmartDashboard.putBoolean("current intake state", intakeState);
 */
+		SmartDashboard.putNumber("LEFT FLYWHEEL", shooter.getLeftFlywheelRPM());
+		SmartDashboard.putNumber("RIGHT FLYWHEEL", shooter.getRightFlywheelRPM());
 		SmartDashboard.putString("Current Command", " ");
 		
 		SmartDashboard.putBoolean("Shooter Hall", shooterPivot.reachedResetLimit());//shooterPivot.resetHalEffect.getDirection());
 		//SmartDashboard.putNumber("Shooter Hall Effect", shooterPivot.resetHalEffect.get());//shooterPivot.resetHalEffect.getDirection());
 
+		SmartDashboard.putBoolean("Is shooter PID running" , shooterPIDIsRunning);
+		
 		//PREV STATES
 		prevStateOpTrigger = oi.operatorJoystick.getRawButton(1);
 		prevStateDriveShifter = oi.driver.isDrivetrainLowGearButtonPressed();
 		tempPrevState = oi.operatorJoystick.getRawButton(4);
-		
+		prevStateShootButton = oi.operatorJoystick.getRawButton(8);
+		prevStatePivotUp = oi.operatorJoystick.getRawButton(5);
+		prevStatePivotMiddle = oi.operatorJoystick.getRawButton(9);
+		prevStateResetButton = oi.operatorJoystick.getRawButton(3);
 		//********updating subsystem*******//
 		
 		//shooter hal effect counter
 		shooterPivot.updateHalEffect();
 		//brake
 		if (shooterPivot.motorLeft.get() == 0 && shooterPivot.motorRight.get() == 0){
-			shooterPivot.engageBrake(true);
+			if (pivotTimer.get() > MIN_STOPPED_TIME){
+				shooterPivot.engageBrake(true);
+			}
+			//if motor is 0 for the first time, start the timer
+			if (!prevStateMotorPowerIs0){
+				pivotTimer.reset();
+				pivotTimer.start();
+			}
+			//keep this at the end
+			prevStateMotorPowerIs0 = true;
 		}
 		else{
 			shooterPivot.engageBrake(false);
+			//keep this at the end
+			pivotTimer.reset();
+			prevStateMotorPowerIs0 = false;
 		}
 		
 		if(shooter.getLeftFlywheelRPM() < shooter.flywheelTargetRPM){
@@ -225,8 +272,8 @@ public class Robot extends IterativeRobot {
 		
 		readyToShoot = ((Math.abs(shooter.getRightFlywheelRPM() - shooter.flywheelTargetRPM) < shooter.flywheelTolerance)
 						&& (Math.abs(shooter.getLeftFlywheelRPM() - shooter.flywheelTargetRPM) < shooter.flywheelTolerance));
+		
 	}
-
 	
 	public double correctForDeadZone(double joyVal){
 		   return Math.abs(joyVal) >= DEAD_ZONE_TOLERANCE ? joyVal : 0;

@@ -19,7 +19,11 @@ public class SetIntakePosition extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.intake.setSolenoids(deployed); 
+    	if(deployed && Robot.shooterPivot.isInIntakeZone()) {
+    		
+    	} else {
+    		Robot.intake.setSolenoids(deployed); 
+    	}
     }
 
     // Called repeatedly when this Command is scheduled to run
