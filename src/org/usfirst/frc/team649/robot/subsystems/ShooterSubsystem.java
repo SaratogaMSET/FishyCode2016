@@ -1,14 +1,10 @@
 package org.usfirst.frc.team649.robot.subsystems;
 
-import java.rmi.server.RMIClassLoader;
-
 import org.usfirst.frc.team649.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.Counter;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -21,10 +17,10 @@ public class ShooterSubsystem extends Subsystem {
 	public DoubleSolenoid loader;
 	public Counter leftPhotoelectric, rightPhotoelectric;
 
-	public static final double flywheelTargetRPM = 4000;
-	public static final double flywheelMaxPower = 0.8;
-	public static final double flywheelMinPower = 0.2;
-	public static final double flywheelTolerance = 15;
+	public static final double FLYWHEEL_TARGET_RPM = 1900;
+	public static final double FLYWHEEL_MAX_POWER = 0.4;
+	public static final double FLYWHEEL_MIN_POWER = 0.32;
+	public static final double FLYWHEEL_TOLERANCE = 90;
 	
 	public ShooterSubsystem() {
 		super("shooter subsystem");

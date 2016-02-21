@@ -20,6 +20,7 @@ import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeed;
 import org.usfirst.frc.team649.robot.commands.shootercommands.ResetPivot;
 import org.usfirst.frc.team649.robot.commands.shootercommands.SetPivotPower;
 import org.usfirst.frc.team649.robot.commands.shootercommands.SetPivotState;
+import org.usfirst.frc.team649.robot.subsystems.CameraSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -39,6 +40,8 @@ public class Robot extends IterativeRobot {
 	public static IntakeSubsystem intake;
 	public static ShooterPivotSubsystem shooterPivot;
 	public static ShooterSubsystem shooter;
+	public static CameraSubsystem camera;
+	
 	public ArrayList<ArrayList<Double>> log;
 	public static Timer timer, pivotTimer;
 	public DoubleSolenoid ds;
@@ -46,7 +49,7 @@ public class Robot extends IterativeRobot {
 
 	SendableChooser chooser;
 	
-	public static double DEAD_ZONE_TOLERANCE = 0.025;
+	public static double DEAD_ZONE_TOLERANCE = 0.043;
 	public static double MIN_STOPPED_TIME = 0.25; //seconds
 	
 	//true = down, false = up
@@ -77,6 +80,8 @@ public class Robot extends IterativeRobot {
 		intake = new IntakeSubsystem();
 		shooterPivot = new ShooterPivotSubsystem();
 		shooter = new ShooterSubsystem();
+		camera = new CameraSubsystem("http://axis-camera.local/");
+		
 		log = new ArrayList<>();
 		timer = new Timer();
 		pivotTimer = new Timer();
@@ -129,7 +134,10 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
-		new DriveForwardRotate(oi.driver.getForward(), oi.driver.getRotation()).start();
+		new DriveForwardRotate(correctForDeadZone(oi.driver.getForward()), correctForDeadZone(oi.driver.getRotation())).start();
+		
+		//CAMERA
+		
 		
 		//INTAKE ----- toggle
 		if (oi.operator.toggleIntake() && !prevStateOpTrigger) {
@@ -142,21 +150,44 @@ public class Robot extends IterativeRobot {
 
 		}
 		
+		//shoot if ready
 		if (oi.operator.shoot() && !prevStateShootButton){
-			shooter.loader.set(shooter.loader.get() == DoubleSolenoid.Value.kForward ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
+			if (shooter.loader.get() == DoubleSolenoid.Value.kReverse && readyToShoot){
+				shooter.loader.set(DoubleSolenoid.Value.kForward);
+			}
+			else{
+				shooter.loader.set(DoubleSolenoid.Value.kReverse);
+			}
 		}
 		
 		if(oi.operator.halfFlywheelForwardPower()){
-			shooter.setLeftFlywheelPower(0.50);
-			shooter.setRightFlywheelPower(-0.50);
+			shooter.setLeftFlywheelPower(-0.50);
+			shooter.setRightFlywheelPower(0.50);
 		} else if(oi.operator.fullFlywheelForwardPower()) {
-			shooter.setLeftFlywheelPower(-1.0);
-			shooter.setRightFlywheelPower(1.0);
+			//if shooting
+			if(shooter.getLeftFlywheelRPM() <= ShooterSubsystem.FLYWHEEL_TARGET_RPM){
+				shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MAX_POWER);
+			}	
+			else{
+				shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MIN_POWER);
+			}
+			
+			if(shooter.getRightFlywheelRPM() <= ShooterSubsystem.FLYWHEEL_TARGET_RPM){
+				shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MAX_POWER);
+			}
+			else{
+				shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MIN_POWER);
+			}
+	
 		} else {
 			shooter.setLeftFlywheelPower(0.0);
 			shooter.setRightFlywheelPower(0.0);
 		}
+		//tells us if bang bang works
+		readyToShoot = ((Math.abs(shooter.getRightFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE)
+				&& (Math.abs(shooter.getLeftFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE));
 		
+		//pivot state
 		if (oi.operator.pivotShootState() && !prevStatePivotUp){
 			new SetPivotState(ShooterPivotSubsystem.PivotPID.SHOOT_STATE).start();
 		}
@@ -167,6 +198,7 @@ public class Robot extends IterativeRobot {
 			new SetPivotState(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
 		}
 		
+		//intake purging/running
 		if(oi.operator.purgeIntake()) {
 			new SetIntakeSpeed(IntakeSubsystem.FORWARD_ROLLER_PURGE_SPEED,
 					IntakeSubsystem.CENTERING_MODULE_PURGE_SPEED).start(); 
@@ -194,34 +226,7 @@ public class Robot extends IterativeRobot {
 			
 			new SetPivotPower(pivotPower).start();
 		}
-		//LOGGING AND DASHBOARD
-		log.add(drivetrain.getLoggingData());
 		
-		SmartDashboard.putData("Shooter Pivot left", shooterPivot.encoderLeft);
-		SmartDashboard.putData("Shooter Pivot Right", shooterPivot.encoderRight);
-		
-		SmartDashboard.putBoolean("Shooter bumper left", shooterPivot.resetBumperLeft.get());
-		SmartDashboard.putBoolean("Shooter bumper right", shooterPivot.resetBumperRight.get());
-		
-		SmartDashboard.putNumber("Shooter Pivot current right", pdp.getCurrent(0));
-		SmartDashboard.putNumber("Shooter pivot current left", pdp.getCurrent(15));
-		/*
-		SmartDashboard.putData("GYRO", drivetrain.gyro);
-		SmartDashboard.putNumber("GYRO ANGLE", drivetrain.gyro.getAngle());
-
-		SmartDashboard.putData("Left Enc", drivetrain.leftEncoder);
-		SmartDashboard.putData("Right Enc", drivetrain.rightEncoder);
-		SmartDashboard.putBoolean("current gear", currentGear);
-		SmartDashboard.putBoolean("current intake state", intakeState);
-*/
-		SmartDashboard.putNumber("LEFT FLYWHEEL", shooter.getLeftFlywheelRPM());
-		SmartDashboard.putNumber("RIGHT FLYWHEEL", shooter.getRightFlywheelRPM());
-		SmartDashboard.putString("Current Command", " ");
-		
-		SmartDashboard.putBoolean("Shooter Hall", shooterPivot.reachedResetLimit());//shooterPivot.resetHalEffect.getDirection());
-		//SmartDashboard.putNumber("Shooter Hall Effect", shooterPivot.resetHalEffect.get());//shooterPivot.resetHalEffect.getDirection());
-
-		SmartDashboard.putBoolean("Is shooter PID running" , shooterPIDIsRunning);
 		
 		//PREV STATES
 		prevStateOpTrigger = oi.operator.toggleIntake();
@@ -231,6 +236,8 @@ public class Robot extends IterativeRobot {
 		prevStatePivotUp = oi.operator.pivotShootState();
 		prevStatePivotMiddle = oi.operator.pivotStoreState();
 		prevStateResetButton = oi.operator.resetPivot();
+		
+		
 		//********updating subsystem*******//
 		
 		//shooter hal effect counter
@@ -255,22 +262,36 @@ public class Robot extends IterativeRobot {
 			prevStateMotorPowerIs0 = false;
 		}
 		
-		if(shooter.getLeftFlywheelRPM() < shooter.flywheelTargetRPM){
-			shooter.setLeftFlywheelPower(shooter.flywheelMaxPower);
-		}	
-		if(shooter.getLeftFlywheelRPM() > shooter.flywheelTargetRPM){
-			shooter.setLeftFlywheelPower(shooter.flywheelMinPower);
-		}
+		//LOGGING AND DASHBOARD
+		log.add(drivetrain.getLoggingData());
 		
-		if(shooter.getRightFlywheelRPM() < shooter.flywheelTargetRPM){
-			shooter.setRightFlywheelPower(shooter.flywheelMaxPower);
-		}
-		if(shooter.getRightFlywheelRPM() > shooter.flywheelTargetRPM){
-			shooter.setRightFlywheelPower(shooter.flywheelMinPower);
-		}
+		SmartDashboard.putData("Shooter Pivot left", shooterPivot.encoderLeft);
+		SmartDashboard.putData("Shooter Pivot Right", shooterPivot.encoderRight);
 		
-		readyToShoot = ((Math.abs(shooter.getRightFlywheelRPM() - shooter.flywheelTargetRPM) < shooter.flywheelTolerance)
-						&& (Math.abs(shooter.getLeftFlywheelRPM() - shooter.flywheelTargetRPM) < shooter.flywheelTolerance));
+		SmartDashboard.putBoolean("Shooter bumper left", shooterPivot.resetBumperLeft.get());
+		SmartDashboard.putBoolean("Shooter bumper right", shooterPivot.resetBumperRight.get());
+		
+		SmartDashboard.putNumber("Shooter Pivot current right", pdp.getCurrent(0));
+		SmartDashboard.putNumber("Shooter pivot current left", pdp.getCurrent(15));
+		
+		/*
+		SmartDashboard.putData("GYRO", drivetrain.gyro);
+		SmartDashboard.putNumber("GYRO ANGLE", drivetrain.gyro.getAngle());
+
+		SmartDashboard.putData("Left Enc", drivetrain.leftEncoder);
+		SmartDashboard.putData("Right Enc", drivetrain.rightEncoder);
+		SmartDashboard.putBoolean("current gear", currentGear);
+		SmartDashboard.putBoolean("current intake state", intakeState);
+*/
+		SmartDashboard.putNumber("LEFT FLYWHEEL", shooter.getLeftFlywheelRPM());
+		SmartDashboard.putNumber("RIGHT FLYWHEEL", shooter.getRightFlywheelRPM());
+		SmartDashboard.putBoolean("Ready to Shoot", readyToShoot);
+		SmartDashboard.putString("Current Command", " ");
+		
+		SmartDashboard.putBoolean("Shooter Hall", shooterPivot.reachedResetLimit());//shooterPivot.resetHalEffect.getDirection());
+		//SmartDashboard.putNumber("Shooter Hall Effect", shooterPivot.resetHalEffect.get());//shooterPivot.resetHalEffect.getDirection());
+
+		SmartDashboard.putBoolean("Is shooter PID running" , shooterPIDIsRunning);
 		
 	}
 	
