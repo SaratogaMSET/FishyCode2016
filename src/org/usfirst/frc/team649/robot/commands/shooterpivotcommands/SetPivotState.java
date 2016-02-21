@@ -1,4 +1,4 @@
-package org.usfirst.frc.team649.robot.commands.shootercommands;
+package org.usfirst.frc.team649.robot.commands.shooterpivotcommands;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;

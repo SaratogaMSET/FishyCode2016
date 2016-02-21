@@ -21,9 +21,10 @@ import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
 import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeed;
-import org.usfirst.frc.team649.robot.commands.shootercommands.ResetPivot;
-import org.usfirst.frc.team649.robot.commands.shootercommands.SetPivotPower;
-import org.usfirst.frc.team649.robot.commands.shootercommands.SetPivotState;
+import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.ResetPivot;
+import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPower;
+import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
+import org.usfirst.frc.team649.robot.shootercommands.SetFlywheels;
 import org.usfirst.frc.team649.robot.subsystems.CameraSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 
@@ -187,26 +188,9 @@ public class Robot extends IterativeRobot {
 			shooter.setLeftFlywheelPower(-0.50);
 			shooter.setRightFlywheelPower(0.50);
 		} else if(oi.operator.shootBallFlywheels()) {
-			//if shooting
-//			if(shooter.getLeftFlywheelRPM() <= ShooterSubsystem.FLYWHEEL_TARGET_RPM){
-//				shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MAX_POWER);
-//			}	
-//			else{
-//				shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MIN_POWER);
-//			}
-//			
-//			if(shooter.getRightFlywheelRPM() <= ShooterSubsystem.FLYWHEEL_TARGET_RPM){
-//				shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MAX_POWER);
-//			}
-//			else{
-//				shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MIN_POWER);
-//			}
-			shooter.setLeftFlywheelPower(1.0);
-			shooter.setRightFlywheelPower(-1.0);
-	
+			new SetFlywheels(true).start();
 		} else {
-			shooter.setLeftFlywheelPower(0.0);
-			shooter.setRightFlywheelPower(0.0);
+			new SetFlywheels(false).start();
 		}
 		//tells us if bang bang works
 		readyToShoot = true;//((Math.abs(shooter.getRightFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE)

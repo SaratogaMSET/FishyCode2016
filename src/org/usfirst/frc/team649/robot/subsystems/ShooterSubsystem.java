@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -47,10 +48,12 @@ public class ShooterSubsystem extends Subsystem {
 	
 	public void setLeftFlywheelPower(double pwr) {
 		leftMotor.set(pwr);
+		SmartDashboard.putNumber("Left Flywheel power", pwr);
 	}
 	
 	public void setRightFlywheelPower(double pwr) {
 		rightMotor.set(pwr);
+		SmartDashboard.putNumber("Right Flywheel power", pwr);
 	}
 	
 	public void loadBall(Value punchPower) {
