@@ -71,11 +71,11 @@ public class DrivetrainSubsystem extends Subsystem {
 			motors[i] = new CANTalon(RobotMap.Drivetrain.MOTOR_PORTS[i]);
 		}
 		leftEncoder = new Encoder(RobotMap.Drivetrain.LEFT_ENCODER_FORWARD_CHANNEL, 
-				RobotMap.Drivetrain.LEFT_ENCODER_REVERSE_CHANNEL, false);
+				RobotMap.Drivetrain.LEFT_ENCODER_REVERSE_CHANNEL, true);
 		leftEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
 		
 		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_ENCODER_FORWARD_CHANNEL, 
-				RobotMap.Drivetrain.RIGHT_ENCODER_REVERSE_CHANNEL, true);
+				RobotMap.Drivetrain.RIGHT_ENCODER_REVERSE_CHANNEL, false);
 		leftEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
 		
 		driveSol  = new DoubleSolenoid(RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[0],

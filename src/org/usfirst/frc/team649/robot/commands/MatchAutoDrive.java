@@ -33,9 +33,9 @@ public class MatchAutoDrive extends Command {
 		
 		//HELLA COOL
 		try{
-			double left = array[index][1] + DrivetrainSubsystem.PIDConstants.k_P * getEncoderErrorLeft(index) + AutonomousSequences.visionOffset(pos, diff, index)[0];
-			double right = array[index][2] + DrivetrainSubsystem.PIDConstants.k_P * getEncoderErrorRight(index) + AutonomousSequences.visionOffset(pos, diff, index)[1];
-			Robot.drivetrain.rawDrive(left, right);
+			double left = array[index][1];// + DrivetrainSubsystem.PIDConstants.k_P * getEncoderErrorLeft(index) + AutonomousSequences.visionOffset(pos, diff, index)[0];
+			double right = array[index][2];// + DrivetrainSubsystem.PIDConstants.k_P * getEncoderErrorRight(index) + AutonomousSequences.visionOffset(pos, diff, index)[1];
+			Robot.drivetrain.rawDrive(-right, left);
 		}
 		catch (Exception e){
 			System.out.println("ERROR ERROR ERROR ERROR ERROR ERROR: " + e.getMessage());

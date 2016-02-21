@@ -9,12 +9,16 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.drivetrain.AutonomousSequences;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
+import org.usfirst.frc.team649.robot.util.Center;
 
 import java.util.ArrayList;
 
+import org.opencv.core.Mat;
 import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
+import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeed;
 import org.usfirst.frc.team649.robot.commands.shootercommands.ResetPivot;
@@ -80,7 +84,7 @@ public class Robot extends IterativeRobot {
 		intake = new IntakeSubsystem();
 		shooterPivot = new ShooterPivotSubsystem();
 		shooter = new ShooterSubsystem();
-		camera = new CameraSubsystem("http://axis-camera.local/");
+		camera = new CameraSubsystem("http://axis-camera.local");
 		
 		log = new ArrayList<>();
 		timer = new Timer();
@@ -114,6 +118,9 @@ public class Robot extends IterativeRobot {
 
 	
 	public void autonomousInit() {
+		drivetrain.resetEncoders();
+		new DriveForwardRotate(0, 0).start();
+		new MatchAutoDrive(AutonomousSequences.fromPos1, 1).start();;
 
 	}
 
@@ -127,17 +134,33 @@ public class Robot extends IterativeRobot {
 		pivotTimer.reset();
 		log = new ArrayList<>();
 		drivetrain.gyro.reset();
+		drivetrain.resetEncoders();
 		//shooterPivot.resetEncoders();
-		new SetPivotState(5).start();;
+		new SetPivotState(5).start();
+		new DriveForwardRotate(0, 0).start();;
+		
+		
+		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
 	}
 
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
-		new DriveForwardRotate(correctForDeadZone(oi.driver.getForward()), correctForDeadZone(oi.driver.getRotation())).start();
+		//new DriveForwardRotate(correctForDeadZone(oi.driver.getForward()), correctForDeadZone(oi.driver.getRotation())).start();
+		new DriveForwardRotate(oi.driver.getForward(), oi.driver.getRotation()).start();
 		
 		//CAMERA
-		
+		if (camera.vcap.isOpened()){
+			SmartDashboard.putBoolean("Checking For Vision?", true);
+			//read the image
+			Mat image = new Mat();
+			camera.vcap.read(image);
+			//find the center
+			Center center = camera.findOneRetroTarget(image);
+		}
+		else{
+			SmartDashboard.putBoolean("Checking For Vision?", false);
+		}
 		
 		//INTAKE ----- toggle
 		if (oi.operator.toggleIntake() && !prevStateOpTrigger) {
@@ -160,32 +183,34 @@ public class Robot extends IterativeRobot {
 			}
 		}
 		
-		if(oi.operator.halfFlywheelForwardPower()){
+		if(oi.operator.loadBallFlywheels()){
 			shooter.setLeftFlywheelPower(-0.50);
 			shooter.setRightFlywheelPower(0.50);
-		} else if(oi.operator.fullFlywheelForwardPower()) {
+		} else if(oi.operator.shootBallFlywheels()) {
 			//if shooting
-			if(shooter.getLeftFlywheelRPM() <= ShooterSubsystem.FLYWHEEL_TARGET_RPM){
-				shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MAX_POWER);
-			}	
-			else{
-				shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MIN_POWER);
-			}
-			
-			if(shooter.getRightFlywheelRPM() <= ShooterSubsystem.FLYWHEEL_TARGET_RPM){
-				shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MAX_POWER);
-			}
-			else{
-				shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MIN_POWER);
-			}
+//			if(shooter.getLeftFlywheelRPM() <= ShooterSubsystem.FLYWHEEL_TARGET_RPM){
+//				shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MAX_POWER);
+//			}	
+//			else{
+//				shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MIN_POWER);
+//			}
+//			
+//			if(shooter.getRightFlywheelRPM() <= ShooterSubsystem.FLYWHEEL_TARGET_RPM){
+//				shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MAX_POWER);
+//			}
+//			else{
+//				shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MIN_POWER);
+//			}
+			shooter.setLeftFlywheelPower(1.0);
+			shooter.setRightFlywheelPower(-1.0);
 	
 		} else {
 			shooter.setLeftFlywheelPower(0.0);
 			shooter.setRightFlywheelPower(0.0);
 		}
 		//tells us if bang bang works
-		readyToShoot = ((Math.abs(shooter.getRightFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE)
-				&& (Math.abs(shooter.getLeftFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE));
+		readyToShoot = true;//((Math.abs(shooter.getRightFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE)
+				//&& (Math.abs(shooter.getLeftFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE));
 		
 		//pivot state
 		if (oi.operator.pivotShootState() && !prevStatePivotUp){
@@ -231,7 +256,7 @@ public class Robot extends IterativeRobot {
 		//PREV STATES
 		prevStateOpTrigger = oi.operator.toggleIntake();
 		prevStateDriveShifter = oi.driver.isDrivetrainLowGearButtonPressed();
-		tempPrevState = oi.operator.halfFlywheelForwardPower();
+		tempPrevState = oi.operator.loadBallFlywheels();
 		prevStateShootButton = oi.operator.shoot();
 		prevStatePivotUp = oi.operator.pivotShootState();
 		prevStatePivotMiddle = oi.operator.pivotStoreState();
@@ -273,6 +298,9 @@ public class Robot extends IterativeRobot {
 		
 		SmartDashboard.putNumber("Shooter Pivot current right", pdp.getCurrent(0));
 		SmartDashboard.putNumber("Shooter pivot current left", pdp.getCurrent(15));
+		
+		SmartDashboard.putData("DT Encoder Left", drivetrain.leftEncoder);
+		SmartDashboard.putData("DT Encoder Right", drivetrain.rightEncoder);
 		
 		/*
 		SmartDashboard.putData("GYRO", drivetrain.gyro);

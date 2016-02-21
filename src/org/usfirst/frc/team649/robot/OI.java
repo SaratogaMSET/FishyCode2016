@@ -46,11 +46,11 @@ public class OI {
 		public boolean shoot(){
 			return operatorJoystick.getRawButton(8);
 		}
-		public boolean halfFlywheelForwardPower()
+		public boolean loadBallFlywheels()
 		{
 			return operatorJoystick.getRawButton(4);
 		}
-		public boolean fullFlywheelForwardPower()
+		public boolean shootBallFlywheels()
 		{
 			return operatorJoystick.getRawButton(6);
 		}

@@ -96,7 +96,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		encoderRight.setDistancePerPulse(PivotPID.ENCODER_DEGREES_PER_PULSE);
 
 		intermediateHalEffect = new Counter(
-				RobotMap.ShooterPivot.HALL_EFFECT_SENSOR); // according to
+				RobotMap.ShooterPivot.HALL_EFFECT_LOW_SENSOR); // according to
 															// wpilib?
 		resetBumperLeft = new DigitalInput(
 				RobotMap.ShooterPivot.RESET_BUMPER_LEFT);

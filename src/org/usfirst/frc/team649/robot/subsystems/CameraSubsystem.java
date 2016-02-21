@@ -1,9 +1,20 @@
 package org.usfirst.frc.team649.robot.subsystems;
 
+//import java.awt.Graphics;
+//import java.awt.Graphics2D;
+//import java.awt.Image;
+//import java.awt.Toolkit;
+//import java.awt.image.BufferedImage;
+//import java.awt.image.DataBufferByte;
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
@@ -12,15 +23,11 @@ import org.opencv.core.Size;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
-import org.usfirst.frc.team649.robot.OI;
 import org.usfirst.frc.team649.robot.util.Center;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.image.ColorImage;
-import edu.wpi.first.wpilibj.image.NIVisionException;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.vision.AxisCamera;
 
 public class CameraSubsystem extends Subsystem {
 	public static VideoCapture vcap;
@@ -31,11 +38,41 @@ public class CameraSubsystem extends Subsystem {
 	public static double X_TARGET = 160;
 	public static double K_PIX = 1.0/400;
 	
+	public static double POS_1_CAM_X = 160; //pixels
+	public static double POS_2_CAM_X = 160; //pixels
+	public static double POS_3_CAM_X = 160; //pixels
+	public static double POS_4_CAM_X = 160; //pixels
+	public static double POS_5_CAM_X = 160; //pixels
+	
+	public static String image_1 = "/home/lvuser/frc_images/from\\ position\\ 1.jpg";
+	public static String image_2 = "/home/lvuser/frc_images/from\\ position\\ 2.jpg";
+	public static String image_3 = "/home/lvuser/frc_images/from\\ position\\ 3.jpg";
+	public static String image_4 = "/home/lvuser/frc_images/from\\ position\\ 4.jpg";
+	public static String image_5 = "/home/lvuser/frc_images/from\\ position\\ 5.jpg";
+	
 	Mat image, imageHSV, erode, dilate, hierarchy;
 	List<MatOfPoint> contours;
 	
 	public CameraSubsystem(String ip){
+//		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+//		InputStream input_1 = classLoader.getResourceAsStream("from position 1.jpg");
+//		Image i_1 = Toolkit.getDefaultToolkit().getImage("from position 1.jpg");
+//		BufferedImage bi_1 = new BufferedImage(i_1.getWidth(null), i_1.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+//	    // Draw the image on to the buffered image
+//	    Graphics2D bGr = bi_1.createGraphics();
+//	    bGr.drawImage(i_1, 0, 0, null);
+//	    bGr.dispose();
+//		
+//		Mat mat_im = new Mat(bi_1.getHeight(), bi_1.getWidth(), CvType.CV_8UC3);
+//		byte[] pixels = ((DataBufferByte) bi_1.getRaster().getDataBuffer()).getData();
+//		mat_im.put(0, 0, pixels);
+//		Center center = findOneRetroTarget(mat_im);
+//		SmartDashboard.putNumber("Center X of im 1", center.x);
+//		SmartDashboard.putNumber("Center Y of im 1", center.y);
+//		System.out.println("Center: " + center.x + ", " + center.y);
+		
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
+		
 		
 		try{
     		//FOR Axis CAMERA 206
