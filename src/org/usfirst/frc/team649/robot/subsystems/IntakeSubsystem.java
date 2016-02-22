@@ -18,15 +18,15 @@ public class IntakeSubsystem extends Subsystem {
 	public static double PURGE_SPEED = -1.0;
 	public static double STOP_SPEED = 0;
 	Victor[] rollers;
-	public DoubleSolenoid leftSolenoid;
-	public DoubleSolenoid rightSolenoid;
+	public DoubleSolenoid intakeSolenoid;
+	//public DoubleSolenoid rightSolenoid;
 
 	public IntakeSubsystem() {
 		rollers = new Victor[3];
-		leftSolenoid = new DoubleSolenoid(RobotMap.Intake.LEFT_SOLENOID_PORTS[0],
+		intakeSolenoid = new DoubleSolenoid(RobotMap.Intake.LEFT_SOLENOID_PORTS[0],
 				RobotMap.Intake.LEFT_SOLENOID_PORTS[1],RobotMap.Intake.LEFT_SOLENOID_PORTS[2]);
-		rightSolenoid = new DoubleSolenoid(RobotMap.Intake.RIGHT_SOLENOID_PORTS[0],
-				RobotMap.Intake.RIGHT_SOLENOID_PORTS[1],RobotMap.Intake.RIGHT_SOLENOID_PORTS[2]);
+//		rightSolenoid = new DoubleSolenoid(RobotMap.Intake.RIGHT_SOLENOID_PORTS[0],
+//				RobotMap.Intake.RIGHT_SOLENOID_PORTS[1],RobotMap.Intake.RIGHT_SOLENOID_PORTS[2]);
 		for (int i = 0; i < rollers.length; i++) {
 			rollers[i] = new Victor(RobotMap.Intake.MOTOR_PORTS[i]);
 		}
@@ -43,18 +43,18 @@ public class IntakeSubsystem extends Subsystem {
 	//true = up, false = down
 	public void setSolenoids(boolean set) {
 		if (set){
-			leftSolenoid.set(DoubleSolenoid.Value.kForward);
-			rightSolenoid.set(DoubleSolenoid.Value.kForward);
+			intakeSolenoid.set(DoubleSolenoid.Value.kForward);
+			//rightSolenoid.set(DoubleSolenoid.Value.kForward);
 		}
 		else{
-			leftSolenoid.set(DoubleSolenoid.Value.kReverse);
-			rightSolenoid.set(DoubleSolenoid.Value.kReverse);
+			intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
+			//rightSolenoid.set(DoubleSolenoid.Value.kReverse);
 		}
 
 	}
 	
 	public boolean getSolenoids() {
-		if(leftSolenoid.get() == DoubleSolenoid.Value.kForward || rightSolenoid.get() == DoubleSolenoid.Value.kForward) {
+		if(intakeSolenoid.get() == DoubleSolenoid.Value.kForward){ //|| rightSolenoid.get() == DoubleSolenoid.Value.kForward) {
 			return true; 
 		}
 		return false;

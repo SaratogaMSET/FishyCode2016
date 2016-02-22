@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.image.ColorImage;
+import edu.wpi.first.wpilibj.image.NIVisionException;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 
 import org.opencv.core.Mat;
 import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
+import org.usfirst.frc.team649.robot.commandgroups.ShootTheShooter;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
 import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
@@ -24,6 +27,7 @@ import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeed;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.ResetPivot;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPower;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
+import org.usfirst.frc.team649.robot.shootercommands.BangBangFlywheels;
 import org.usfirst.frc.team649.robot.shootercommands.SetFlywheels;
 import org.usfirst.frc.team649.robot.subsystems.CameraSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
@@ -46,6 +50,7 @@ public class Robot extends IterativeRobot {
 	public static ShooterPivotSubsystem shooterPivot;
 	public static ShooterSubsystem shooter;
 	public static CameraSubsystem camera;
+	public static String ip = "169.254.110.201";
 	
 	public ArrayList<ArrayList<Double>> log;
 	public static Timer timer, pivotTimer;
@@ -85,7 +90,11 @@ public class Robot extends IterativeRobot {
 		intake = new IntakeSubsystem();
 		shooterPivot = new ShooterPivotSubsystem();
 		shooter = new ShooterSubsystem();
-		camera = new CameraSubsystem("http://axis-camera.local");
+		camera = new CameraSubsystem(ip);
+		
+		if (camera.vcap.isOpened()){
+			System.out.println("R-INIT FINISHED VCAP, VALID IP -:- STREAM OPENED");
+		}
 		
 		log = new ArrayList<>();
 		timer = new Timer();
@@ -109,7 +118,7 @@ public class Robot extends IterativeRobot {
 			ArrayList<Double> d = log.get(i);
 			System.out.println("BEGINNING_TAG " + d.get(0) + ", " + d.get(1)
 					+ ", " + d.get(2) + ", " + d.get(3) + ", " + d.get(4)
-					+ ", " + d.get(5) + " ENDING_TAG");
+					+ ", " + d.get(4) + " ENDING_TAG"); //change from 4 to 5 when gyro works
 		}
 	}
 
@@ -134,14 +143,16 @@ public class Robot extends IterativeRobot {
 		timer.start();
 		pivotTimer.reset();
 		log = new ArrayList<>();
-		drivetrain.gyro.reset();
+		//drivetrain.gyro.reset();
 		drivetrain.resetEncoders();
-		//shooterPivot.resetEncoders();
+		shooterPivot.resetEncoders();
 		new SetPivotState(5).start();
-		new DriveForwardRotate(0, 0).start();;
+		new DriveForwardRotate(0, 0).start();
 		
 		
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
+		//camera.vcap.open("http://axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
+		
 	}
 
 	public void teleopPeriodic() {
@@ -154,10 +165,12 @@ public class Robot extends IterativeRobot {
 		if (camera.vcap.isOpened()){
 			SmartDashboard.putBoolean("Checking For Vision?", true);
 			//read the image
+			
 			Mat image = new Mat();
 			camera.vcap.read(image);
 			//find the center
 			Center center = camera.findOneRetroTarget(image);
+		
 		}
 		else{
 			SmartDashboard.putBoolean("Checking For Vision?", false);
@@ -176,11 +189,8 @@ public class Robot extends IterativeRobot {
 		
 		//shoot if ready
 		if (oi.operator.shoot() && !prevStateShootButton){
-			if (shooter.loader.get() == DoubleSolenoid.Value.kReverse && readyToShoot){
-				shooter.loader.set(DoubleSolenoid.Value.kForward);
-			}
-			else{
-				shooter.loader.set(DoubleSolenoid.Value.kReverse);
+			if (readyToShoot){
+				new ShootTheShooter().start();
 			}
 		}
 		
@@ -188,9 +198,9 @@ public class Robot extends IterativeRobot {
 			shooter.setLeftFlywheelPower(-0.50);
 			shooter.setRightFlywheelPower(0.50);
 		} else if(oi.operator.shootBallFlywheels()) {
-			new SetFlywheels(true).start();
+			new SetFlywheels(1.0, -1.0).start();//BangBangFlywheels(true).start();
 		} else {
-			new SetFlywheels(false).start();
+			new SetFlywheels(0, 0).start();//BangBangFlywheels(false).start();
 		}
 		//tells us if bang bang works
 		readyToShoot = true;//((Math.abs(shooter.getRightFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE)
@@ -277,8 +287,10 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Shooter Pivot left", shooterPivot.encoderLeft);
 		SmartDashboard.putData("Shooter Pivot Right", shooterPivot.encoderRight);
 		
-		SmartDashboard.putBoolean("Shooter bumper left", shooterPivot.resetBumperLeft.get());
-		SmartDashboard.putBoolean("Shooter bumper right", shooterPivot.resetBumperRight.get());
+		SmartDashboard.putBoolean("Shooter bumper left", !shooterPivot.resetBumperLeft.get());
+		SmartDashboard.putBoolean("Shooter bumper right", !shooterPivot.resetBumperRight.get());
+		
+		SmartDashboard.putBoolean("IR Tripped", Robot.shooter.infraredSensor.get());
 		
 		SmartDashboard.putNumber("Shooter Pivot current right", pdp.getCurrent(0));
 		SmartDashboard.putNumber("Shooter pivot current left", pdp.getCurrent(15));

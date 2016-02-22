@@ -3,6 +3,7 @@ package org.usfirst.frc.team649.robot.subsystems;
 import org.usfirst.frc.team649.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.Counter;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Victor;
@@ -17,6 +18,7 @@ public class ShooterSubsystem extends Subsystem {
 	public Victor leftMotor, rightMotor;
 	public DoubleSolenoid loader;
 	public Counter leftPhotoelectric, rightPhotoelectric;
+	public DigitalInput infraredSensor;
 
 	public static final double FLYWHEEL_TARGET_RPM = 1900;
 	public static final double FLYWHEEL_MAX_POWER = 0.4;
@@ -36,6 +38,9 @@ public class ShooterSubsystem extends Subsystem {
 		
 		rightPhotoelectric = new Counter(RobotMap.ShooterSubsystem.RIGHT_EINSTEIN);
 		rightPhotoelectric.setReverseDirection(false);
+		
+
+		infraredSensor = new DigitalInput(RobotMap.ShooterSubsystem.IR_GATE_PORT);
 	}
 
 	public double getLeftFlywheelRPM() {

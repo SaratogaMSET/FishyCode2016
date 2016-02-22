@@ -22,14 +22,14 @@ public class TurnWithGyro extends Command {
 	@Override
 	protected void execute() {
 		// TODO Auto-generated method stub
-		double error = angle - Robot.drivetrain.gyro.getAngle();
+		double error = 0;//angle - Robot.drivetrain.gyro.getAngle();
 		Robot.drivetrain.rawDrive(error * TurnConstants.P_VAL, -error * TurnConstants.P_VAL);
 	}
 
 	@Override
 	protected boolean isFinished() {
 		// TODO Auto-generated method stub
-		return Math.abs(angle - Robot.drivetrain.gyro.getAngle()) < TurnConstants.TOLERANCE;
+		return true; //Math.abs(angle - Robot.drivetrain.gyro.getAngle()) < TurnConstants.TOLERANCE;
 	}
 
 	@Override

@@ -14,7 +14,7 @@ public class RobotMap {
 	
 	/*****PRACTICE BOT*****/
 	
-	public static class Drivetrain {
+	/*public static class Drivetrain {
 		// FR,BR,BL,BR
 		public static final int[] MOTOR_PORTS = { 0, 1, 2, 3 };
 		public static final int[] DRIVE_SOLENOID_PORTS = {0,4,5};
@@ -55,14 +55,14 @@ public class RobotMap {
 		public static final int[] PUNCH_SOLENOID_PORTS = {0,2,3};
 		public static final int IR_GATE_PORT = 1;
 	
-	} 
+	} */
 	
 	/****FINAL BOT****/
 
-	/*public static class Drivetrain {
+	public static class Drivetrain {
 		// FR,BR,BL,BR
 		public static final int[] MOTOR_PORTS = { 0, 1, 2, 3 };
-		public static final int[] DRIVE_SOLENOID_PORTS = {0,4,5};
+		public static final int[] DRIVE_SOLENOID_PORTS = {1,0,7};
 		public static final int LEFT_ENCODER_FORWARD_CHANNEL = 6;
 		public static final int LEFT_ENCODER_REVERSE_CHANNEL = 7;
 		public static final int RIGHT_ENCODER_FORWARD_CHANNEL = 8;
@@ -73,9 +73,9 @@ public class RobotMap {
 
 	public static class Intake {
 		public static final int[] MOTOR_PORTS = {0,9,8};
-		public static final int[] RIGHT_SOLENOID_PORTS = {0,0,1};//{0,1,1,1};
+		public static final int[] RIGHT_SOLENOID_PORTS = {1,5,2};//{0,1,1,1};
 		//not used on pbot
-		public static final int[] LEFT_SOLENOID_PORTS = {1,6,7};//{0,2,1,2};
+		public static final int[] LEFT_SOLENOID_PORTS = {1,5,2};//{0,2,1,2};
 		public static final int HAL_EFFECT_INTAKE = 14;
 	}
 
@@ -90,9 +90,9 @@ public class RobotMap {
 		public static final int HALL_EFFECT_HIGH_SENSOR = 16;
 		public static final int RESET_BUMPER_LEFT = 10;
 		public static final int RESET_BUMPER_RIGHT = 11;
-		public static final int [] LEFT_SOLENOID_PORTS = {0,6,7};
+		public static final int [] LEFT_SOLENOID_PORTS = {0,0,7};
 		//not used on pbot
-		public static final int [] RIGHT_SOLENOID_PORTS = {1,2,3};
+		public static final int [] RIGHT_SOLENOID_PORTS = {0,0,7};
 		public static final int LEFT_PDP_PORT = 15;
 		public static final int RIGHT_PDP_PORT = 0;
 	}
@@ -101,9 +101,9 @@ public class RobotMap {
 		public static final int[] MOTOR_PORTS = {7,2};
 		public static final int LEFT_EINSTEIN = 19;
 		public static final int RIGHT_EINSTEIN = 20;
-		public static final int[] PUNCH_SOLENOID_PORTS = {0,2,3};
+		public static final int[] PUNCH_SOLENOID_PORTS = {0,5,2};
 		public static final int IR_GATE_PORT = 1;
 	
-	}*/
+	}
 
 }

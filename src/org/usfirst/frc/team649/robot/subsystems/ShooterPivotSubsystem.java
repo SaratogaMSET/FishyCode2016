@@ -27,7 +27,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 											// counter/hall effect
 	public DigitalInput resetBumperLeft;
 	public DigitalInput resetBumperRight;
-	public DoubleSolenoid leftSol, rightSol;
+	public DoubleSolenoid brake;//, rightSol;
 
 	public static class PivotPID {
 
@@ -57,7 +57,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		public static final double TOP_OF_INTAKE_ZONE = 60;
 		public static final double MIDDLE_OF_INTAKE_ZONE = 35;
 
-		public static double MAX_ENCODER_VAL = 115;
+		public static double MAX_ENCODER_VAL = 130;
 		public static double MIN_ENCODER_VAL = 0;
 
 		public static double LEVER_TOLERANCE = 0.03;
@@ -76,12 +76,12 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		// Init Hardware
 		motorLeft = new Victor(RobotMap.ShooterPivot.MOTOR_PORTS[0]);
 		motorRight = new Victor(RobotMap.ShooterPivot.MOTOR_PORTS[1]);
-		rightSol = new DoubleSolenoid(
-				RobotMap.ShooterPivot.RIGHT_SOLENOID_PORTS[0],
-				RobotMap.ShooterPivot.RIGHT_SOLENOID_PORTS[1],
-				RobotMap.ShooterPivot.RIGHT_SOLENOID_PORTS[2]);
+//		rightSol = new DoubleSolenoid(
+//				RobotMap.ShooterPivot.RIGHT_SOLENOID_PORTS[0],
+//				RobotMap.ShooterPivot.RIGHT_SOLENOID_PORTS[1],
+//				RobotMap.ShooterPivot.RIGHT_SOLENOID_PORTS[2]);
 
-		leftSol = new DoubleSolenoid(
+		brake = new DoubleSolenoid(
 				RobotMap.ShooterPivot.LEFT_SOLENOID_PORTS[0],
 				RobotMap.ShooterPivot.LEFT_SOLENOID_PORTS[1],
 				RobotMap.ShooterPivot.LEFT_SOLENOID_PORTS[2]);
@@ -102,6 +102,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 				RobotMap.ShooterPivot.RESET_BUMPER_LEFT);
 		resetBumperRight = new DigitalInput(
 				RobotMap.ShooterPivot.RESET_BUMPER_RIGHT);
+		
 		// PID
 		pid = this.getPIDController();
 		pid.setOutputRange(PivotPID.MAX_MOTOR_DOWN_POWER,
@@ -111,7 +112,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 
 	// //////// LOWER LIMITS
 	public boolean lowerLimitsTriggered() {
-		return resetBumperLeft.get() || resetBumperRight.get();
+		return !resetBumperLeft.get() || !resetBumperRight.get();
 	}
 
 	// //////////HALL EFFECTS
@@ -173,11 +174,11 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 
 	public void engageBrake(boolean set) {
 		if (set) {
-			rightSol.set(DoubleSolenoid.Value.kReverse);
-			leftSol.set(DoubleSolenoid.Value.kReverse);
+			//rightSol.set(DoubleSolenoid.Value.kReverse);
+			brake.set(DoubleSolenoid.Value.kReverse);
 		} else {
-			rightSol.set(DoubleSolenoid.Value.kForward);
-			leftSol.set(DoubleSolenoid.Value.kForward);
+			//rightSol.set(DoubleSolenoid.Value.kForward);
+			brake.set(DoubleSolenoid.Value.kForward);
 		}
 	}
 

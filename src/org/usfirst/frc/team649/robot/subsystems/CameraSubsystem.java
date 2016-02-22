@@ -28,6 +28,7 @@ import org.usfirst.frc.team649.robot.util.Center;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.vision.AxisCamera;
 
 public class CameraSubsystem extends Subsystem {
 	public static VideoCapture vcap;
@@ -53,7 +54,9 @@ public class CameraSubsystem extends Subsystem {
 	Mat image, imageHSV, erode, dilate, hierarchy;
 	List<MatOfPoint> contours;
 	
+	
 	public CameraSubsystem(String ip){
+		
 //		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 //		InputStream input_1 = classLoader.getResourceAsStream("from position 1.jpg");
 //		Image i_1 = Toolkit.getDefaultToolkit().getImage("from position 1.jpg");
@@ -74,21 +77,24 @@ public class CameraSubsystem extends Subsystem {
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
 		
 		
-		try{
+		//try{
     		//FOR Axis CAMERA 206
     		//vcap = new VideoCapture("http://root:admin@axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
     		
     		//FOR Axis M1011
-    		vcap = new VideoCapture("http://root:admin@" + ip + "/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
-    		System.out.println("R-INIT FINISHED VCAP START AND FOUND CAM");
+    		vcap = new VideoCapture("http://169.254.110.201/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
+    		//vcap.open("http://169.254.110.201//mjpg/video.mjpg?user=root&password=admin&channel=0&.mjpg");
+    		
+    		//while (!vcap.isOpened()){}
+    		//System.out.println("R-INIT FINISHED VCAP START AND FOUND CAM");
     		//FOR USB CAMERA
 //    		vcap = new VideoCapture(0);
 //    		//Thread.sleep(1000);
-		}
-    	catch (Exception e){
-    		System.out.println("\nERROROROROROROROR WITH CAM");
-    		System.out.println(e.getMessage() + "\n");
-    	}
+		//}
+//    	catch (Exception e){
+//    		System.out.println("\nERROROROROROROROR WITH CAM");
+//    		System.out.println(e.getMessage() + "\n");
+//    	}
 	}
 	
 	 public Center findOneRetroTarget(Mat image){
@@ -184,6 +190,8 @@ public class CameraSubsystem extends Subsystem {
 	        	SmartDashboard.putNumber("Obj 0 width: ", r.width);
 	        	SmartDashboard.putNumber("Obj 0 height: ", r.height);
 	        	SmartDashboard.putNumber("Obj 0 Distance: ", dist);
+	        	
+	        	//Imgcodecs.imwrite("output.png", imageHSV);
 	    	}
 	    	else{
 	    		SmartDashboard.putNumber("Obj 0 Center X: ", 0);

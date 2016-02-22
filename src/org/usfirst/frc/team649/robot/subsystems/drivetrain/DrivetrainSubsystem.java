@@ -7,7 +7,10 @@ import org.usfirst.frc.team649.robot.RobotMap;
 import org.usfirst.frc.team649.robot.util.DoubleSolenoid649;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Victor;
@@ -27,7 +30,9 @@ public class DrivetrainSubsystem extends Subsystem {
 	public Encoder leftEncoder, rightEncoder;
 	
 	public DoubleSolenoid driveSol;
-	public ADXRS450_Gyro gyro;
+	public Gyro gyro;//ADXRS450_Gyro gyro;
+	
+	public Compressor compressor;
 	
 	public static final double highGearEncoderDistancePerPulse = 18.85  * 14.0/60.0 / 128;
 	public static final double lowGearEncoderDistancePerPulse = 18.85 * 24.0/50.0 / 128;
@@ -63,19 +68,20 @@ public class DrivetrainSubsystem extends Subsystem {
 	
 	public DrivetrainSubsystem() {
 		motors = new CANTalon[4];
-		gyro = new ADXRS450_Gyro();
-		gyro.reset();
+		gyro = new AnalogGyro(0);//new ADXRS450_Gyro();
+		//compressor = new Compressor();
+		//gyro.reset();
 		
-		//FR,BR,BL,BR
+		//FR,BR,BL,BR																																																																																																																																																																																																																																																																																																																						
 		for(int i =0; i < motors.length; i++) {
 			motors[i] = new CANTalon(RobotMap.Drivetrain.MOTOR_PORTS[i]);
 		}
 		leftEncoder = new Encoder(RobotMap.Drivetrain.LEFT_ENCODER_FORWARD_CHANNEL, 
-				RobotMap.Drivetrain.LEFT_ENCODER_REVERSE_CHANNEL, true);
+				RobotMap.Drivetrain.LEFT_ENCODER_REVERSE_CHANNEL, false);
 		leftEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
 		
 		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_ENCODER_FORWARD_CHANNEL, 
-				RobotMap.Drivetrain.RIGHT_ENCODER_REVERSE_CHANNEL, false);
+				RobotMap.Drivetrain.RIGHT_ENCODER_REVERSE_CHANNEL, true);
 		leftEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
 		
 		driveSol  = new DoubleSolenoid(RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[0],
@@ -113,11 +119,11 @@ public class DrivetrainSubsystem extends Subsystem {
     public ArrayList<Double> getLoggingData() {
     	ArrayList<Double> temp = new ArrayList<Double>();
    	   temp.add(Robot.timer.get());
-   	   temp.add(motors[0].get());
-   	   temp.add(motors[2].get());
+   	   temp.add(motors[0].get());//right
+   	   temp.add(motors[2].get());//left
    	   temp.add(getDistanceDTLeft());
    	   temp.add(getDistanceDTRight());
-   	   temp.add(gyro.getAngle());
+   	   //temp.add(gyro.getAngle());
    	   
    	   return temp;
    	 
