@@ -63,10 +63,10 @@ public class RobotMap {
 		// FR,BR,BL,BR
 		public static final int[] MOTOR_PORTS = { 0, 1, 2, 3 };
 		public static final int[] DRIVE_SOLENOID_PORTS = {1,0,7};
-		public static final int LEFT_ENCODER_FORWARD_CHANNEL = 6;
-		public static final int LEFT_ENCODER_REVERSE_CHANNEL = 7;
-		public static final int RIGHT_ENCODER_FORWARD_CHANNEL = 8;
-		public static final int RIGHT_ENCODER_REVERSE_CHANNEL = 9;
+		public static final int LEFT_ENCODER_FORWARD_CHANNEL = 8;
+		public static final int LEFT_ENCODER_REVERSE_CHANNEL = 9;
+		public static final int RIGHT_ENCODER_FORWARD_CHANNEL = 6;
+		public static final int RIGHT_ENCODER_REVERSE_CHANNEL = 7;
 		
 		public static final int CAM_SERVO = 12;
 	}

@@ -82,7 +82,7 @@ public class CameraSubsystem extends Subsystem {
     		//vcap = new VideoCapture("http://root:admin@axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
     		
     		//FOR Axis M1011
-    		vcap = new VideoCapture("http://169.254.110.201/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
+    		vcap = new VideoCapture("http://axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
     		//vcap.open("http://169.254.110.201//mjpg/video.mjpg?user=root&password=admin&channel=0&.mjpg");
     		
     		//while (!vcap.isOpened()){}
