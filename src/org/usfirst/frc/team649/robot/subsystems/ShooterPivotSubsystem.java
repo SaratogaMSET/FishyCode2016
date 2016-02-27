@@ -50,10 +50,10 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		public static final int SHOOT_STATE = 2;
 
 		public static final double PICKUP_POSITION = 0;
-		public static final double STORE_POSITION = 5;// temp value
+		public static final double STORE_POSITION = 7.5;// temp value
 		public static final double SHOOT_POSITION = 65;// arbitrary value
 
-		public static final double BOTTOM_OF_INTAKE_ZONE = 6;
+		public static final double BOTTOM_OF_INTAKE_ZONE = 8.5;
 		public static final double TOP_OF_INTAKE_ZONE = 60;
 		public static final double MIDDLE_OF_INTAKE_ZONE = 35;
 

@@ -46,7 +46,7 @@ public class SetPivotState extends Command {
 
 		up = setPoint > Robot.shooterPivot.getPosition();
 		
-		
+		System.out.println("Entered Pivot state");
 	}
 
 	// Called just before this Command runs the first time
@@ -97,6 +97,8 @@ public class SetPivotState extends Command {
 				&& Robot.shooterPivot.getEncoderRate() <= ShooterPivotSubsystem.PivotPID.MINIMUM_ENCODER_RATE){
 			//isStalling = true;
 		}
+		
+		System.out.println("Entered Pivot execute");
 		
 		averageMotorSpeed = (Math.abs(Robot.shooterPivot.motorLeft.get()) + Math.abs(Robot.shooterPivot.motorRight.get())) / 2.0;
 	}

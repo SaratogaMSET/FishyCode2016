@@ -24,17 +24,17 @@ public class BangBangFlywheels extends Command {
     protected void execute() {
     	if (running){
  			if(Robot.shooter.getLeftFlywheelRPM() <= ShooterSubsystem.FLYWHEEL_TARGET_RPM){
- 				Robot.shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MAX_POWER);
+ 				Robot.shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MAX_SHOOT_POWER);
  			}	
  			else{
- 				Robot.shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MIN_POWER);
+ 				Robot.shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MIN_SHOOT_POWER);
  			}
  			
  			if(Robot.shooter.getRightFlywheelRPM() <= ShooterSubsystem.FLYWHEEL_TARGET_RPM){
- 				Robot.shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MAX_POWER);
+ 				Robot.shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MAX_SHOOT_POWER);
  			}
  			else{
- 				Robot.shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MIN_POWER);
+ 				Robot.shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MIN_SHOOT_POWER);
  			}
     	}
  		

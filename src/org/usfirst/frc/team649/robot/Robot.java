@@ -19,9 +19,11 @@ import java.util.ArrayList;
 
 import org.opencv.core.Mat;
 import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
+import org.usfirst.frc.team649.robot.commandgroups.SemiAutoLoadBall;
 import org.usfirst.frc.team649.robot.commandgroups.ShootTheShooter;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
 import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
+import org.usfirst.frc.team649.robot.commands.intakecommands.RunAllRollers;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeed;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.ResetPivot;
@@ -29,6 +31,7 @@ import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPower
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
 import org.usfirst.frc.team649.robot.shootercommands.BangBangFlywheels;
 import org.usfirst.frc.team649.robot.shootercommands.SetFlywheels;
+import org.usfirst.frc.team649.robot.shootercommands.ShooterSet;
 import org.usfirst.frc.team649.robot.subsystems.CameraSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 
@@ -64,11 +67,15 @@ public class Robot extends IterativeRobot {
 	
 	//true = down, false = up
 	public static boolean intakeState = false;
+	public static boolean shooterState = false;
 	//true = high gear, false = low gear
 	public static boolean currentGear = true;
 	public static boolean shooterPIDIsRunning = false;
 	public static boolean readyToShoot = false;
 	
+	public static boolean allIntakeRunning = false;
+	public static boolean flywheelShootRunning = false;
+	public static boolean semiAutoIsRunning = false;
 	//prevStates
 	public boolean prevStateOpTrigger;
 	public boolean prevStateDriveShifter;
@@ -79,6 +86,7 @@ public class Robot extends IterativeRobot {
 	public boolean prevStatePivotUp;
 	public boolean prevStateResetButton;
 	public boolean prevStatePivotMiddle;
+	public boolean prevStateSemiAutoIntake;
 
 	
 	public void robotInit() {
@@ -92,10 +100,12 @@ public class Robot extends IterativeRobot {
 		shooter = new ShooterSubsystem();
 		camera = new CameraSubsystem(ip);
 		
-		if (camera.vcap.isOpened()){
-			System.out.println("R-INIT FINISHED VCAP, VALID IP -:- STREAM OPENED");
+		if (Robot.camera.noOpencvErrors){
+			if (camera.vcap.isOpened()){
+				System.out.println("R-INIT FINISHED VCAP, VALID IP -:- STREAM OPENED");
+			}
 		}
-		
+//		
 		log = new ArrayList<>();
 		timer = new Timer();
 		pivotTimer = new Timer();
@@ -109,17 +119,18 @@ public class Robot extends IterativeRobot {
 		prevStatePivotUp = false;
 		prevStateResetButton = false;
 		prevStatePivotMiddle = false;
+		prevStateSemiAutoIntake = false;
 		
 	}
 
 	public void disabledInit() {
 		System.out.println("STARTING LOG: Time, MotorLeft, MotorRight ");
-		for (int i = 0; i < log.size(); i++) {
-			ArrayList<Double> d = log.get(i);
-			System.out.println("BEGINNING_TAG " + d.get(0) + ", " + d.get(1)
-					+ ", " + d.get(2) + ", " + d.get(3) + ", " + d.get(4)
-					+ ", " + d.get(4) + " ENDING_TAG"); //change from 4 to 5 when gyro works
-		}
+//		for (int i = 0; i < log.size(); i++) {
+//			ArrayList<Double> d = log.get(i);
+//			System.out.println("BEGINNING_TAG " + d.get(0) + ", " + d.get(1)
+//					+ ", " + d.get(2) + ", " + d.get(3) + ", " + d.get(4)
+//					+ ", " + d.get(4) + " ENDING_TAG"); //change from 4 to 5 when gyro works
+//		}
 	}
 
 	public void disabledPeriodic() {
@@ -148,7 +159,8 @@ public class Robot extends IterativeRobot {
 		shooterPivot.resetEncoders();
 		new SetPivotState(5).start();
 		new DriveForwardRotate(0, 0).start();
-		
+		intakeState = intake.getSolenoids();
+		new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();;
 		
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
 		//camera.vcap.open("http://axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
@@ -162,49 +174,56 @@ public class Robot extends IterativeRobot {
 		new DriveForwardRotate(oi.driver.getForward(), oi.driver.getRotation()).start();
 		
 		//CAMERA
-		if (camera.vcap.isOpened()){
-			SmartDashboard.putBoolean("Checking For Vision?", true);
-			//read the image
-			
-			Mat image = new Mat();
-			camera.vcap.read(image);
-			//find the center
-			Center center = camera.findOneRetroTarget(image);
+//		if (camera.vcap.isOpened()){
+//			SmartDashboard.putBoolean("Checking For Vision?", true);
+//			//read the image
+//			
+//			Mat image = new Mat();
+//			camera.vcap.read(image);
+//			//find the center
+//			//Center center = camera.findOneRetroTarget(image); TODO re put this in eventually
+//		
+//		}
+//		else{
+//			SmartDashboard.putBoolean("Checking For Vision?", false);
+//		}
 		
-		}
-		else{
-			SmartDashboard.putBoolean("Checking For Vision?", false);
+//		if (readyToShoot){
+//			if (oi.operator.shoot() && !prevStateShootButton){
+//				new ShooterSet(shooterState? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward).start();
+//				shooterState = !shooterState;
+//			}
+//		}
+		
+		if (readyToShoot && oi.operator.shoot() && !prevStateShootButton){
+			new ShootTheShooter().start();
 		}
 		
 		//INTAKE ----- toggle
 		if (oi.operator.toggleIntake() && !prevStateOpTrigger) {
 			//shooter.loadBall(DoubleSolenoid.Value.kForward);
 			///	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
-			new SetIntakePosition(intakeState).start();
+			new SetIntakePosition(!intakeState).start();
 			intakeState = !intakeState;
 		} else {
 		//	shooter.loadBall(DoubleSolenoid.Value.kReverse);
 
 		}
 		
-		//shoot if ready
-		if (oi.operator.shoot() && !prevStateShootButton){
-			if (readyToShoot){
-				new ShootTheShooter().start();
-			}
+		//CAMERA SERVO
+		
+		//move up
+//		if (oi.driver.isCameraUpPressed()){
+//			camera.setServoAngle(CameraSubsystem.CAM_UP_ANGLE);
+//		}
+//		else{
+//			camera.setServoAngle(CameraSubsystem.CAM_DOWN_ANGLE);
+//		}
+		if (oi.operator.isSemiAutonomousIntakePressed() && !prevStateSemiAutoIntake){
+			semiAutoIsRunning = true;
+			new SemiAutoLoadBall().start();
 		}
 		
-		if(oi.operator.loadBallFlywheels()){
-			shooter.setLeftFlywheelPower(-0.50);
-			shooter.setRightFlywheelPower(0.50);
-		} else if(oi.operator.shootBallFlywheels()) {
-			new SetFlywheels(1.0, -1.0).start();//BangBangFlywheels(true).start();
-		} else {
-			new SetFlywheels(0, 0).start();//BangBangFlywheels(false).start();
-		}
-		//tells us if bang bang works
-		readyToShoot = true;//((Math.abs(shooter.getRightFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE)
-				//&& (Math.abs(shooter.getLeftFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE));
 		
 		//pivot state
 		if (oi.operator.pivotShootState() && !prevStatePivotUp){
@@ -217,17 +236,48 @@ public class Robot extends IterativeRobot {
 			new SetPivotState(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
 		}
 		
-		//intake purging/running
-		if(oi.operator.purgeIntake()) {
-			new SetIntakeSpeed(IntakeSubsystem.FORWARD_ROLLER_PURGE_SPEED,
-					IntakeSubsystem.CENTERING_MODULE_PURGE_SPEED).start(); 
-		} else if (oi.operator.runIntake()) {
-			new SetIntakeSpeed(IntakeSubsystem.FORWARD_ROLLER_INTAKE_SPEED,
-					IntakeSubsystem.CENTERING_MODULE_INTAKE_SPEED).start();
-		} else {
-			new SetIntakeSpeed(IntakeSubsystem.INTAKE_OFF_SPEED,
-					IntakeSubsystem.INTAKE_OFF_SPEED).start();
+		
+		
+		if (!semiAutoIsRunning){
+//		
+			//intake purging/running
+			if(oi.operator.purgeIntake()) {
+				//new SetIntakeSpeed(IntakeSubsystem.FORWARD_ROLLER_PURGE_SPEED, IntakeSubsystem.CENTERING_MODULE_PURGE_SPEED).start(); 
+				new RunAllRollers(ShooterSubsystem.OUT, !ShooterSubsystem.UNTIL_IR).start();
+				allIntakeRunning = true;
+			} else if (oi.operator.runIntake()) {
+				//new SetIntakeSpeed(IntakeSubsystem.FORWARD_ROLLER_INTAKE_SPEED, IntakeSubsystem.CENTERING_MODULE_INTAKE_SPEED).start();
+				new RunAllRollers(ShooterSubsystem.IN, !ShooterSubsystem.UNTIL_IR).start();
+				allIntakeRunning = true;
+			} else {
+				//just the intakes off here to avoid conflicts
+				new SetIntakeSpeed(IntakeSubsystem.INTAKE_OFF_SPEED, IntakeSubsystem.INTAKE_OFF_SPEED).start();
+				//new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();
+				allIntakeRunning = false;
+			}
+			
+			//flywheel control
+			if (!allIntakeRunning){
+				if(oi.operator.loadBallFlywheels()){
+					new SetFlywheels(ShooterSubsystem.FLYWHEEL_INTAKE_POWER, -ShooterSubsystem.FLYWHEEL_INTAKE_POWER).start();;
+					flywheelShootRunning = true;
+				} else if(oi.operator.shootBallFlywheels()) {
+					new SetFlywheels(1.0, -1.0).start();//BangBangFlywheels(true).start();
+					flywheelShootRunning = true;
+				} else {
+					//new SetFlywheels(0, 0).start();//BangBangFlywheels(false).start();
+					flywheelShootRunning = false;
+				}
+			}
+			
+			if (!allIntakeRunning && !flywheelShootRunning){
+				new SetFlywheels(0, 0).start();
+			}
 		}
+		//tells us if bang bang works
+		readyToShoot = true;//((Math.abs(shooter.getRightFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE)
+				//&& (Math.abs(shooter.getLeftFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE));
+		
 		
 		if(oi.driver.isDrivetrainLowGearButtonPressed() && !prevStateDriveShifter){
 			drivetrain.shift(!currentGear);
@@ -236,14 +286,19 @@ public class Robot extends IterativeRobot {
 			drivetrain.shift(currentGear);
 		}
 		
-		if(oi.operator.isManualPivotRest() && !shooterPIDIsRunning) {
-			double pivotPower = correctForDeadZone(oi.operator.getManualPower()/2.0);
-			
-			if (pivotPower > 0 && shooterPivot.pastMax() || pivotPower < 0 && shooterPivot.lowerLimitsTriggered()){
-				pivotPower = 0;
+		if (!shooterPIDIsRunning){
+			if(oi.operator.isManualPivotRest()) {
+				double pivotPower = correctForDeadZone(oi.operator.getManualPower()/2.0);
+				
+				if (pivotPower > 0 && shooterPivot.pastMax() || pivotPower < 0 && shooterPivot.lowerLimitsTriggered()){
+					pivotPower = 0;
+				}
+				
+				new SetPivotPower(pivotPower).start();
 			}
-			
-			new SetPivotPower(pivotPower).start();
+			else{
+				new SetPivotPower(0).start();
+			}
 		}
 		
 		
@@ -255,7 +310,7 @@ public class Robot extends IterativeRobot {
 		prevStatePivotUp = oi.operator.pivotShootState();
 		prevStatePivotMiddle = oi.operator.pivotStoreState();
 		prevStateResetButton = oi.operator.resetPivot();
-		
+		prevStateSemiAutoIntake = oi.operator.isSemiAutonomousIntakePressed();
 		
 		//********updating subsystem*******//
 		
@@ -290,6 +345,9 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("Shooter bumper left", !shooterPivot.resetBumperLeft.get());
 		SmartDashboard.putBoolean("Shooter bumper right", !shooterPivot.resetBumperRight.get());
 		
+		SmartDashboard.putBoolean("is flywheel command running", flywheelShootRunning);
+		SmartDashboard.putBoolean("is all rollers command running", allIntakeRunning);
+		
 		SmartDashboard.putBoolean("IR Tripped", Robot.shooter.infraredSensor.get());
 		
 		SmartDashboard.putNumber("Shooter Pivot current right", pdp.getCurrent(0));
@@ -298,15 +356,21 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("DT Encoder Left", drivetrain.leftEncoder);
 		SmartDashboard.putData("DT Encoder Right", drivetrain.rightEncoder);
 		
+		SmartDashboar
+		d.putBoolean("Semi Auto Enabled", semiAutoIsRunning);
+		
+		//SmartDashboard.putNumber("Cam Servo Angle", camera.camServo.getAngle());
+		
 		/*
 		SmartDashboard.putData("GYRO", drivetrain.gyro);
 		SmartDashboard.putNumber("GYRO ANGLE", drivetrain.gyro.getAngle());
 
 		SmartDashboard.putData("Left Enc", drivetrain.leftEncoder);
-		SmartDashboard.putData("Right Enc", drivetrain.rightEncoder);
+		SmartDashboard.putData("Right Enc", drivetrain.rightEncoder);*/
 		SmartDashboard.putBoolean("current gear", currentGear);
 		SmartDashboard.putBoolean("current intake state", intakeState);
-*/
+		SmartDashboard.putBoolean("absolute intake state from sols", intake.isIntakeDeployed());
+
 		SmartDashboard.putNumber("LEFT FLYWHEEL", shooter.getLeftFlywheelRPM());
 		SmartDashboard.putNumber("RIGHT FLYWHEEL", shooter.getRightFlywheelRPM());
 		SmartDashboard.putBoolean("Ready to Shoot", readyToShoot);

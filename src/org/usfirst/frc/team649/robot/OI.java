@@ -70,6 +70,10 @@ public class OI {
 		{
 			return operatorJoystick.getRawButton(2);
 		}
+		public boolean isSemiAutonomousIntakePressed()
+		{
+			return operatorJoystick.getRawButton(10);
+		}
 		public double getManualPower()
 		{
 			return operatorJoystick.getY();
@@ -87,9 +91,13 @@ public class OI {
 			return -driveJoystickHorizontal.getX();
 		}
 		
-		  public boolean isDrivetrainLowGearButtonPressed() {
-	            return driveJoystickHorizontal.getRawButton(1) || driveJoystickVertical.getRawButton(1);
-	        }
+		public boolean isDrivetrainLowGearButtonPressed() {
+            return driveJoystickHorizontal.getRawButton(1) || driveJoystickVertical.getRawButton(1);
+        }
+		
+		public boolean isCameraUpPressed(){
+			return driveJoystickHorizontal.getRawButton(10) || driveJoystickVertical.getRawButton(7);
+		}
     }
     
     public class Manual {

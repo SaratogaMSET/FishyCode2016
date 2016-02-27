@@ -19,11 +19,20 @@ public class ShooterSubsystem extends Subsystem {
 	public DoubleSolenoid loader;
 	public Counter leftPhotoelectric, rightPhotoelectric;
 	public DigitalInput infraredSensor;
+	
+	public static int IN = 0;
+	public static int OUT = 1;
+	public static int OFF = 2;
+	
+	public static boolean UNTIL_IR = true;
 
 	public static final double FLYWHEEL_TARGET_RPM = 1900;
-	public static final double FLYWHEEL_MAX_POWER = 0.4;
-	public static final double FLYWHEEL_MIN_POWER = 0.32;
+	public static final double FLYWHEEL_MAX_SHOOT_POWER = 0.4;
+	public static final double FLYWHEEL_MIN_SHOOT_POWER = 0.32;
 	public static final double FLYWHEEL_TOLERANCE = 90;
+	//doubles as purge speed when pivot is down (just inverted of course)
+	public static final double FLYWHEEL_INTAKE_POWER = -0.4;
+	
 	
 	public ShooterSubsystem() {
 		super("shooter subsystem");
