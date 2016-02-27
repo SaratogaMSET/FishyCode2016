@@ -22,20 +22,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class LeftDTPID extends PIDSubsystem {
 
     public PIDController encoderDriveLeftPID;
+    double PIDDistance;
     
-    
-    public LeftDTPID() {
+    public LeftDTPID(double distance) {
     	super("DT Left", PIDConstants.k_P, PIDConstants.k_I, PIDConstants.k_D);
 
        	
     	encoderDriveLeftPID = this.getPIDController();
     	encoderDriveLeftPID.setAbsoluteTolerance(0.8);
+    	PIDDistance = distance;
     	//encoderDrivePID.setOutputRange(-EncoderBasedDriving.MAX_MOTOR_POWER, EncoderBasedDriving.MAX_MOTOR_POWER);
         
     }
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
-
+    protected void initialize() {
+    	encoderDriveLeftPID.enable();
+    	encoderDriveLeftPID.setSetpoint(PIDDistance);
+    }
 	protected double returnPIDInput() {
 		return Robot.drivetrain.getDistanceDTLeft();
 	}
@@ -50,6 +54,14 @@ public class LeftDTPID extends PIDSubsystem {
         //setDefaultCommand(new MySpecialCommand());
     }
     
+    protected boolean isFinished() {
+
+        return encoderDriveLeftPID.onTarget();
+    }
+    protected void end() {
+    	encoderDriveLeftPID.disable();
+
+    }
 //    public PIDController getGyroPIDControler() {
 //    	return encoderTurnPID;
 //    }
