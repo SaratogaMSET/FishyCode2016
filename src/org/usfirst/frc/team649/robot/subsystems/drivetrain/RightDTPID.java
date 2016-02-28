@@ -2,50 +2,55 @@ package org.usfirst.frc.team649.robot.subsystems.drivetrain;
 
 
 import org.usfirst.frc.team649.robot.Robot;
-
 import edu.wpi.first.wpilibj.PIDController;
 
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
+
 
 /**
  *
  */
 public class RightDTPID extends PIDSubsystem {
 
-	 public PIDController encoderDriveRightPID;
-	    
-	    //PID Constants
-	    public static final double AUTO_P = 0.0;
-	    public static final double AUTO_I = 0.0;
-	    public static final double AUTO_D = 0.0;
-	    public static final double MAX_MOTOR_POWER = 1.0;
-	    public static final double MIN_MOTOR_POWER = -1.0;
-	    
-	    
-	    public RightDTPID()  {
-	    	super("DT Left", AUTO_P, AUTO_I, AUTO_D);
+    public PIDController encoderDriveRightPID;
+    
+    
+    public RightDTPID() {
+    	super("DT Right", DrivetrainSubsystem.PIDConstants.k_P, DrivetrainSubsystem.PIDConstants.k_I, DrivetrainSubsystem.PIDConstants.k_D);
 
-	       	
-	    	encoderDriveRightPID = this.getPIDController();
-	    	encoderDriveRightPID.setAbsoluteTolerance(DrivetrainSubsystem.PIDConstants.PID_ABSOLUTE_TOLERANCE);
-	    	encoderDriveRightPID.setOutputRange(MAX_MOTOR_POWER, MIN_MOTOR_POWER);
-	        
-	    }
-	    // Put methods for controlling this subsystem
-	    // here. Call these from Commands.
+       	
+    	encoderDriveRightPID = this.getPIDController();
+    	encoderDriveRightPID.setAbsoluteTolerance(0.8);
+    	//encoderDrivePID.setOutputRange(-EncoderBasedDriving.MAX_MOTOR_POWER, EncoderBasedDriving.MAX_MOTOR_POWER);
+        
+    }
+    // Put methods for controlling this subsystem
+    // here. Call these from Commands.
 
-		protected double returnPIDInput() {
-			return Robot.drivetrain.getDistanceDTLeft();
-		}
+	protected double returnPIDInput() {
+		return Robot.drivetrain.getDistanceDTRight();
+	}
 
-		protected void usePIDOutput(double output) {
-	        Robot.drivetrain.motors[0].set(output);
-	        Robot.drivetrain.motors[1].set(output);
-		}
+	protected void usePIDOutput(double output) {
+        Robot.drivetrain.motors[2].set(-output);
+        Robot.drivetrain.motors[3].set(-output);
+	}
 
-	    public void initDefaultCommand() {
-	        // Set the default command for a subsystem here.
-	        //setDefaultCommand(new MySpecialCommand());
-	    }
+    public void initDefaultCommand() {
+        // Set the default command for a subsystem here.
+        //setDefaultCommand(new MySpecialCommand());
+    }
+    
+//    public PIDController getGyroPIDControler() {
+//    	return encoderTurnPID;
+//    }
+//	@Override
+//	public void pidWrite(double output) {
+//        
+//        driveFwdRot(0, output);
+//	}
+//	@Override
+//	public double pidGet() {
+//		return this.encoders[0].getDistance();
+//	}
 }
-

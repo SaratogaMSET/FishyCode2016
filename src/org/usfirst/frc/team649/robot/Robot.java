@@ -79,7 +79,7 @@ public class Robot extends IterativeRobot {
 	public boolean prevStatePivotUp;
 	public boolean prevStateResetButton;
 	public boolean prevStatePivotMiddle;
-
+	public static boolean isPIDActive;
 	
 	public void robotInit() {
 		oi = new OI();
@@ -91,6 +91,7 @@ public class Robot extends IterativeRobot {
 		shooterPivot = new ShooterPivotSubsystem();
 		shooter = new ShooterSubsystem();
 		camera = new CameraSubsystem(ip);
+		isPIDActive= false;
 		
 		if (camera.vcap.isOpened()){
 			System.out.println("R-INIT FINISHED VCAP, VALID IP -:- STREAM OPENED");

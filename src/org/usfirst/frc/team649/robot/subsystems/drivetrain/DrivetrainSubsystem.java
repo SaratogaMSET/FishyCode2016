@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -25,7 +26,7 @@ public class DrivetrainSubsystem extends Subsystem {
     
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
-	
+
 	public CANTalon [] motors;
 	public Encoder leftEncoder, rightEncoder;
 	
@@ -36,6 +37,7 @@ public class DrivetrainSubsystem extends Subsystem {
 	
 	public static final double highGearEncoderDistancePerPulse = 18.85  * 14.0/60.0 / 128;
 	public static final double lowGearEncoderDistancePerPulse = 18.85 * 24.0/50.0 / 128;
+	public PIDController encoderDriveLeftPID;
 	
 	
 	public static class PIDConstants {
@@ -147,5 +149,10 @@ public class DrivetrainSubsystem extends Subsystem {
     public boolean seesAlignmentLine() {
     	return false;
     }
+
+	public PIDController getPIDController() {
+		// TODO Auto-generated method stub
+		return encoderDriveLeftPID;
+	}
 }
 
