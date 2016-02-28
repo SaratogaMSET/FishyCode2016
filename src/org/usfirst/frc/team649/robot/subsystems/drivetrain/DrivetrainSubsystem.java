@@ -9,6 +9,7 @@ import org.usfirst.frc.team649.robot.util.DoubleSolenoid649;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -30,6 +32,7 @@ public class DrivetrainSubsystem extends Subsystem {
 	public CANTalon [] motors;
 	public Encoder leftEncoder, rightEncoder;
 	
+	public BuiltInAccelerometer accel;
 	public DoubleSolenoid driveSol;
 	public Gyro gyro;//ADXRS450_Gyro gyro;
 	
@@ -66,6 +69,16 @@ public class DrivetrainSubsystem extends Subsystem {
 		public static final int RAMPARTS = 7;
 		public static final int MOAT = 8;
 		
+		
+		//CHEVAL CONSTANTS
+		public static final double DISTANCE_START_TO_RAMP_CHEVAL = 84.0;
+		public static final double DISTANCE_RAMP_TO_MIDRAMP_CHEVAL = 20.0;
+		public static final double WAIT_TIME_AT_TOP_CHEVAL = 0.75;
+		public static final double DISTANCE_OFF_CHEVAL = 18.0;
+		
+		//ROCKWALL CONSTANTS
+		public static final double DISTANCE_OFF_ROCKWALL = 18;
+		
 	}
 	
 	
@@ -75,7 +88,7 @@ public class DrivetrainSubsystem extends Subsystem {
 		gyro = new AnalogGyro(0);//new ADXRS450_Gyro();
 		//compressor = new Compressor();
 		//gyro.reset();
-		
+		accel = new BuiltInAccelerometer();
 		//FR,BR,BL,BR																																																																																																																																																																																																																																																																																																																						
 		for(int i =0; i < motors.length; i++) {
 			motors[i] = new CANTalon(RobotMap.Drivetrain.MOTOR_PORTS[i]);
@@ -120,6 +133,9 @@ public class DrivetrainSubsystem extends Subsystem {
     public double getDistanceDTRight() {
       return rightEncoder.getDistance();
   }
+   public double getDistanceDTBoth(){
+	   return rightEncoder.getDistance()/2 + leftEncoder.getDistance()/2;
+   }
     public ArrayList<Double> getLoggingData() {
     	ArrayList<Double> temp = new ArrayList<Double>();
    	   temp.add(Robot.timer.get());
