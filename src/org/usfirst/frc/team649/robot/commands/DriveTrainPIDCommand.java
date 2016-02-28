@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *
  */
-public class  DriveTrainPIDCommand extends Command {
+public class  DrivetrainPIDCommand extends Command {
 	double distance;
 	double tolerance = 0.25;
 	public PIDController drivePIDLeft,drivePIDRight;
 	
-    public DriveTrainPIDCommand(double distance) {
+    public DrivetrainPIDCommand(double distance) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	drivePIDLeft = Robot.drivetrain.getPIDController();
