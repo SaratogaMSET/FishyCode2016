@@ -20,6 +20,7 @@ public class SetPivotState extends Command {
 	PIDController pid;
 	boolean inDangerOfIntakes, up;
 	double setPoint;
+	int state;
 	double averageMotorSpeed;
 	Timer timer;
 	boolean isStalling; // set to true if current is greater than constant
@@ -34,6 +35,14 @@ public class SetPivotState extends Command {
 		// eg. requires(chassis);
 		pid = Robot.shooterPivot.getPIDController();
 
+		this.state = state;
+		
+		System.out.println("Entered Pivot state");
+	}
+
+	// Called just before this Command runs the first time
+	protected void initialize() {
+		
 		if (state == ShooterPivotSubsystem.PivotPID.PICKUP_STATE) {
 			setPoint = ShooterPivotSubsystem.PivotPID.PICKUP_POSITION;
 		} else if (state == ShooterPivotSubsystem.PivotPID.STORING_STATE) {
@@ -46,11 +55,6 @@ public class SetPivotState extends Command {
 
 		up = setPoint > Robot.shooterPivot.getPosition();
 		
-		System.out.println("Entered Pivot state");
-	}
-
-	// Called just before this Command runs the first time
-	protected void initialize() {
 		timer = new Timer();
 		timer.start();
 		inDangerOfIntakes = false;
@@ -90,6 +94,7 @@ public class SetPivotState extends Command {
 				//what issue are you seeing, not doing down to top of danger zone. or up when above
 				inDangerOfIntakes = true;
 			}
+			
 	
 		}
 		
@@ -112,7 +117,8 @@ public class SetPivotState extends Command {
 		//END
 		return inDangerOfIntakes || up && Robot.shooterPivot.pastMax() || !up
 				&& Robot.shooterPivot.lowerLimitsTriggered() || pid.onTarget() ||
-				timer.get() > 2.5 || isStalling || (timer.get() > 0.8 && Math.abs(averageMotorSpeed) < PivotPID.MIN_PIVOT_SPEED);
+				timer.get() > 2.5 || isStalling || (timer.get() > 0.8 && Math.abs(averageMotorSpeed) < PivotPID.MIN_PIVOT_SPEED)
+				|| Robot.oi.driver.isManualOverride();
 	}
 	
 	// Called once after isFinished returns true

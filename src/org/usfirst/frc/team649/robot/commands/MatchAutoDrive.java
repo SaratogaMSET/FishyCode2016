@@ -46,7 +46,8 @@ public class MatchAutoDrive extends Command {
 	@Override
 	protected boolean isFinished() {
 		// TODO Auto-generated method stub
-		return index >= array.length;
+		return index >= array.length
+				|| Robot.oi.driver.isManualOverride();
 	}
 
 	@Override

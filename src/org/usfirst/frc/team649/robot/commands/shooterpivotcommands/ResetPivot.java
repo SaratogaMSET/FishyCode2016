@@ -22,15 +22,20 @@ public class ResetPivot extends Command {
     	SmartDashboard.putString("ACTIVE COMMAND", "Run Til Hall Effect");
     	Robot.shooterPivot.setPower(ShooterPivotSubsystem.PivotPID.ZEROING_CONSTANT_MOVE_POWER);
     	Robot.shooterPIDIsRunning = true;
-    	if(!Robot.intake.isIntakeDeployed()
+    	if(!Robot.intakeState //TODO change to isIntakeDeployed when sensors are added
     			&& Robot.shooterPivot.getPosition() > ShooterPivotSubsystem.PivotPID.MIDDLE_OF_INTAKE_ZONE) {
     		inDangerOfIntakes = true;
     	}
+    	
+//    	if (Robot.semiAutoIsRunning){ //TODO get rid of this stupid thing when we have actual sensors
+//    		inDangerOfIntakes = false;
+//    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.shooterPivot.lowerLimitsTriggered()|| inDangerOfIntakes;
+        return Robot.shooterPivot.lowerLimitsTriggered()|| inDangerOfIntakes
+        		|| Robot.oi.driver.isManualOverride();
     }
 
     // Called once after isFinished returns true

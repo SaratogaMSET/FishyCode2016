@@ -14,6 +14,7 @@ public class SetIntakePosition extends Command {
     public SetIntakePosition(boolean toDeploy) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
+    	//requires(Robot.intake);
 		deployed = toDeploy;
     }
 
@@ -23,6 +24,7 @@ public class SetIntakePosition extends Command {
     		
     	} else {
     		Robot.intake.setSolenoids(deployed); 
+    		Robot.intakeState = deployed;
     	}
     }
 

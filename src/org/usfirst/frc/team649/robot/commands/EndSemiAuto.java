@@ -5,11 +5,16 @@ import org.usfirst.frc.team649.robot.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class EndSemiAuto extends Command {
-
+	boolean stateToSet;
+	
+	public EndSemiAuto(boolean s) {
+		stateToSet = !s;
+	}
+	
 	@Override
 	protected void initialize() {
 		// TODO Auto-generated method stub
-		Robot.semiAutoIsRunning = false;
+		Robot.semiAutoIsRunning = stateToSet;
 
 	}
 

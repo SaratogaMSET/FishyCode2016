@@ -17,6 +17,10 @@ public class IntakeSubsystem extends Subsystem {
 	public static double INTAKE_SPEED = 1.0;
 	public static double PURGE_SPEED = -1.0;
 	public static double STOP_SPEED = 0;
+	
+	public static double MIN_STALL_TIME = 1.0;
+	public static double CURRENT_THRESHOLD = 15;
+	
 	Victor[] rollers;
 	public DoubleSolenoid intakeSolenoid;
 	//public DoubleSolenoid rightSolenoid;

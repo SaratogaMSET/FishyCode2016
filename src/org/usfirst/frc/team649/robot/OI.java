@@ -98,6 +98,10 @@ public class OI {
 		public boolean isCameraUpPressed(){
 			return driveJoystickHorizontal.getRawButton(10) || driveJoystickVertical.getRawButton(7);
 		}
+		
+		public boolean isManualOverride(){
+			return driveJoystickHorizontal.getRawButton(2) || driveJoystickVertical.getRawButton(2);
+		}
     }
     
     public class Manual {

@@ -1,9 +1,11 @@
 package org.usfirst.frc.team649.robot;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.image.ColorImage;
 import edu.wpi.first.wpilibj.image.NIVisionException;
@@ -87,6 +89,7 @@ public class Robot extends IterativeRobot {
 	public boolean prevStateResetButton;
 	public boolean prevStatePivotMiddle;
 	public boolean prevStateSemiAutoIntake;
+	private DigitalInput hal;
 
 	
 	public void robotInit() {
@@ -121,6 +124,7 @@ public class Robot extends IterativeRobot {
 		prevStatePivotMiddle = false;
 		prevStateSemiAutoIntake = false;
 		
+		hal = new DigitalInput(14);
 	}
 
 	public void disabledInit() {
@@ -159,7 +163,7 @@ public class Robot extends IterativeRobot {
 		shooterPivot.resetEncoders();
 		new SetPivotState(5).start();
 		new DriveForwardRotate(0, 0).start();
-		intakeState = intake.getSolenoids();
+		intakeState = intake.isIntakeDeployed();
 		new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();;
 		
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
@@ -170,6 +174,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
+		SmartDashboard.putBoolean("HAL", hal.get());
 		//new DriveForwardRotate(correctForDeadZone(oi.driver.getForward()), correctForDeadZone(oi.driver.getRotation())).start();
 		new DriveForwardRotate(oi.driver.getForward(), oi.driver.getRotation()).start();
 		
@@ -204,7 +209,7 @@ public class Robot extends IterativeRobot {
 			//shooter.loadBall(DoubleSolenoid.Value.kForward);
 			///	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
 			new SetIntakePosition(!intakeState).start();
-			intakeState = !intakeState;
+			//intakeState = !intakeState; //THIS NOW HAPPENS WITHIN THE COMMAND
 		} else {
 		//	shooter.loadBall(DoubleSolenoid.Value.kReverse);
 
@@ -356,8 +361,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("DT Encoder Left", drivetrain.leftEncoder);
 		SmartDashboard.putData("DT Encoder Right", drivetrain.rightEncoder);
 		
-		SmartDashboar
-		d.putBoolean("Semi Auto Enabled", semiAutoIsRunning);
+		SmartDashboard.putBoolean("Semi Auto Enabled", semiAutoIsRunning);
 		
 		//SmartDashboard.putNumber("Cam Servo Angle", camera.camServo.getAngle());
 		
@@ -386,6 +390,10 @@ public class Robot extends IterativeRobot {
 	public double correctForDeadZone(double joyVal){
 		   return Math.abs(joyVal) >= DEAD_ZONE_TOLERANCE ? joyVal : 0;
    }
+	
+	public boolean isStalling(Victor motor, int pdpPort){
+		return false;
+	}
 	/**
 	 * This function is called periodically during test mode
 	 */

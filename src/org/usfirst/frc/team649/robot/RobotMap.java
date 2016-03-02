@@ -73,6 +73,7 @@ public class RobotMap {
 
 	public static class Intake {
 		public static final int[] MOTOR_PORTS = {9,0,8};
+		public static final int[] PDP_PORTS = {10,5,11};
 		public static final int[] RIGHT_SOLENOID_PORTS = {0,5,2};//{0,1,1,1};
 		//not used on pbot
 		public static final int[] LEFT_SOLENOID_PORTS = {0,5,2};//{0,2,1,2};

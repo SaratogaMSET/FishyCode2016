@@ -41,6 +41,8 @@ public class DrivetrainSubsystem extends Subsystem {
 	public static class PIDConstants {
 		public static final double PID_ABSOLUTE_TOLERANCE = 0.8;
 		public static  double k_P = .2;
+		public static double k_I = 0;
+		public static double k_D = 0;
 	}
 	
 	public static class TurnConstants { 
@@ -140,6 +142,10 @@ public class DrivetrainSubsystem extends Subsystem {
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
+    }
+    
+    public boolean seesAlignmentLine() {
+    	return false;
     }
 }
 

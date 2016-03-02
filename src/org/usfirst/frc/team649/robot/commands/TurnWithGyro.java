@@ -29,7 +29,8 @@ public class TurnWithGyro extends Command {
 	@Override
 	protected boolean isFinished() {
 		// TODO Auto-generated method stub
-		return true; //Math.abs(angle - Robot.drivetrain.gyro.getAngle()) < TurnConstants.TOLERANCE;
+		return false
+				|| Robot.oi.driver.isManualOverride(); //Math.abs(angle - Robot.drivetrain.gyro.getAngle()) < TurnConstants.TOLERANCE;
 	}
 
 	@Override
