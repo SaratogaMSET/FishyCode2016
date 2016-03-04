@@ -1,49 +1,44 @@
 package org.usfirst.frc.team649.robot.commands;
 
-import org.usfirst.frc.team649.robot.OI;
-import org.usfirst.frc.team649.robot.Robot;
-
-import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class DriveTrainPIDCommand extends Command {
-	double PIDDistance;
-	double tolerance = 0.25;
-	public PIDController leftPID,rightPID;
-	
-    public DriveTrainPIDCommand(double distance,PIDController pidLeft,PIDController pidRight) {
-    	leftPID = pidLeft;
-    	rightPID = pidRight;
-    	PIDDistance = distance;
+public class Wait extends Command {
+	Timer time;
+	double target;
+	boolean isDone;
+    public Wait(double timeTarget) {
+    	time = new Timer();
+    	target = timeTarget;
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	leftPID.enable();
-    	rightPID.enable();
-    	leftPID.setSetpoint(PIDDistance);
-    	rightPID.setSetpoint(PIDDistance);
+    	time.reset();
+    	time.start();
+    	isDone = false;
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+    	if(time.get()>=target){
+    		isDone = true;
+    	}
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	return leftPID.onTarget() && rightPID.onTarget() 
-    			|| Robot.oi.driver.isManualOverride();
+        return isDone;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	leftPID.disable();
-    	rightPID.disable();
+    	time.stop();
     }
 
     // Called when another command which requires one or more of the same

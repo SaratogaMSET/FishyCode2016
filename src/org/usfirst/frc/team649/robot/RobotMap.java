@@ -77,7 +77,7 @@ public class RobotMap {
 		public static final int[] RIGHT_SOLENOID_PORTS = {0,5,2};//{0,1,1,1};
 		//not used on pbot
 		public static final int[] LEFT_SOLENOID_PORTS = {0,5,2};//{0,2,1,2};
-		public static final int HAL_EFFECT_INTAKE = 21;
+		public static final int HAL_EFFECT_INTAKE = 18;
 	}
 
 	

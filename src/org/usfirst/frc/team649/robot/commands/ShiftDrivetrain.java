@@ -7,25 +7,22 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class DriveForwardRotate extends Command {
-
-	double forward, rotation;
-    public DriveForwardRotate(double fwd, double rot) {
+public class ShiftDrivetrain extends Command {
+	boolean isHighGear;
+	//true is high, false is low
+    public ShiftDrivetrain(boolean gear) {
         // Use requires() here to declare subsystem dependencies
+    	isHighGear = gear; 
         // eg. requires(chassis);
-    	requires(Robot.drivetrain);
-    	forward = fwd;
-    	rotation = rot;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.drivetrain.driveFwdRot(forward, rotation);
+    	Robot.drivetrain.shift(isHighGear);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-
     }
 
     // Make this return true when this Command no longer needs to run execute()

@@ -26,12 +26,12 @@ public class ShooterSubsystem extends Subsystem {
 	
 	public static boolean UNTIL_IR = true;
 
-	public static final double FLYWHEEL_TARGET_RPM = 1900;
-	public static final double FLYWHEEL_MAX_SHOOT_POWER = 0.4;
-	public static final double FLYWHEEL_MIN_SHOOT_POWER = 0.32;
+	public static final double FLYWHEEL_TARGET_RPM = 4800;
+	public static final double FLYWHEEL_MAX_SHOOT_POWER = 1.0;
+	public static final double FLYWHEEL_MIN_SHOOT_POWER = 0.8;
 	public static final double FLYWHEEL_TOLERANCE = 90;
 	//doubles as purge speed when pivot is down (just inverted of course)
-	public static final double FLYWHEEL_INTAKE_POWER = -0.4;
+	public static final double FLYWHEEL_INTAKE_POWER = -0.5;
 	
 	
 	public ShooterSubsystem() {

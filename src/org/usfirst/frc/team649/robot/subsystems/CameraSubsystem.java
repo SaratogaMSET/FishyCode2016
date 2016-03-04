@@ -38,8 +38,8 @@ public class CameraSubsystem extends Subsystem {
 	
 	public boolean noOpencvErrors;
 	
-	public static double CAM_UP_ANGLE = 150; //TODO
-	public static double CAM_DOWN_ANGLE = 60;
+	public static double CAM_UP_ANGLE = 0; //TODO
+	public static double CAM_DOWN_ANGLE = 90;
 	
 	public static double WIDTH_TARGET = 18.5; //in
 	public static double STANDARD_VIEW_ANGLE = 0.454885;//0.9424778; //radians, for an Axis Camera 206 /////...54 degrees

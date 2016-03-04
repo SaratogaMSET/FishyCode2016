@@ -9,22 +9,23 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class SetIntakePosition extends Command {
 
-	boolean deployed;
+	boolean deploy;
 	
     public SetIntakePosition(boolean toDeploy) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	//requires(Robot.intake);
-		deployed = toDeploy;
+		deploy = toDeploy;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	if(deployed && Robot.shooterPivot.isInIntakeZone()) {
-    		
-    	} else {
-    		Robot.intake.setSolenoids(deployed); 
-    		Robot.intakeState = deployed;
+    	if (!deploy && Robot.shooterPivot.isInIntakeZone()){
+    		//don't execute anything if shooter is in the way and we are trying to move up
+    	}
+    	else{
+    		Robot.intake.setSolenoids(deploy); 
+    		Robot.intakeState = deploy;
     	}
     }
 

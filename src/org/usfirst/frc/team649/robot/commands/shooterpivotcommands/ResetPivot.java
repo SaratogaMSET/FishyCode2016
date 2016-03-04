@@ -42,7 +42,7 @@ public class ResetPivot extends Command {
     protected void end() {
     	//Robot.shooterPivot.resetCounter();
     	if(!inDangerOfIntakes) {
-    	Robot.shooterPivot.resetEncoders();
+    		Robot.shooterPivot.resetEncoders();
     	}
     	Robot.shooterPivot.setPower(0);
     	Robot.shooterPIDIsRunning = false;

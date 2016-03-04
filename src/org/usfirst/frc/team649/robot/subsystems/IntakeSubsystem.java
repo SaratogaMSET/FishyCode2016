@@ -2,6 +2,7 @@ package org.usfirst.frc.team649.robot.subsystems;
 
 import org.usfirst.frc.team649.robot.RobotMap;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -24,6 +25,7 @@ public class IntakeSubsystem extends Subsystem {
 	Victor[] rollers;
 	public DoubleSolenoid intakeSolenoid;
 	//public DoubleSolenoid rightSolenoid;
+	public DigitalInput hal;
 
 	public IntakeSubsystem() {
 		rollers = new Victor[3];
@@ -34,6 +36,8 @@ public class IntakeSubsystem extends Subsystem {
 		for (int i = 0; i < rollers.length; i++) {
 			rollers[i] = new Victor(RobotMap.Intake.MOTOR_PORTS[i]);
 		}
+		
+		hal = new DigitalInput(RobotMap.Intake.HAL_EFFECT_INTAKE);
 	}
 
 	public void setFwdRolSpd(double speed) {
@@ -66,7 +70,7 @@ public class IntakeSubsystem extends Subsystem {
 
 	public boolean isIntakeDeployed() {
 		//TODO, update when sol's for intake are actually plugged in
-		return getSolenoids();
+		return !hal.get();
 	}
 	
 	protected void initDefaultCommand() {

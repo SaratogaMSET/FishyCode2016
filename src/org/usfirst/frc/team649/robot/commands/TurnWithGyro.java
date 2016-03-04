@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class TurnWithGyro extends Command {
 	public double angle;
+	public double setpoint;
 	//positive is clockwise
 	public TurnWithGyro(double angle) {
 		// TODO Auto-generated constructor stub
@@ -16,20 +17,20 @@ public class TurnWithGyro extends Command {
 	@Override
 	protected void initialize() {
 		// TODO Auto-generated method stub
-		
+		setpoint = Robot.drivetrain.gyro.getAngle() + angle;
 	}
 
 	@Override
 	protected void execute() {
 		// TODO Auto-generated method stub
-		double error = 0;//angle - Robot.drivetrain.gyro.getAngle();
-		Robot.drivetrain.rawDrive(error * TurnConstants.P_VAL, -error * TurnConstants.P_VAL);
+		double error = angle - Robot.drivetrain.gyro.getAngle();
+		Robot.drivetrain.rawDrive(-error * TurnConstants.P_VAL, error * TurnConstants.P_VAL);
 	}
 
 	@Override
 	protected boolean isFinished() {
 		// TODO Auto-generated method stub
-		return false
+		return Math.abs(angle - Robot.drivetrain.gyro.getAngle()) < TurnConstants.TOLERANCE
 				|| Robot.oi.driver.isManualOverride(); //Math.abs(angle - Robot.drivetrain.gyro.getAngle()) < TurnConstants.TOLERANCE;
 	}
 
