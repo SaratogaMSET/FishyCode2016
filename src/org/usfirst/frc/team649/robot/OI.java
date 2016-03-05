@@ -27,9 +27,13 @@ public class OI {
 	
     public class Operator {
 
-		public boolean toggleIntake() {
+		public boolean intakeUp() {
 			// TODO Auto-generated method stub
-			return operatorJoystick.getRawButton(1);
+			return operatorJoystick.getRawButton(8);
+		}
+		
+		public boolean intakeDown() {
+			return operatorJoystick.getRawButton(7);
 		}
 		
 		public boolean runIntake() {
