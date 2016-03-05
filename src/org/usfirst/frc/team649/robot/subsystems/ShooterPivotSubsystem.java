@@ -56,7 +56,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		public static final int CURRENT_STATE = 5;
 		
 
-		public static final double PICKUP_POSITION = 0;
+		public static final double PICKUP_POSITION = 1.0;
 		public static final double STORE_POSITION = 7.5;// temp value
 		public static final double CLOSE_SHOOT_POSITION = 47.0;//62.2;
 		public static final double FAR_SHOOT_POSITION = 62.2;//62.2;
@@ -262,5 +262,10 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	public void initDefaultCommand() {
 		// Set the default command for a subsystem here.
 		// setDefaultCommand(new MySpecialCommand());
+	}
+
+	public boolean isReadyToPickUp() {
+		// TODO Auto-generated method stub
+		return getPosition() <= PivotPID.PICKUP_POSITION;
 	}
 }
