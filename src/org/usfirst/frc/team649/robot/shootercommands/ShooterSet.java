@@ -4,6 +4,7 @@ import org.usfirst.frc.team649.robot.Robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShooterSet extends Command {
 	
@@ -23,6 +24,7 @@ public class ShooterSet extends Command {
 	@Override
 	protected void execute() {
 		// TODO Auto-generated method stub
+		SmartDashboard.putString("SHOOTER Current Command", this.getName());
 	}
 
 	@Override

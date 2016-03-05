@@ -24,6 +24,7 @@ public class SetPivotState extends Command {
 	double averageMotorSpeed;
 	Timer timer;
 	boolean isStalling; // set to true if current is greater than constant
+	//int oldState;
 
 	// in ShooterPivot SubSystem and if not moving by some amount (constant in
 	// shooter subsystem)
@@ -42,13 +43,24 @@ public class SetPivotState extends Command {
 
 	// Called just before this Command runs the first time
 	protected void initialize() {
+		//oldState = Robot.shooterPivot.currentPivotState;
+		Robot.shooterPivot.currentPivotState = state;
 		
 		if (state == ShooterPivotSubsystem.PivotPID.PICKUP_STATE) {
 			setPoint = ShooterPivotSubsystem.PivotPID.PICKUP_POSITION;
+			
 		} else if (state == ShooterPivotSubsystem.PivotPID.STORING_STATE) {
 			setPoint = ShooterPivotSubsystem.PivotPID.STORE_POSITION;
-		} else if (state == ShooterPivotSubsystem.PivotPID.SHOOT_STATE) {
-			setPoint = ShooterPivotSubsystem.PivotPID.SHOOT_POSITION;
+			
+		} else if (state == ShooterPivotSubsystem.PivotPID.CLOSE_SHOOT_STATE) {
+			setPoint = ShooterPivotSubsystem.PivotPID.CLOSE_SHOOT_POSITION;
+			
+		} else if (state == ShooterPivotSubsystem.PivotPID.FAR_SHOOT_STATE) {
+			setPoint = ShooterPivotSubsystem.PivotPID.FAR_SHOOT_POSITION;
+			
+		} else if (state == ShooterPivotSubsystem.PivotPID.BACK_SHOOT_STATE) {
+			setPoint = ShooterPivotSubsystem.PivotPID.BACK_SHOOT_POSITION;
+			
 		} else {
 			setPoint = Robot.shooterPivot.getPosition();
 		}
@@ -83,7 +95,6 @@ public class SetPivotState extends Command {
 
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
-		SmartDashboard.putString("Current Command", "Set Pivot");
 		Robot.shooterPIDIsRunning = true;
 		if (!Robot.intake.isIntakeDeployed()) {
 
@@ -103,7 +114,7 @@ public class SetPivotState extends Command {
 			//isStalling = true;
 		}
 		
-		System.out.println("Entered Pivot execute");
+		SmartDashboard.putString("SHOOTERPIVOT Current Command", this.getName());
 		
 		averageMotorSpeed = (Math.abs(Robot.shooterPivot.motorLeft.get()) + Math.abs(Robot.shooterPivot.motorRight.get())) / 2.0;
 	}

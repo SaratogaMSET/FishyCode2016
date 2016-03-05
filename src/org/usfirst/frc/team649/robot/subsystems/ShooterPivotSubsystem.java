@@ -28,6 +28,8 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	public DigitalInput resetBumperLeft;
 	public DigitalInput resetBumperRight;
 	public DoubleSolenoid brake;//, rightSol;
+	
+	public int currentPivotState;
 
 	public static class PivotPID {
 
@@ -44,14 +46,23 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		public static final double MAX_MOTOR_DOWN_POWER = -0.3;
 		public static final double MIN_PIVOT_SPEED = 0;
 		public static final double ZEROING_CONSTANT_MOVE_POWER = -0.2;
-
+		
+		
 		public static final int PICKUP_STATE = 0;
 		public static final int STORING_STATE = 1;
-		public static final int SHOOT_STATE = 2;
+		public static final int CLOSE_SHOOT_STATE = 2;
+		public static final int FAR_SHOOT_STATE = 3;
+		public static final int BACK_SHOOT_STATE = 4;
+		public static final int CURRENT_STATE = 5;
+		
 
 		public static final double PICKUP_POSITION = 0;
 		public static final double STORE_POSITION = 7.5;// temp value
-		public static final double SHOOT_POSITION = 47.0;//62.2;
+		public static final double CLOSE_SHOOT_POSITION = 47.0;//62.2;
+		public static final double FAR_SHOOT_POSITION = 62.2;//62.2;
+		public static final double BACK_SHOOT_POSITION = 115.0;//62.2;
+		
+		public static final double REGION_ERROR = 2.0; //degrees
 
 		public static final double BOTTOM_OF_INTAKE_ZONE = 8.5;
 		public static final double TOP_OF_INTAKE_ZONE = 60;
@@ -108,6 +119,9 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		pid.setOutputRange(PivotPID.MAX_MOTOR_DOWN_POWER,
 				PivotPID.max_motor_up_power);
 		pid.setAbsoluteTolerance(PivotPID.ABS_TOLERANCE);
+		
+		
+		currentPivotState = -1; //always at beginning of match
 	}
 
 	// //////// LOWER LIMITS
@@ -134,6 +148,10 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		return intermediateHalEffect.get() > 0;
 	}
 
+	public int getPivotState(){
+		return currentPivotState;
+	}
+	
 	// ///////////ENCODERS
 	public boolean pastMax() {
 		return encoderLeft.getDistance() > PivotPID.MAX_ENCODER_VAL;
@@ -166,6 +184,45 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		double dist1 = encoderLeft.getDistance();
 		double dist2 = encoderRight.getDistance();
 		return (dist1 + dist2) / 2;
+	}
+	
+	//there are 5 regions: RESET, STORE, CLOSE_SHOT, FAR_SHOT, and BACK_SHOT
+	//this function returns the closest NEXT state to go to based on where we are (with tolerance)
+	public int getClosestNextSetpointState(boolean up){
+		double pos = getPosition();
+		//if traveling up
+		if (up){ 
+			if (pos < PivotPID.STORE_POSITION - PivotPID.REGION_ERROR){ //IN THE LOWEST REGION, so go UP to store
+				return PivotPID.STORING_STATE;
+			}
+			else if (pos < PivotPID.CLOSE_SHOOT_POSITION - PivotPID.REGION_ERROR){ //IN THE REGION OF STORE, so go UP to CLOSE SHOOT
+				return PivotPID.CLOSE_SHOOT_STATE;
+			}
+			else if (pos < PivotPID.FAR_SHOOT_POSITION - PivotPID.REGION_ERROR){ //IN THE REGION OF CLOSE SHOOT, so go UP to FAR SHOOT
+				return PivotPID.FAR_SHOOT_STATE;
+			}
+			else{ //IN ANY OTHER CASE, JUST GO UP TO BACK SHOOT
+				return PivotPID.BACK_SHOOT_STATE;
+			}
+		}
+		//if traveling down
+		else{ 
+			if (pos > PivotPID.BACK_SHOOT_POSITION + PivotPID.REGION_ERROR){ //IN THE LOWEST REGION, so go UP to store
+				return PivotPID.BACK_SHOOT_STATE;
+			}
+			else if (pos > PivotPID.FAR_SHOOT_POSITION + PivotPID.REGION_ERROR){ //IN THE REGION OF STORE, so go UP to CLOSE SHOOT
+				return PivotPID.FAR_SHOOT_STATE;
+			}
+			else if (pos > PivotPID.CLOSE_SHOOT_POSITION + PivotPID.REGION_ERROR){ //IN THE REGION OF CLOSE SHOOT, so go UP to FAR SHOOT
+				return PivotPID.CLOSE_SHOOT_STATE;
+			}
+			else if (pos > PivotPID.STORE_POSITION + PivotPID.REGION_ERROR){ //IN THE LOWEST REGION, so go UP to store
+				return PivotPID.STORING_STATE;
+			}
+			else{ //IN ANY OTHER CASE, JUST GO RESET
+				return PivotPID.PICKUP_STATE;
+			}
+		}
 	}
 
 	protected double returnPIDInput() {

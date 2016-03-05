@@ -5,6 +5,7 @@ import org.usfirst.frc.team649.robot.subsystems.drivetrain.AutonomousSequences;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MatchAutoDrive extends Command {
 
@@ -41,6 +42,10 @@ public class MatchAutoDrive extends Command {
 			System.out.println("ERROR ERROR ERROR ERROR ERROR ERROR: " + e.getMessage());
 		}
 		index++;
+		
+		
+
+    	SmartDashboard.putString("DT Current Command", this.getName());
 	}
 
 	@Override

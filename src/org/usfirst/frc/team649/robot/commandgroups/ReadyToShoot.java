@@ -14,7 +14,7 @@ public class ReadyToShoot extends CommandGroup {
     
     public  ReadyToShoot() {
     	addSequential(new SetIntakePosition(true));
-    	addParallel(new SetPivotState(PivotPID.SHOOT_STATE));
+    	addParallel(new SetPivotState(PivotPID.FAR_SHOOT_STATE));
     	addSequential(new BangBangFlywheels(true));
     }
     

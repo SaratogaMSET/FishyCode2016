@@ -22,6 +22,8 @@ public class IntakeSubsystem extends Subsystem {
 	public static double MIN_STALL_TIME = 1.0;
 	public static double CURRENT_THRESHOLD = 15;
 	
+	public static boolean UP = false;
+	
 	Victor[] rollers;
 	public DoubleSolenoid intakeSolenoid;
 	//public DoubleSolenoid rightSolenoid;

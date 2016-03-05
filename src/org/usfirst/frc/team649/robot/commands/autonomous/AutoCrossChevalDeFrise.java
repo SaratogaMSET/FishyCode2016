@@ -6,7 +6,6 @@ import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
 import org.usfirst.frc.team649.robot.commands.ResetDTEncoders;
 import org.usfirst.frc.team649.robot.commands.ShiftDrivetrain;
 import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
-import org.usfirst.frc.team649.robot.commands.Wait;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
 import org.usfirst.frc.team649.robot.shootercommands.SetFlywheels;
@@ -35,7 +34,7 @@ public class AutoCrossChevalDeFrise extends CommandGroup {
 		addSequential(new DrivetrainPIDCommand(57));
 		*/
 		addSequential(new TurnWithGyro(-21.5));
-		addSequential(new SetPivotState(ShooterPivotSubsystem.PivotPID.SHOOT_STATE));
+		addSequential(new SetPivotState(ShooterPivotSubsystem.PivotPID.FAR_SHOOT_STATE));
 		addSequential(new SetFlywheels(1.0, -1.0));
 		addSequential(new WaitCommand(2.5));
 		addSequential(new ShootTheShooter());

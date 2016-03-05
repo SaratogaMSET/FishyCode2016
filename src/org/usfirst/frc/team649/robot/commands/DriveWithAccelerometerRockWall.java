@@ -4,6 +4,7 @@ import org.usfirst.frc.team649.robot.Robot;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 	
 /**
  *
@@ -44,6 +45,8 @@ public class DriveWithAccelerometerRockWall extends Command {
     			distanceIsEnough = true;
     		}
     	}
+
+    	SmartDashboard.putString("DT Current Command", this.getName());
     	
     }
 

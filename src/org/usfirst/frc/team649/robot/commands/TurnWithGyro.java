@@ -4,6 +4,7 @@ import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.TurnConstants;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TurnWithGyro extends Command {
 	public double angle;
@@ -25,6 +26,8 @@ public class TurnWithGyro extends Command {
 		// TODO Auto-generated method stub
 		double error = angle - Robot.drivetrain.gyro.getAngle();
 		Robot.drivetrain.rawDrive(-error * TurnConstants.P_VAL, error * TurnConstants.P_VAL);
+
+    	SmartDashboard.putString("DT Current Command", this.getName());
 	}
 
 	@Override

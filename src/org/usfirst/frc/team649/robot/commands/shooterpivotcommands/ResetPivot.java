@@ -2,6 +2,7 @@ package org.usfirst.frc.team649.robot.commands.shooterpivotcommands;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,11 +16,12 @@ public class ResetPivot extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.shooterPivot.currentPivotState = PivotPID.PICKUP_STATE;
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	SmartDashboard.putString("ACTIVE COMMAND", "Run Til Hall Effect");
+    	
     	Robot.shooterPivot.setPower(ShooterPivotSubsystem.PivotPID.ZEROING_CONSTANT_MOVE_POWER);
     	Robot.shooterPIDIsRunning = true;
     	if(!Robot.intakeState //TODO change to isIntakeDeployed when sensors are added
@@ -30,6 +32,8 @@ public class ResetPivot extends Command {
 //    	if (Robot.semiAutoIsRunning){ //TODO get rid of this stupid thing when we have actual sensors
 //    		inDangerOfIntakes = false;
 //    	}
+    	
+    	SmartDashboard.putString("SHOOTERPIVOT Current Command", this.getName());
     }
 
     // Make this return true when this Command no longer needs to run execute()

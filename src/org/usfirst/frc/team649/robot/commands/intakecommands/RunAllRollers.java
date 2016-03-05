@@ -8,6 +8,7 @@ import org.usfirst.frc.team649.robot.subsystems.ShooterSubsystem;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -79,6 +80,9 @@ public class RunAllRollers extends Command {
 			intakeTimer.reset();
 			prevStateTooMuchCurrent = false;
 		}
+    	
+
+    	SmartDashboard.putString("INTAKE Current Command", this.getName());
     }
 
     // Make this return true when this Command no longer needs to run execute()
