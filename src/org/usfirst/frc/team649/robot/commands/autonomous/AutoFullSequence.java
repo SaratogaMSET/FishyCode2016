@@ -47,7 +47,7 @@ public class AutoFullSequence extends CommandGroup {
 				break;
 				
 		}
-		addSequential(new SetPivotState(ShooterPivotSubsystem.PivotPID.SHOOT_STATE));
+		addSequential(new SetPivotState(ShooterPivotSubsystem.PivotPID.FAR_SHOOT_STATE));
 		//addSequential(new RampUpAndShoot()); //TODO create bang bang
 	}
 	

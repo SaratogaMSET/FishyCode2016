@@ -2,6 +2,7 @@ package org.usfirst.frc.team649.robot.commands.shooterpivotcommands;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,6 +16,7 @@ public class ResetPivot extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.shooterPivot.currentPivotState = PivotPID.PICKUP_STATE;
     }
 
     // Called repeatedly when this Command is scheduled to run

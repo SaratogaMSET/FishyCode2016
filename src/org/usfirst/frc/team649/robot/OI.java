@@ -27,9 +27,13 @@ public class OI {
 	
     public class Operator {
 
-		public boolean toggleIntake() {
+		public boolean intakeUp() {
 			// TODO Auto-generated method stub
-			return operatorJoystick.getRawButton(1);
+			return operatorJoystick.getRawButton(7);
+		}
+		
+		public boolean intakeDeploy(){
+			return operatorJoystick.getRawButton(8);
 		}
 		
 		public boolean runIntake() {
@@ -40,35 +44,38 @@ public class OI {
 			return operatorJoystick.getRawButton(11);
 		}
 		
-		public double shooterPower() {
-			return operatorJoystick.getY();
-		}
+//		public double shooterPower() {
+//			return operatorJoystick.getY();
+//		}
 		public boolean shoot(){
-			return operatorJoystick.getRawButton(8);
+			return operatorJoystick.getRawButton(1);
 		}
 		public boolean loadBallFlywheels()
 		{
-			return operatorJoystick.getRawButton(4);
+			return operatorJoystick.getRawButton(5);
 		}
 		public boolean shootBallFlywheels()
 		{
+			return operatorJoystick.getRawButton(2);
+		}
+		public boolean pivotMoveUp()
+		{
 			return operatorJoystick.getRawButton(6);
 		}
-		public boolean pivotShootState()
+		public boolean pivotMoveDown()
 		{
-			return operatorJoystick.getRawButton(5);
+			return operatorJoystick.getRawButton(4);
 		}
-		public boolean resetPivot()
-		{
-			return operatorJoystick.getRawButton(3);
-		}
-		public boolean pivotStoreState()
-		{
+		public boolean pivotResetSafety(){
 			return operatorJoystick.getRawButton(9);
 		}
+//		public boolean pivotStoreState()
+//		{
+//			return operatorJoystick.getRawButton(9);
+//		}
 		public boolean isManualPivotRest()
 		{
-			return operatorJoystick.getRawButton(2);
+			return operatorJoystick.getRawButton(3);
 		}
 		public boolean isSemiAutonomousIntakePressed()
 		{

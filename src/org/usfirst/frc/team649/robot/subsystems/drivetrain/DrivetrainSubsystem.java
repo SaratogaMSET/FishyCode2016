@@ -84,6 +84,16 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		//ROCKWALL CONSTANTS
 		public static final double DISTANCE_OFF_ROCKWALL = 18;
 		
+		
+		//MOAT CONSTANTS
+		public static final double DISTANCE_START_TO_RAMP_MOAT = 18;
+		public static final double DISTANCE_RAMP_TO_END_MOAT = 18;
+		
+		//PORTCULLIS CONSTANTS
+		
+		public static final double ACCEL_CHANGE_THRESHOLD = 0;
+		public static final double DISTANCE_START_TO_RAMP_PORTCULLIS = 44;
+		public static final double DISTANCE_RAMP_TO_END_PORTCULLIS = 21;
 	}
 	
 	

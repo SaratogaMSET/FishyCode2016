@@ -84,15 +84,14 @@ public class Robot extends IterativeRobot {
 	public static boolean flywheelShootRunning = false;
 	public static boolean semiAutoIsRunning = false;
 	//prevStates
-	public boolean prevStateOpTrigger;
+	public boolean prevStateIntakeUp;
+	public boolean prevStateIntakeDeployed;
 	public boolean prevStateDriveShifter;
-	public boolean tempPrevState;
 	public boolean prevStateShootButton;
 	
 	public boolean prevStateMotorPowerIs0;
 	public boolean prevStatePivotUp;
-	public boolean prevStateResetButton;
-	public boolean prevStatePivotMiddle;
+	public boolean prevStatePivotDown;
 
 	public boolean prevStateSemiAutoIntake;
 
@@ -121,14 +120,13 @@ public class Robot extends IterativeRobot {
 		pivotTimer = new Timer();
 		pdp = new PowerDistributionPanel();
 		
-		prevStateOpTrigger = false;
+		prevStateIntakeUp = false;
+		prevStateIntakeDeployed = false;
 		prevStateDriveShifter = false;
-		tempPrevState = false;
 		prevStateMotorPowerIs0 = true;
 		prevStateShootButton = false;
 		prevStatePivotUp = false;
-		prevStateResetButton = false;
-		prevStatePivotMiddle = false;
+		prevStatePivotDown = false;
 		prevStateSemiAutoIntake = false;
 		
 	}
@@ -165,7 +163,9 @@ public class Robot extends IterativeRobot {
 		//new ResetPivot().start();;
 		//new AutoCrossChevalDeFrise().start();;
 		
-		new BangBangFlywheels(false).start();;
+		new BangBangFlywheels(false).start();
+		
+		shooterPivot.currentPivotState = -1;
 	}
 
 	public void autonomousPeriodic() {
@@ -234,7 +234,8 @@ public class Robot extends IterativeRobot {
 		
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
 		//camera.vcap.open("http://axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
-		
+
+		shooterPivot.currentPivotState = -1;
 	}
 
 	public void teleopPeriodic() {
@@ -266,22 +267,31 @@ public class Robot extends IterativeRobot {
 //			}
 //		}
 		
-		if (readyToShoot && oi.operator.shoot() && !prevStateShootButton){
+		if (readyToShoot && oi.operator.shootBallFlywheels() && oi.operator.shoot() && !prevStateShootButton){
 			new ShootTheShooter().start();
 		}
 		
 		//INTAKE ----- toggle
-		if (oi.operator.toggleIntake() && !prevStateOpTrigger) {
-			//shooter.loadBall(DoubleSolenoid.Value.kForward);
-			///	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
-			new SetIntakePosition(!intakeState).start();
-			//intakeState = !intakeState; //THIS NOW HAPPENS WITHIN THE COMMAND
-		} else {
-		//	shooter.loadBall(DoubleSolenoid.Value.kReverse);
-
+//		if (oi.operator.toggleIntake() && !prevStateOpTrigger) {
+//			//shooter.loadBall(DoubleSolenoid.Value.kForward);
+//			///	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
+//			new SetIntakePosition(!intakeState).start();
+//			//intakeState = !intakeState; //THIS NOW HAPPENS WITHIN THE COMMAND
+//		} else {
+//		//	shooter.loadBall(DoubleSolenoid.Value.kReverse);
+//
+//		}
+		
+		//INTAKE ------2 button
+		if (oi.operator.intakeUp() && !prevStateIntakeUp){
+			new SetIntakePosition(IntakeSubsystem.UP).start();
+		}
+		if (oi.operator.intakeDeploy() && !prevStateIntakeDeployed){
+			new SetIntakePosition(!IntakeSubsystem.UP).start();
 		}
 		
 		//CAMERA SERVO
+		
 		
 		//move up
 		if (oi.driver.isCameraUpPressed()){
@@ -300,14 +310,35 @@ public class Robot extends IterativeRobot {
 		
 		
 		//pivot state
-		if (oi.operator.pivotShootState() && !prevStatePivotUp){
-			new SetPivotState(ShooterPivotSubsystem.PivotPID.SHOOT_STATE).start();
+//		if (oi.operator.pivotShootState() && !prevStatePivotUp){
+//			new SetPivotState(ShooterPivotSubsystem.PivotPID.FAR_SHOOT_STATE).start();
+//		}
+//		else if(oi.operator.resetPivot() && !prevStateResetButton) {
+//			 new ResetPivot().start();
+//		}
+//		else if (oi.operator.pivotStoreState() && !prevStatePivotMiddle){
+//			new SetPivotState(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
+//		}
+		
+		//PIVOT
+		
+		//if going up
+		if (oi.operator.pivotMoveUp() && !prevStatePivotUp){
+			int nextRegion = shooterPivot.getClosestNextSetpointState(true);
+			new SetPivotState(nextRegion).start();
 		}
-		else if(oi.operator.resetPivot() && !prevStateResetButton) {
-			 new ResetPivot().start();
-		}
-		else if (oi.operator.pivotStoreState() && !prevStatePivotMiddle){
-			new SetPivotState(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
+		//if going down
+		else if(oi.operator.pivotMoveDown() && !prevStatePivotDown) {
+			int nextRegion = shooterPivot.getClosestNextSetpointState(false);
+			if (oi.operator.pivotResetSafety() || nextRegion == ShooterPivotSubsystem.PivotPID.PICKUP_STATE){
+				//if we are trying to reset (with safety button) or if the next state is the reset state
+				new ResetPivot().start();
+			}
+			else{
+				//if going down to any other region, use the regular pivot command
+				new SetPivotState(nextRegion).start();
+			}
+			
 		}
 		
 		
@@ -378,13 +409,14 @@ public class Robot extends IterativeRobot {
 		
 		
 		//PREV STATES
-		prevStateOpTrigger = oi.operator.toggleIntake();
+		prevStateIntakeUp = oi.operator.intakeUp();
+		prevStateIntakeDeployed = oi.operator.intakeDeploy();
 		prevStateDriveShifter = oi.driver.isDrivetrainLowGearButtonPressed();
-		tempPrevState = oi.operator.loadBallFlywheels();
 		prevStateShootButton = oi.operator.shoot();
-		prevStatePivotUp = oi.operator.pivotShootState();
-		prevStatePivotMiddle = oi.operator.pivotStoreState();
-		prevStateResetButton = oi.operator.resetPivot();
+		
+		prevStatePivotUp = oi.operator.pivotMoveUp();
+		prevStatePivotDown = oi.operator.pivotMoveDown();
+		
 		prevStateSemiAutoIntake = oi.operator.isSemiAutonomousIntakePressed();
 		
 		
