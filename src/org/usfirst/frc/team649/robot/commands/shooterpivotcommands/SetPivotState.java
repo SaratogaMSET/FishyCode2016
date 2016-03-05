@@ -52,11 +52,11 @@ public class SetPivotState extends Command {
 		} else if (state == ShooterPivotSubsystem.PivotPID.STORING_STATE) {
 			setPoint = ShooterPivotSubsystem.PivotPID.STORE_POSITION;
 			
-		} else if (state == ShooterPivotSubsystem.PivotPID.CLOSE_SHOOT_STATE) {
-			setPoint = ShooterPivotSubsystem.PivotPID.CLOSE_SHOOT_POSITION;
-			
 		} else if (state == ShooterPivotSubsystem.PivotPID.FAR_SHOOT_STATE) {
 			setPoint = ShooterPivotSubsystem.PivotPID.FAR_SHOOT_POSITION;
+			
+		} else if (state == ShooterPivotSubsystem.PivotPID.CLOSE_SHOOT_STATE) {
+			setPoint = ShooterPivotSubsystem.PivotPID.CLOSE_SHOOT_POSITION;
 			
 		} else if (state == ShooterPivotSubsystem.PivotPID.BACK_SHOOT_STATE) {
 			setPoint = ShooterPivotSubsystem.PivotPID.BACK_SHOOT_POSITION;

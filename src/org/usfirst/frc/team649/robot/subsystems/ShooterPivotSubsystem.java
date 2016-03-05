@@ -50,16 +50,16 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		
 		public static final int PICKUP_STATE = 0;
 		public static final int STORING_STATE = 1;
-		public static final int CLOSE_SHOOT_STATE = 2;
-		public static final int FAR_SHOOT_STATE = 3;
+		public static final int FAR_SHOOT_STATE = 2;
+		public static final int CLOSE_SHOOT_STATE = 3;
 		public static final int BACK_SHOOT_STATE = 4;
 		public static final int CURRENT_STATE = 5;
 		
 
 		public static final double PICKUP_POSITION = 0;
 		public static final double STORE_POSITION = 7.5;// temp value
-		public static final double CLOSE_SHOOT_POSITION = 47.0;//62.2;
-		public static final double FAR_SHOOT_POSITION = 62.2;//62.2;
+		public static final double FAR_SHOOT_POSITION = 47.0;//62.2;
+		public static final double CLOSE_SHOOT_POSITION = 62.2;//62.2;
 		public static final double BACK_SHOOT_POSITION = 115.0;//62.2;
 		
 		public static final double REGION_ERROR = 2.0; //degrees
@@ -195,11 +195,11 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 			if (pos < PivotPID.STORE_POSITION - PivotPID.REGION_ERROR){ //IN THE LOWEST REGION, so go UP to store
 				return PivotPID.STORING_STATE;
 			}
-			else if (pos < PivotPID.CLOSE_SHOOT_POSITION - PivotPID.REGION_ERROR){ //IN THE REGION OF STORE, so go UP to CLOSE SHOOT
-				return PivotPID.CLOSE_SHOOT_STATE;
-			}
-			else if (pos < PivotPID.FAR_SHOOT_POSITION - PivotPID.REGION_ERROR){ //IN THE REGION OF CLOSE SHOOT, so go UP to FAR SHOOT
+			else if (pos < PivotPID.FAR_SHOOT_POSITION - PivotPID.REGION_ERROR){ //IN THE REGION OF STORE, so go UP to CLOSE SHOOT
 				return PivotPID.FAR_SHOOT_STATE;
+			}
+			else if (pos < PivotPID.CLOSE_SHOOT_POSITION - PivotPID.REGION_ERROR){ //IN THE REGION OF CLOSE SHOOT, so go UP to FAR SHOOT
+				return PivotPID.CLOSE_SHOOT_STATE;
 			}
 			else{ //IN ANY OTHER CASE, JUST GO UP TO BACK SHOOT
 				return PivotPID.BACK_SHOOT_STATE;
@@ -210,11 +210,11 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 			if (pos > PivotPID.BACK_SHOOT_POSITION + PivotPID.REGION_ERROR){ //IN THE LOWEST REGION, so go UP to store
 				return PivotPID.BACK_SHOOT_STATE;
 			}
-			else if (pos > PivotPID.FAR_SHOOT_POSITION + PivotPID.REGION_ERROR){ //IN THE REGION OF STORE, so go UP to CLOSE SHOOT
-				return PivotPID.FAR_SHOOT_STATE;
-			}
-			else if (pos > PivotPID.CLOSE_SHOOT_POSITION + PivotPID.REGION_ERROR){ //IN THE REGION OF CLOSE SHOOT, so go UP to FAR SHOOT
+			else if (pos > PivotPID.CLOSE_SHOOT_POSITION + PivotPID.REGION_ERROR){ //IN THE REGION OF STORE, so go UP to CLOSE SHOOT
 				return PivotPID.CLOSE_SHOOT_STATE;
+			}
+			else if (pos > PivotPID.FAR_SHOOT_POSITION + PivotPID.REGION_ERROR){ //IN THE REGION OF CLOSE SHOOT, so go UP to FAR SHOOT
+				return PivotPID.FAR_SHOOT_STATE;
 			}
 			else if (pos > PivotPID.STORE_POSITION + PivotPID.REGION_ERROR){ //IN THE LOWEST REGION, so go UP to store
 				return PivotPID.STORING_STATE;

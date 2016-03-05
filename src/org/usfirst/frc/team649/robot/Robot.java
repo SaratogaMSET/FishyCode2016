@@ -152,7 +152,7 @@ public class Robot extends IterativeRobot {
 		drivetrain.resetEncoders();
 		drivetrain.gyro.reset();
 		shooterPivot.resetEncoders();
-		new SetPivotState(5).start();
+		new SetPivotState(ShooterPivotSubsystem.PivotPID.CURRENT_STATE).start();
 		new DriveForwardRotate(0, 0).start();
 		intakeState = intake.isIntakeDeployed();
 		currentGear = drivetrain.driveSol.get() == Value.kForward;
@@ -225,7 +225,7 @@ public class Robot extends IterativeRobot {
 		drivetrain.resetEncoders();
 		drivetrain.gyro.reset();
 		shooterPivot.resetEncoders();
-		new SetPivotState(5).start();
+		new SetPivotState(ShooterPivotSubsystem.PivotPID.CURRENT_STATE).start();
 		new DriveForwardRotate(0, 0).start();
 		intakeState = intake.isIntakeDeployed();
 		currentGear = drivetrain.driveSol.get() == Value.kForward;
