@@ -25,6 +25,7 @@ import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
 import org.usfirst.frc.team649.robot.commandgroups.SemiAutoLoadBall;
 import org.usfirst.frc.team649.robot.commandgroups.ShootTheShooter;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
+import org.usfirst.frc.team649.robot.commands.EndSemiAuto;
 import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.SetCameraServo;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossChevalDeFrise;
@@ -360,11 +361,12 @@ public class Robot extends IterativeRobot {
 				allIntakeRunning = true;
 			} else if (oi.operator.runIntake()) {
 				//new SetIntakeSpeed(IntakeSubsystem.FORWARD_ROLLER_INTAKE_SPEED, IntakeSubsystem.CENTERING_MODULE_INTAKE_SPEED).start();
-				new RunAllRollers(ShooterSubsystem.IN, !ShooterSubsystem.UNTIL_IR).start();
+				new SemiAutoLoadBall().start();
 				allIntakeRunning = true;
 			} else {
 				//just the intakes off here to avoid conflicts
 				new SetIntakeSpeed(IntakeSubsystem.INTAKE_OFF_SPEED, IntakeSubsystem.INTAKE_OFF_SPEED).start();
+				new EndSemiAuto(true).start();
 				//new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();
 				allIntakeRunning = false;
 			}
@@ -402,7 +404,7 @@ public class Robot extends IterativeRobot {
 		}
 		
 		if (!shooterPIDIsRunning){
-			if(oi.operator.isManualPivotRest()) {
+			if(oi.operator.isManualPivotReset()) {
 				double pivotPower = correctForDeadZone(oi.operator.getManualPower()/2.0);
 				
 				if (pivotPower > 0 && shooterPivot.pastMax() || pivotPower < 0 && shooterPivot.lowerLimitsTriggered()){

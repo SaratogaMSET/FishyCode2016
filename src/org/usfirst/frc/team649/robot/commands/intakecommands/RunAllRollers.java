@@ -37,18 +37,22 @@ public class RunAllRollers extends Command {
     	if (dir == ShooterSubsystem.IN){
 	    	Robot.shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_INTAKE_POWER);
 	    	Robot.shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_INTAKE_POWER);
-	    	
-	    	Robot.intake.setFwdRolSpd(IntakeSubsystem.FORWARD_ROLLER_INTAKE_SPEED);
-	    	Robot.intake.setCenteringModuleSpeed(IntakeSubsystem.CENTERING_MODULE_INTAKE_SPEED);
+	    
+	    	if(Robot.shooterPivot.isReadyToPickUp()) {
+	    		Robot.intake.setFwdRolSpd(IntakeSubsystem.FORWARD_ROLLER_INTAKE_SPEED);
+	    		Robot.intake.setCenteringModuleSpeed(IntakeSubsystem.CENTERING_MODULE_INTAKE_SPEED);
+	    	}
     	}
     	else if (dir == ShooterSubsystem.OUT){
     		//inverse of above basically
     		Robot.shooter.setLeftFlywheelPower(-ShooterSubsystem.FLYWHEEL_INTAKE_POWER);
 	    	Robot.shooter.setRightFlywheelPower(ShooterSubsystem.FLYWHEEL_INTAKE_POWER);
-	    	
-	    	Robot.intake.setFwdRolSpd(IntakeSubsystem.FORWARD_ROLLER_PURGE_SPEED);
-	    	Robot.intake.setCenteringModuleSpeed(IntakeSubsystem.CENTERING_MODULE_PURGE_SPEED);
-    	}
+	    
+	    	if(Robot.shooterPivot.isReadyToPickUp()) {			    	
+		    	Robot.intake.setFwdRolSpd(IntakeSubsystem.FORWARD_ROLLER_PURGE_SPEED);
+		   		Robot.intake.setCenteringModuleSpeed(IntakeSubsystem.CENTERING_MODULE_PURGE_SPEED);
+	    	}
+	   	}
     	else{
     		Robot.shooter.setLeftFlywheelPower(0);
 	    	Robot.shooter.setRightFlywheelPower(0);

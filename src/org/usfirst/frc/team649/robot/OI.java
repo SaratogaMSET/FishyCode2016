@@ -79,7 +79,7 @@ public class OI {
 			return operatorJoystick.getRawButton(7);
 		}
 		
-		public boolean isManualPivotRest()
+		public boolean isManualPivotReset()
 		{
 			return operatorJoystick.getRawButton(8);
 		}
