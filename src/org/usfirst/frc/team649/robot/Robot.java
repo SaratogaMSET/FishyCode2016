@@ -43,6 +43,7 @@ import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import sun.java2d.pipe.SpanClipRenderer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -312,11 +313,11 @@ public class Robot extends IterativeRobot {
 		
 		
 		
-		if (oi.operator.isSemiAutonomousIntakePressed() && !prevStateSemiAutoIntake){
-			semiAutoIsRunning = true;
-			new SemiAutoLoadBall().start();
-		}
-		
+//		if (oi.operator.isSemiAutonomousIntakePressed() && !prevStateSemiAutoIntake){
+//			semiAutoIsRunning = true;
+//			new SemiAutoLoadBall().start();
+//		}
+//		
 		
 		//pivot state
 //		if (oi.operator.pivotShootState() && !prevStatePivotUp){
@@ -333,24 +334,28 @@ public class Robot extends IterativeRobot {
 		
 		//if going up
 		if (oi.operator.pivotMoveUp() && !prevStatePivotUp){
-			int nextRegion = shooterPivot.getClosestNextSetpointState(true);
-			new SetPivotState(nextRegion).start();
+			new SetPivotState(ShooterPivotSubsystem.PivotPID.CLOSE_SHOOT_STATE).start();
+//			int nextRegion = shooterPivot.getClosestNextSetpointState(true);
+//			new SetPivotState(nextRegion).start();
+			
 		}
 		//if going down
 		else if(oi.operator.pivotMoveDown() && !prevStatePivotDown) {
-			int nextRegion = shooterPivot.getClosestNextSetpointState(false);
-			if (nextRegion == ShooterPivotSubsystem.PivotPID.PICKUP_STATE){
-				//if we are trying to reset (with safety button) or if the next state is the reset state
-				new ResetPivot().start();
+			new SetPivotState(ShooterPivotSubsystem.PivotPID.FAR_SHOOT_STATE).start();
+//			int nextRegion = shooterPivot.getClosestNextSetpointState(false);
+//			if (nextRegion == ShooterPivotSubsystem.PivotPID.PICKUP_STATE){
+//				//if we are trying to reset (with safety button) or if the next state is the reset state
+//				new ResetPivot().start();
 			}
-			else{
-				//if going down to any other region, use the regular pivot command
-				new SetPivotState(nextRegion).start();
-			}
-		}
 		else if (oi.operator.pivotResetSafety() && !prevStateResetSafety){
+			new SetPivotState(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
+		}
+		else if (oi.operatorJoystick.getRawButton(5)){
+			//if going down to any other region, use the regular pivot command
+		//	new SetPivotState(nextRegion).start();
 			new ResetPivot().start();
 		}
+	
 		
 		if (!semiAutoIsRunning){
 //		
@@ -361,12 +366,13 @@ public class Robot extends IterativeRobot {
 				allIntakeRunning = true;
 			} else if (oi.operator.runIntake()) {
 				//new SetIntakeSpeed(IntakeSubsystem.FORWARD_ROLLER_INTAKE_SPEED, IntakeSubsystem.CENTERING_MODULE_INTAKE_SPEED).start();
-				new SemiAutoLoadBall().start();
+				new RunAllRollers(ShooterSubsystem.IN, ShooterSubsystem.UNTIL_IR).start();
+//				new SemiAutoLoadBall().start();
 				allIntakeRunning = true;
 			} else {
 				//just the intakes off here to avoid conflicts
 				new SetIntakeSpeed(IntakeSubsystem.INTAKE_OFF_SPEED, IntakeSubsystem.INTAKE_OFF_SPEED).start();
-				new EndSemiAuto(true).start();
+				//new EndSemiAuto(true).start();
 				//new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();
 				allIntakeRunning = false;
 			}
@@ -385,6 +391,12 @@ public class Robot extends IterativeRobot {
 					//new SetFlywheels(0, 0).start();//BangBangFlywheels(false).start();
 					flywheelShootRunning = false;
 				}
+			}
+			
+			if(oi.operator.shoot()){
+				new ShooterSet(DoubleSolenoid.Value.kForward).start();
+			} else {
+				new ShooterSet(DoubleSolenoid.Value.kReverse).start();
 			}
 			
 			if (!allIntakeRunning && !flywheelShootRunning){
@@ -429,7 +441,7 @@ public class Robot extends IterativeRobot {
 		prevStatePivotDown = oi.operator.pivotMoveDown();
 		prevStateResetSafety = oi.operator.pivotResetSafety();
 		
-		prevStateSemiAutoIntake = oi.operator.isSemiAutonomousIntakePressed();
+		//prevStateSemiAutoIntake = oi.operator.isSemiAutonomousIntakePressed();
 		
 		
 		//********updating subsystem*******//
@@ -507,7 +519,7 @@ public class Robot extends IterativeRobot {
 
 		SmartDashboard.putBoolean("Is shooter PID running" , shooterPIDIsRunning);
 		SmartDashboard.putNumber("Current Servo", camera.camServo.getAngle());
-		
+		SmartDashboard.putNumber("PIVOT ANGLE", shooterPivot.getPivotAngle());
 	}
 	
 	public double correctForDeadZone(double joyVal){

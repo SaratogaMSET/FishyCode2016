@@ -22,7 +22,7 @@ public class SemiAutoLoadBall extends CommandGroup {
 		//deploy intakes
 		addSequential(new SetIntakePosition(true));
 		addSequential(new WaitCommand(0.1));
-		addSequential(new ResetPivot());
+		//addSequential(new ResetPivot());
 		addSequential(new RunAllRollers(ShooterSubsystem.IN, ShooterSubsystem.UNTIL_IR));
 		
 		addSequential(new WaitCommand(0.15));

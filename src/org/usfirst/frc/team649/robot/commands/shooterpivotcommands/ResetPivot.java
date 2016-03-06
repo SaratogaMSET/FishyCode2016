@@ -45,11 +45,22 @@ public class ResetPivot extends Command {
     // Called once after isFinished returns true
     protected void end() {
     	//Robot.shooterPivot.resetCounter();
+    	Robot.shooterPivot.setPower(0);
+    	System.out.println(Robot.shooterPivot.getPivotAngle());
+    	try {
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			
+			e.printStackTrace();
+			
+		}
     	if(!inDangerOfIntakes) {
     		Robot.shooterPivot.resetEncoders();
     	}
-    	Robot.shooterPivot.setPower(0);
     	Robot.shooterPIDIsRunning = false;
+    	System.out.println(Robot.shooterPivot.getPivotAngle());
+
     }
 
     // Called when another command which requires one or more of the same

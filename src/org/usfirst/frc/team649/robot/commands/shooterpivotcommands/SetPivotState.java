@@ -88,6 +88,7 @@ public class SetPivotState extends Command {
 			PivotPID.max_motor_up_power = PivotPID.MIDDLE_STATE_MAX_UP_POWER;
 		}
 		else {
+			
 			PivotPID.max_motor_up_power = PivotPID.REGULAR_MAX_UP_POWER;
 		}
 
@@ -96,6 +97,7 @@ public class SetPivotState extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	protected void execute() {
 		Robot.shooterPIDIsRunning = true;
+		
 		if (!Robot.intake.isIntakeDeployed()) {
 
 			if ((Robot.shooterPivot.isInIntakeZone() && Robot.shooterPivot.getPosition() > ShooterPivotSubsystem.PivotPID.MIDDLE_OF_INTAKE_ZONE
@@ -126,6 +128,7 @@ public class SetPivotState extends Command {
 		// end if (TODO end cases), if going up and past max, if going down and at bumpers, 
 		//if pid is done, or if it's been going for too long, if applying insignificant power
 		//END
+		System.out.println("Pivot angle " + Robot.shooterPivot.returnPIDInput());
 		return inDangerOfIntakes || up && Robot.shooterPivot.pastMax() || !up
 				&& Robot.shooterPivot.lowerLimitsTriggered() || pid.onTarget() ||
 				timer.get() > 2.5 || isStalling || (timer.get() > 0.8 && Math.abs(averageMotorSpeed) < PivotPID.MIN_PIVOT_SPEED)
@@ -136,7 +139,9 @@ public class SetPivotState extends Command {
 	protected void end() {
 		pid.disable();
 		Robot.shooterPIDIsRunning = false;
-		SmartDashboard.putString("  Current Command", " ");
+		SmartDashboard.putString("  Current Command", " "
+				+ "");
+		System.out.println("end: " + timer.get());
 		// Robot.shooterPivot.setPower(0);
 		// Robot.shooterPivot.engageBrake(true);
 	}

@@ -28,8 +28,6 @@ public class OI {
     public class Operator {
 
 		public boolean intakeUp() {
-			// TODO Auto-generated method stub
-
 			return operatorJoystick.getRawButton(10);
 		}
 		
@@ -68,7 +66,7 @@ public class OI {
 			return operatorJoystick.getRawButton(4);
 		}
 		public boolean pivotResetSafety(){
-			return operatorJoystick.getRawButton(5) && operatorJoystick.getRawButton(3);
+			return  operatorJoystick.getRawButton(3); //operatorJoystick.getRawButton(5) &&
 		}
 //		public boolean pivotStoreState()
 //		{
@@ -83,10 +81,10 @@ public class OI {
 		{
 			return operatorJoystick.getRawButton(8);
 		}
-		public boolean isSemiAutonomousIntakePressed()
-		{
-			return operatorJoystick.getRawButton(10);
-		}
+//		public boolean isSemiAutonomousIntakePressed()
+//		{
+//			return operatorJoystick.getRawButton(10);
+//		}
 		public double getManualPower()
 		{
 			return operatorJoystick.getY();

@@ -36,9 +36,9 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		public static final double ENCODER_DEGREES_PER_PULSE = 360.0 / 256.0
 				* 20.0 / 50.0 * 20.0 / 48.0 * 16.0 / 34.0; // change of course
 		public static final double k_P = 0.13;
-		public static final double k_I = 0.00005;
-		public static final double k_D = 0.05;
-		public static final double ABS_TOLERANCE = 3.0;
+		public static final double k_I = 0.01;
+		public static final double k_D = 0.1;
+		public static final double ABS_TOLERANCE = .30;
 		
 		public static double max_motor_up_power = 0.6; //changed in pivot state command
 		public static final double MIDDLE_STATE_MAX_UP_POWER = 0.3;
@@ -58,11 +58,12 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 
 		public static final double PICKUP_POSITION = 1.0;
 		public static final double STORE_POSITION = 7.5;// temp value
-		public static final double FAR_SHOOT_POSITION = 47.0;//62.2;
+		public static final double FAR_SHOOT_POSITION = 40.0+2.35;//62.2;//want40degress
+		
 		public static final double CLOSE_SHOOT_POSITION = 62.2;//62.2;
 		public static final double BACK_SHOOT_POSITION = 115.0;//62.2;
 		
-		public static final double REGION_ERROR = 2.0; //degrees
+		public static final double REGION_ERROR = 4.0; //degrees
 
 		public static final double BOTTOM_OF_INTAKE_ZONE = 8.5;
 		public static final double TOP_OF_INTAKE_ZONE = 60;
@@ -225,7 +226,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		}
 	}
 
-	protected double returnPIDInput() {
+	public double returnPIDInput() {
 		return getPivotAngle();
 	}
 
