@@ -34,10 +34,10 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	public static class PivotPID {
 
 		public static final double ENCODER_DEGREES_PER_PULSE = 360.0 / 256.0
-				* 20.0 / 50.0 * 20.0 / 48.0 * 16.0 / 34.0; // change of course
-		public static final double k_P = 0.13;
-		public static final double k_I = 0.01;
-		public static final double k_D = 0.1;
+				* 20.0 / 50.0 * 20.0 / 48.0 * 16.0 / 34.0; 
+		public static final double k_P = 0.1;
+		public static final double k_I = 0.000;
+		public static final double k_D = 0.07;
 		public static final double ABS_TOLERANCE = .30;
 		
 		public static double max_motor_up_power = 0.6; //changed in pivot state command
@@ -68,6 +68,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		public static final double BOTTOM_OF_INTAKE_ZONE = 8.5;
 		public static final double TOP_OF_INTAKE_ZONE = 60;
 		public static final double MIDDLE_OF_INTAKE_ZONE = 35;
+		public static final double HOLD_PIVOT_POSITION_POWER = 0.05;
 
 		public static double MAX_ENCODER_VAL = 130;
 		public static double MIN_ENCODER_VAL = 0;
@@ -178,13 +179,37 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 
 		motorLeft.set(power);
 		SmartDashboard.putNumber(" motor power", power);
-		motorRight.set(-power/0.92);
+		motorRight.set(-power/0.94);
 	}
 
 	public double getPivotAngle() {
-		double dist1 = encoderLeft.getDistance();
-		double dist2 = encoderRight.getDistance();
-		return (dist1 + dist2) / 2;
+		return encoderLeft.getDistance();
+//		double dist2 = encoderRight.getDistance();
+//		return (dist1 + dist2) / 2;
+	}
+	
+	public double getClosestAngleToSetpoint(double setpoint){
+		double diffL = Math.abs(encoderLeft.getDistance() - setpoint);
+		double diffR = Math.abs(encoderRight.getDistance() - setpoint);
+		double diffEncoders = encoderLeft.getDistance()- encoderRight.getDistance();
+		
+		if (Math.abs(diffEncoders) < 10){
+			if (diffL <= diffR){
+				return encoderLeft.getDistance();
+			}
+			else {
+				return encoderRight.getDistance();
+			}
+		}
+		else{
+			if (diffEncoders > 0){
+				//left is greater than right
+				return encoderLeft.getDistance();
+			}
+			else{
+				return encoderRight.getDistance();
+			}
+		}
 	}
 	
 	//there are 5 regions: RESET, STORE, CLOSE_SHOT, FAR_SHOT, and BACK_SHOT
@@ -227,12 +252,14 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	}
 
 	public double returnPIDInput() {
-		return getPivotAngle();
+		//return getPivotAngle();
+		return getClosestAngleToSetpoint(this.pid.getSetpoint());
 	}
 
 	public void engageBrake(boolean set) {
 		if (set) {
 			//rightSol.set(DoubleSolenoid.Value.kReverse);
+			setPower(0);
 			brake.set(DoubleSolenoid.Value.kReverse);
 		} else {
 			//rightSol.set(DoubleSolenoid.Value.kForward);
@@ -246,8 +273,11 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		} else if (output < PivotPID.MAX_MOTOR_DOWN_POWER) {
 			output = PivotPID.MAX_MOTOR_DOWN_POWER;
 		}
-
-		setPower(output);
+		double powerUpOrDown = 1.0;
+		if(getPivotAngle() > 80) {
+		//	powerUpOrDown = -1.0;
+		}
+		setPower(output + powerUpOrDown * PivotPID.HOLD_PIVOT_POSITION_POWER /*account for gravety*/);
 	}
 
 	// method that returns the average of the current of the 2 motors
@@ -268,5 +298,9 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	public boolean isReadyToPickUp() {
 		// TODO Auto-generated method stub
 		return getPosition() <= PivotPID.PICKUP_POSITION;
+	}
+	
+	public boolean isOnTarget(double setpoint){
+		return Math.abs(getPivotAngle() - setpoint) < PivotPID.ABS_TOLERANCE;
 	}
 }

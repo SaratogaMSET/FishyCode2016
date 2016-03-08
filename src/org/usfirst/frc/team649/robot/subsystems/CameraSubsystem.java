@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
 
 public class CameraSubsystem extends Subsystem {
-	public VideoCapture vcap;
+	public org.opencv.highgui.VideoCapture vcap;
 	public Servo camServo;
 	
 	public boolean noOpencvErrors;

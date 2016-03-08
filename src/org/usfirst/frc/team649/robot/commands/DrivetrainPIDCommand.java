@@ -51,7 +51,7 @@ public class  DrivetrainPIDCommand extends Command {
 
 
         return drivePIDLeft.onTarget()
-        		|| Robot.oi.driver.isManualOverride();
+        		|| Robot.oi.driver.isManualOverride() || Robot.drivetrain.isOnTarget(distance);
     }
 
     // Called once after isFinished returns true

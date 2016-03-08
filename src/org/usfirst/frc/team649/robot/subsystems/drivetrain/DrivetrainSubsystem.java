@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
+import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 import org.usfirst.frc.team649.robot.util.DoubleSolenoid649;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -50,6 +51,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	
 	public static class PIDConstants {
 		public static final double PID_ABSOLUTE_TOLERANCE =1.0;
+		public static final double ABS_TOLERANCE = 1.0;
 		public static  double k_P = .02; //0.2
 		public static double k_I = 0.0001;
 		public static double k_D = 0.03;
@@ -61,18 +63,14 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		public static final double D_VAL = 0.0;
 		
 		public static final double TOLERANCE = 0.8; //degrees
+		
+		public static final double LOW_BAR_TURN_ANGLE = -21.5; //change
 	}
 	
 	public static class AutoConstants {
-		public static final int LOW_BAR = 0;
-		public static final int PORTCULLIS = 1;
-		public static final int CHEVAL_DE_FRISE = 2;
-		public static final int ROCK_WALL = 3;
-		public static final int ROUGH_TERRAIN = 4;
-		public static final int SALLY_PORT = 5;
-		public static final int DRAWBRIDGE = 6;
-		public static final int RAMPARTS = 7;
-		public static final int MOAT = 8;
+		public static final double LOW_GOAL_DRIVE_DISTANCE = 146; //in inches, remember to add extra for slope of ramp
+		public static final double TWO_BALL_MIDLINE_DISTANCE = -156;
+	
 		
 		
 		//CHEVAL CONSTANTS
@@ -127,7 +125,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		
 		encoderDrivePID = this.getPIDController();
 		encoderDrivePID.setAbsoluteTolerance(PIDConstants.PID_ABSOLUTE_TOLERANCE);
-		encoderDrivePID.setOutputRange(-.2, .5);
+		encoderDrivePID.setOutputRange(-.5, .5);
 		
 	}
 
@@ -208,6 +206,11 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		// TODO Auto-generated method stub
 		driveFwdRot(-output, 0);
 		
+	}
+
+	public boolean isOnTarget(double distance) {
+		// TODO Auto-generated method stub
+		return Math.abs(getDistanceDTBoth() - distance) < DrivetrainSubsystem.PIDConstants.ABS_TOLERANCE;
 	}
 }
 

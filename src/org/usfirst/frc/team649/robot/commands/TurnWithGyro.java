@@ -3,22 +3,28 @@ package org.usfirst.frc.team649.robot.commands;
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.TurnConstants;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TurnWithGyro extends Command {
 	public double angle;
 	public double setpoint;
+	public Timer timer;
 	//positive is clockwise
 	public TurnWithGyro(double angle) {
 		// TODO Auto-generated constructor stub
 		this.angle = angle;
+	
 	}
 	
 	@Override
 	protected void initialize() {
 		// TODO Auto-generated method stub
 		setpoint = Robot.drivetrain.gyro.getAngle() + angle;
+		timer = new Timer();
+		timer.reset();
+		timer.start();
 	}
 
 	@Override
@@ -34,7 +40,7 @@ public class TurnWithGyro extends Command {
 	protected boolean isFinished() {
 		// TODO Auto-generated method stub
 		return Math.abs(angle - Robot.drivetrain.gyro.getAngle()) < TurnConstants.TOLERANCE
-				|| Robot.oi.driver.isManualOverride(); //Math.abs(angle - Robot.drivetrain.gyro.getAngle()) < TurnConstants.TOLERANCE;
+				|| Robot.oi.driver.isManualOverride() || timer.get() > 1.0; //Math.abs(angle - Robot.drivetrain.gyro.getAngle()) < TurnConstants.TOLERANCE;
 	}
 
 	@Override

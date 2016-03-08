@@ -22,7 +22,7 @@ public class SemiAutoLoadBall extends CommandGroup {
 		//deploy intakes
 		addSequential(new SetIntakePosition(true));
 		addSequential(new WaitCommand(0.1));
-		//addSequential(new ResetPivot());
+		addSequential(new ResetPivot());
 		addSequential(new RunAllRollers(ShooterSubsystem.IN, ShooterSubsystem.UNTIL_IR));
 		
 		addSequential(new WaitCommand(0.15));
@@ -34,6 +34,8 @@ public class SemiAutoLoadBall extends CommandGroup {
 		//addSequential(new WaitForChildren());
 		
 		addSequential(new SetPivotState(ShooterPivotSubsystem.PivotPID.STORING_STATE));
+		
+		addSequential(new SetIntakePosition(IntakeSubsystem.UP));
 		
 		addSequential(new EndSemiAuto(true)); //true = set the semi auto varibale to false
 	}

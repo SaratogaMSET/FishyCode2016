@@ -35,9 +35,9 @@ public class OI {
 			return operatorJoystick.getRawButton(9);
 		}
 		
-		public boolean runIntake() {
-			return operatorJoystick.getRawButton(12);
-		}
+//		public boolean runIntake() {
+//			return operatorJoystick.getRawButton(12);
+//		}
     	
 		public boolean purgeIntake() {
 			return operatorJoystick.getRawButton(11);
@@ -57,21 +57,21 @@ public class OI {
 		{
 			return operatorJoystick.getRawButton(2);
 		}
-		public boolean pivotMoveUp()
+		public boolean pivotCloseShot()
 		{
 			return operatorJoystick.getRawButton(6);
 		}
-		public boolean pivotMoveDown()
+		public boolean pivotFarShot()
 		{
 			return operatorJoystick.getRawButton(4);
 		}
-		public boolean pivotResetSafety(){
+		public boolean pivotReset(){
 			return  operatorJoystick.getRawButton(3); //operatorJoystick.getRawButton(5) &&
 		}
-//		public boolean pivotStoreState()
-//		{
-//			return operatorJoystick.getRawButton(9);
-//		}
+		public boolean pivotStoreState()
+		{
+			return operatorJoystick.getRawButton(5);
+		}
 		
 		public boolean isManualFirePistonToggle(){
 			return operatorJoystick.getRawButton(7);
@@ -81,10 +81,10 @@ public class OI {
 		{
 			return operatorJoystick.getRawButton(8);
 		}
-//		public boolean isSemiAutonomousIntakePressed()
-//		{
-//			return operatorJoystick.getRawButton(10);
-//		}
+		public boolean isSemiAutonomousIntakePressed()
+		{
+			return operatorJoystick.getRawButton(12);
+		}
 		public double getManualPower()
 		{
 			return operatorJoystick.getY();

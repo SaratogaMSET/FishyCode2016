@@ -19,6 +19,7 @@ public class SetPivotState extends Command {
 
 	PIDController pid;
 	boolean inDangerOfIntakes, up;
+	boolean exit;
 	double setPoint;
 	int state;
 	double averageMotorSpeed;
@@ -128,22 +129,29 @@ public class SetPivotState extends Command {
 		// end if (TODO end cases), if going up and past max, if going down and at bumpers, 
 		//if pid is done, or if it's been going for too long, if applying insignificant power
 		//END
-		System.out.println("Pivot angle " + Robot.shooterPivot.returnPIDInput());
-		return inDangerOfIntakes || up && Robot.shooterPivot.pastMax() || !up
-				&& Robot.shooterPivot.lowerLimitsTriggered() || pid.onTarget() ||
-				timer.get() > 2.5 || isStalling || (timer.get() > 0.8 && Math.abs(averageMotorSpeed) < PivotPID.MIN_PIVOT_SPEED)
+		exit = inDangerOfIntakes || up && Robot.shooterPivot.pastMax() || !up
+				&& Robot.shooterPivot.lowerLimitsTriggered() || Robot.shooterPivot.isOnTarget(setPoint) ||
+				timer.get() > 5.0 || isStalling || (timer.get() > 0.8 && Math.abs(averageMotorSpeed) < PivotPID.MIN_PIVOT_SPEED)
 				|| Robot.oi.driver.isManualOverride();
+		return exit;
 	}
 	
 	// Called once after isFinished returns true
 	protected void end() {
+		//do this to minimize time pivot has power of zero and prevent slip
 		pid.disable();
+		double powerUpOrDown = 1.0;
+		if(Robot.shooterPivot.getPivotAngle() > 80) {
+			powerUpOrDown = -1.0;
+		}
+		Robot.shooterPivot.setPower(powerUpOrDown*ShooterPivotSubsystem.PivotPID.HOLD_PIVOT_POSITION_POWER);
 		Robot.shooterPIDIsRunning = false;
-		SmartDashboard.putString("  Current Command", " "
-				+ "");
-		System.out.println("end: " + timer.get());
+		SmartDashboard.putString("  Current Command", " "+ "");
+		System.out.println("end: " + timer.get() );
+		System.out.println("Pivot angle " + Robot.shooterPivot.returnPIDInput());
 		// Robot.shooterPivot.setPower(0);
 		// Robot.shooterPivot.engageBrake(true);
+		System.out.println("inDangerOfIntakes: " + inDangerOfIntakes + ", EXIT: " + exit);
 	}
 
 	// Called when another command which requires one or more of the same

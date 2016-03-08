@@ -52,39 +52,39 @@ public class AutoFullSequence extends CommandGroup {
 	}
 	
 	public Command selectDefenseCommand(int defense) throws Exception{
-		Command crossingCommand;
-		switch(defense){
-		case AutoConstants.LOW_BAR:
-			crossingCommand = new AutoCrossLowBar();
-			break;
-		case AutoConstants.PORTCULLIS:
-			crossingCommand = new AutoCrossPortcullis();
-			break;
-		case AutoConstants.CHEVAL_DE_FRISE:
-			crossingCommand = new AutoCrossChevalDeFrise();
-			break;
-		case AutoConstants.ROCK_WALL:
-			crossingCommand = new AutoCrossRockWall();
-			break;
-		case AutoConstants.ROUGH_TERRAIN:
-			crossingCommand = new AutoCrossRoughTerrain();
-			break;
-		case AutoConstants.SALLY_PORT:
-			crossingCommand = new AutoCrossSallyPort();
-			break;
-		case AutoConstants.DRAWBRIDGE:
-			crossingCommand = new AutoCrossDrawbridge();
-			break;
-		case AutoConstants.RAMPARTS:
-			crossingCommand = new AutoCrossRamparts();
-			break;
-		case AutoConstants.MOAT:
-			crossingCommand = new AutoCrossMoat();
-			break;
-		default:
-			throw new Exception("ERROR: PASSED INVALID DEFENSE");
-			
-		}
+		Command crossingCommand = new AutoCrossChevalDeFrise();
+//		switch(defense){
+//		case AutoConstants.LOW_BAR:
+//			crossingCommand = new AutoCrossLowBar();
+//			break;
+//		case AutoConstants.PORTCULLIS:
+//			crossingCommand = new AutoCrossPortcullis();
+//			break;
+//		case AutoConstants.CHEVAL_DE_FRISE:
+//			crossingCommand = new AutoCrossChevalDeFrise();
+//			break;
+//		case AutoConstants.ROCK_WALL:
+//			crossingCommand = new AutoCrossRockWall();
+//			break;
+//		case AutoConstants.ROUGH_TERRAIN:
+//			crossingCommand = new AutoCrossRoughTerrain();
+//			break;
+//		case AutoConstants.SALLY_PORT:
+//			crossingCommand = new AutoCrossSallyPort();
+//			break;
+//		case AutoConstants.DRAWBRIDGE:
+//			crossingCommand = new AutoCrossDrawbridge();
+//			break;
+//		case AutoConstants.RAMPARTS:
+//			crossingCommand = new AutoCrossRamparts();
+//			break;
+//		case AutoConstants.MOAT:
+//			crossingCommand = new AutoCrossMoat();
+//			break;
+//		default:
+//			throw new Exception("ERROR: PASSED INVALID DEFENSE");
+//			
+//		}
 		return crossingCommand;
 	}
 }
