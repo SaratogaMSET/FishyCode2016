@@ -65,23 +65,7 @@ public class CameraSubsystem extends Subsystem {
 	
 	public CameraSubsystem(String ip){
 		camServo = new Servo(RobotMap.Drivetrain.CAM_SERVO);
-//		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-//		InputStream input_1 = classLoader.getResourceAsStream("from position 1.jpg");
-//		Image i_1 = Toolkit.getDefaultToolkit().getImage("from position 1.jpg");
-//		BufferedImage bi_1 = new BufferedImage(i_1.getWidth(null), i_1.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-//	    // Draw the image on to the buffered image
-//	    Graphics2D bGr = bi_1.createGraphics();
-//	    bGr.drawImage(i_1, 0, 0, null);
-//	    bGr.dispose();
-//		
-//		Mat mat_im = new Mat(bi_1.getHeight(), bi_1.getWidth(), CvType.CV_8UC3);
-//		byte[] pixels = ((DataBufferByte) bi_1.getRaster().getDataBuffer()).getData();
-//		mat_im.put(0, 0, pixels);
-//		Center center = findOneRetroTarget(mat_im);
-//		SmartDashboard.putNumber("Center X of im 1", center.x);
-//		SmartDashboard.putNumber("Center Y of im 1", center.y);
-//		System.out.println("Center: " + center.x + ", " + center.y);
-		
+	
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
 		
 		

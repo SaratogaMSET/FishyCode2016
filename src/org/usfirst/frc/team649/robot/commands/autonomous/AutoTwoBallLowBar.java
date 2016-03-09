@@ -3,7 +3,6 @@ package org.usfirst.frc.team649.robot.commands.autonomous;
 import org.usfirst.frc.team649.robot.commandgroups.SemiAutoLoadBall;
 import org.usfirst.frc.team649.robot.commandgroups.ShootTheShooter;
 import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
-import org.usfirst.frc.team649.robot.commands.EndSemiAuto;
 import org.usfirst.frc.team649.robot.commands.ShiftDrivetrain;
 import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
@@ -44,7 +43,6 @@ public class AutoTwoBallLowBar extends CommandGroup {
 		addParallel(new DrivetrainPIDCommand(DrivetrainSubsystem.AutoConstants.TWO_BALL_MIDLINE_DISTANCE));
 		
 		addSequential(new SemiAutoLoadBall());
-		addSequential(new EndSemiAuto(true));
 		
 		
 		//FROM HERE ON NEEDS FINISHING

@@ -17,6 +17,11 @@ public class ShootTheShooter extends CommandGroup {
 	public void initialize(){
 		Robot.isShooting = true;
 	}
+	
+	public boolean isFinished(){
+		return Robot.oi.driver.isManualOverride();
+	}
+	
 	public void end(){
 		Robot.isShooting = false;
 	}

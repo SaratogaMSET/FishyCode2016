@@ -35,12 +35,12 @@ public class OI {
 			return operatorJoystick.getRawButton(9);
 		}
 		
-//		public boolean runIntake() {
-//			return operatorJoystick.getRawButton(12);
-//		}
+		public boolean runIntake() {
+			return operatorJoystick.getRawButton(8);
+		}
     	
 		public boolean purgeIntake() {
-			return operatorJoystick.getRawButton(11);
+			return operatorJoystick.getRawButton(7);
 		}
 		
 //		public double shooterPower() {
@@ -72,22 +72,32 @@ public class OI {
 		{
 			return operatorJoystick.getRawButton(5);
 		}
+
+		public boolean isSemiAutonomousIntakePressed()
+		{
+			return operatorJoystick.getRawButton(12);
+		}
 		
+		public boolean isDefenseState(){
+			return operatorJoystick.getRawButton(10);
+		}
+		
+		
+		//***MANUALS***//
 		public boolean isManualFirePistonToggle(){
-			return operatorJoystick.getRawButton(7);
+			return operatorJoystick.getPOV() == 180;
 		}
 		
 		public boolean isManualPivotReset()
 		{
 			return operatorJoystick.getRawButton(8);
 		}
-		public boolean isSemiAutonomousIntakePressed()
-		{
-			return operatorJoystick.getRawButton(12);
-		}
 		public double getManualPower()
 		{
 			return operatorJoystick.getY();
+		}
+		public boolean isManualOverrideOperator(){
+			return operatorJoystick.getPOV() == 0;
 		}
     }
     
@@ -111,7 +121,8 @@ public class OI {
 		}
 		
 		public boolean isManualOverride(){
-			return driveJoystickHorizontal.getRawButton(2) || driveJoystickVertical.getRawButton(2);
+			return driveJoystickHorizontal.getRawButton(2) || driveJoystickVertical.getRawButton(2)
+					|| operator.isManualOverrideOperator();
 		}
     }
     

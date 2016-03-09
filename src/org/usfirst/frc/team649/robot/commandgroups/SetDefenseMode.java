@@ -15,41 +15,18 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 import edu.wpi.first.wpilibj.command.WaitForChildren;
 
-public class SemiAutoLoadBall extends CommandGroup {
-	public SemiAutoLoadBall() {
+public class SetDefenseMode extends CommandGroup {
+	public SetDefenseMode() {
 		// TODO Auto-generated constructor stub
 		
-		//deploy intakes
-		addSequential(new SetIntakePosition(true));
-		addSequential(new WaitCommand(0.1));
-		addSequential(new ResetPivot());
-		addSequential(new RunAllRollers(ShooterSubsystem.IN, ShooterSubsystem.UNTIL_IR));
-		
-		addSequential(new WaitCommand(0.15));
-		
-		addSequential(new SetIntakeSpeed(IntakeSubsystem.FORWARD_ROLLER_PURGE_SPEED, IntakeSubsystem.CENTERING_MODULE_PURGE_SPEED));
-		addSequential(new WaitCommand(0.7));
-		addSequential(new SetIntakeSpeed(0,0));
-		
-		//addSequential(new WaitForChildren());
-		
 		addSequential(new SetPivotState(ShooterPivotSubsystem.PivotPID.STORING_STATE));
-		
 		addSequential(new SetIntakePosition(IntakeSubsystem.UP));
 		
-		//addSequential(new EndSemiAuto(true)); //true = set the semi auto varibale to false
-	}
-	
-	public void initialize(){
-		Robot.semiAutoIsRunning = true;
 	}
 	
 	public boolean isFinished(){
-		return !Robot.oi.operator.isSemiAutonomousIntakePressed() 
-				|| Robot.oi.driver.isManualOverride();
+		return Robot.oi.driver.isManualOverride();
+		
 	}
-	
-	public void end(){
-		Robot.semiAutoIsRunning = false;
-	}
+
 }

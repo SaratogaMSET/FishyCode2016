@@ -1,33 +1,29 @@
 package org.usfirst.frc.team649.robot.commands;
 
-import org.usfirst.frc.team649.robot.Robot;
-
 import edu.wpi.first.wpilibj.command.Command;
 
-public class EndSemiAuto extends Command {
-	boolean stateToSet;
-	
-	public EndSemiAuto(boolean s) {
-		stateToSet = !s;
-	}
-	
+public class SystemCheck extends Command {
+
+	int currentCommandState;
+	boolean hasFinishedIntakes, hasFinished;
 	@Override
 	protected void initialize() {
 		// TODO Auto-generated method stub
-		Robot.semiAutoIsRunning = stateToSet;
-
+		currentCommandState = 1;
 	}
 
 	@Override
 	protected void execute() {
 		// TODO Auto-generated method stub
-
+		switch(currentCommandState){
+		
+		}
 	}
 
 	@Override
 	protected boolean isFinished() {
 		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
 
 	@Override

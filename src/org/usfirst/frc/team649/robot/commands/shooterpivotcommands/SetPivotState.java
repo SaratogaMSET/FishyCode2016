@@ -3,6 +3,8 @@ package org.usfirst.frc.team649.robot.commands.shooterpivotcommands;
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
 import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
+import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
+import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 
@@ -76,14 +78,25 @@ public class SetPivotState extends Command {
 		pid.enable();
 		
 		if (!Robot.intake.isIntakeDeployed()){
-			if (Robot.shooterPivot.getPosition() > PivotPID.TOP_OF_INTAKE_ZONE && setPoint < PivotPID.TOP_OF_INTAKE_ZONE){
-				inDangerOfIntakes = true;
-			}
-			
-			if (Robot.shooterPivot.getPosition() < PivotPID.BOTTOM_OF_INTAKE_ZONE && setPoint > PivotPID.BOTTOM_OF_INTAKE_ZONE){
-				inDangerOfIntakes = true;
+			if ((Robot.shooterPivot.getPosition() > PivotPID.TOP_OF_INTAKE_ZONE && setPoint < PivotPID.TOP_OF_INTAKE_ZONE)
+					|| (Robot.shooterPivot.getPosition() < PivotPID.BOTTOM_OF_INTAKE_ZONE && setPoint > PivotPID.BOTTOM_OF_INTAKE_ZONE)){
+				//inDangerOfIntakes = true;
+				new SetIntakePosition(!IntakeSubsystem.UP).start();
+				
+				Timer t = new Timer();
+				t.start();
+				boolean exit = false;
+				while (exit || !Robot.intake.isIntakeDeployed());{ //wait for intakes to be down, t
+					System.out.println("waiting for intakes... Time: " + t.get());
+					if (t.get() > 2.0){
+						exit = true;
+						System.out.println("Timed out at t = " + t.get());
+					}
+				}
+				
 			}
 		}
+	
 		
 		if (up && setPoint == PivotPID.STORE_POSITION){
 			PivotPID.max_motor_up_power = PivotPID.MIDDLE_STATE_MAX_UP_POWER;
