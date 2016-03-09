@@ -79,12 +79,12 @@ public class OI {
 		}
 		
 		public boolean isDefenseState(){
-			return operatorJoystick.getRawButton(10);
+			return operatorJoystick.getRawButton(11);
 		}
 		
 		
 		//***MANUALS***//
-		public boolean isManualFirePistonToggle(){
+		public boolean isManualFirePiston(){
 			return operatorJoystick.getPOV() == 180;
 		}
 		

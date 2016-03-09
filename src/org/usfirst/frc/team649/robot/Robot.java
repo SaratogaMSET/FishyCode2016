@@ -102,6 +102,8 @@ public class Robot extends IterativeRobot {
 	
 	public boolean prevStateDefenseMode;
 	public boolean prevStateSemiAutoIntake;
+	
+	public boolean prevStateManualFirePiston;
 
 	public static boolean isPIDActive;
 	
@@ -139,6 +141,7 @@ public class Robot extends IterativeRobot {
 		prevStateResetSafety = false;
 		prevStateSemiAutoIntake = false;
 		prevStateDefenseMode = false;
+		prevStateManualFirePiston = false;
 		
 	}
 
@@ -351,12 +354,12 @@ public class Robot extends IterativeRobot {
 				}
 			}
 			
-			if(oi.operator.shoot()){
-				new ShooterSet(DoubleSolenoid.Value.kForward).start();
-			} else {
-				new ShooterSet(DoubleSolenoid.Value.kReverse).start();
-			}
-			
+//			if(oi.operator.shoot()){
+//				new ShooterSet(DoubleSolenoid.Value.kForward).start();
+//			} else {
+//				new ShooterSet(DoubleSolenoid.Value.kReverse).start();
+//			}
+//			
 			if (!allIntakeRunning && !flywheelShootRunning){
 				new SetFlywheels(0, 0).start();
 			}
@@ -369,6 +372,11 @@ public class Robot extends IterativeRobot {
 		//tells us if bang bang works
 		readyToShoot = ((Math.abs(shooter.getRightFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE)
 				&& (Math.abs(shooter.getLeftFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE));
+		
+		
+		if (oi.operator.isManualFirePiston() && !prevStateManualFirePiston){
+			new ShootTheShooter().start();
+		}
 		
 		
 		if(oi.driver.isDrivetrainLowGearButtonPressed()){
@@ -410,6 +418,8 @@ public class Robot extends IterativeRobot {
 		prevStateSemiAutoIntake = oi.operator.isSemiAutonomousIntakePressed();
 		prevStateDefenseMode = oi.operator.isDefenseState();
 		
+		prevStateManualFirePiston = oi.operator.isManualFirePiston();
+		
 		
 		//********updating subsystem*******//
 		
@@ -435,7 +445,7 @@ public class Robot extends IterativeRobot {
 			pivotTimer.reset();
 			prevStateMotorPowerIs0 = false;
 		}
-		System.out.println(shooterPivot.motorLeft.get());
+		//System.out.println(shooterPivot.motorLeft.get());
 		
 		//LOGGING AND DASHBOARD
 		logAndDashboard();
