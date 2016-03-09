@@ -1,5 +1,6 @@
 package org.usfirst.frc.team649.robot.commandgroups;
 
+import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
 import org.usfirst.frc.team649.robot.commands.EndSemiAuto;
 import org.usfirst.frc.team649.robot.commands.intakecommands.RunAllRollers;
@@ -37,6 +38,14 @@ public class SemiAutoLoadBall extends CommandGroup {
 		
 		addSequential(new SetIntakePosition(IntakeSubsystem.UP));
 		
-		addSequential(new EndSemiAuto(true)); //true = set the semi auto varibale to false
+		//addSequential(new EndSemiAuto(true)); //true = set the semi auto varibale to false
+	}
+	
+	public boolean isFinished(){
+		return !Robot.oi.operator.isSemiAutonomousIntakePressed();
+	}
+	
+	public void end(){
+		Robot.semiAutoIsRunning = false;
 	}
 }
