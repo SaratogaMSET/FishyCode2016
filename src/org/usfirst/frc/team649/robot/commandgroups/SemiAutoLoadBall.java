@@ -41,6 +41,10 @@ public class SemiAutoLoadBall extends CommandGroup {
 		//addSequential(new EndSemiAuto(true)); //true = set the semi auto varibale to false
 	}
 	
+	public void initialize(){
+		Robot.semiAutoIsRunning = true;
+	}
+	
 	public boolean isFinished(){
 		return !Robot.oi.operator.isSemiAutonomousIntakePressed();
 	}

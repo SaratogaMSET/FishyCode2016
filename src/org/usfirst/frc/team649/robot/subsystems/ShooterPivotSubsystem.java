@@ -37,7 +37,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 				* 20.0 / 50.0 * 20.0 / 48.0 * 16.0 / 34.0; 
 		public static final double k_P = 0.1;
 		public static final double k_I = 0.000;
-		public static final double k_D = 0.07;
+		public static final double k_D = 0.055;
 		public static final double ABS_TOLERANCE = .30;
 		
 		public static double max_motor_up_power = 0.6; //changed in pivot state command

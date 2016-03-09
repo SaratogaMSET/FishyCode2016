@@ -262,7 +262,7 @@ public class Robot extends IterativeRobot {
 		new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();;
 		
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
-		camera.vcap.open("http://axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
+		//camera.vcap.open("http://axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
 
 		shooterPivot.currentPivotState = -1;
 	}
@@ -341,7 +341,6 @@ public class Robot extends IterativeRobot {
 		
 		
 		if (oi.operator.isSemiAutonomousIntakePressed() && !prevStateSemiAutoIntake){
-			semiAutoIsRunning = true;
 			new SemiAutoLoadBall().start();
 		}
 //		
@@ -498,7 +497,7 @@ public class Robot extends IterativeRobot {
 			pivotTimer.reset();
 			prevStateMotorPowerIs0 = false;
 		}
-		//System.out.println(shooterPivot.motorLeft.get());
+		System.out.println(shooterPivot.motorLeft.get());
 		//LOGGING AND DASHBOARD
 		log.add(drivetrain.getLoggingData());
 		
@@ -552,6 +551,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Current Servo", camera.camServo.getAngle());
 		SmartDashboard.putNumber("PIVOT ANGLE", shooterPivot.getPivotAngle());
 		SmartDashboard.putNumber("CHOSEN PIVOT ANGLE", shooterPivot.getClosestAngleToSetpoint(shooterPivot.getSetpoint()));
+		
+		SmartDashboard.putNumber("Joy POV", oi.operatorJoystick.getPOV());
 	}
 	
 	public double correctForDeadZone(double joyVal){
