@@ -444,7 +444,7 @@ public class Robot extends IterativeRobot {
 		//********updating subsystem*******//
 		
 		//shooter hal effect counter
-		shooterPivot.updateHalEffect();
+		//shooterPivot.updateHalEffect();
 		
 		//update the flywheel speed constants
 		shooter.updateShooterConstants();
@@ -522,7 +522,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("NEXT STATE on PIVOT (DOWN)", shooterPivot.getClosestNextSetpointState(false));
 		SmartDashboard.putNumber("Current Pivot State", shooterPivot.currentPivotState);
 		
-		SmartDashboard.putBoolean("Shooter Hall", shooterPivot.reachedResetLimit());//shooterPivot.resetHalEffect.getDirection());
+		SmartDashboard.putBoolean("Shooter Pivot Hal", shooterPivot.isResetHalTripped());//shooterPivot.resetHalEffect.getDirection());
 		//SmartDashboard.putNumber("Shooter Hall Effect", shooterPivot.resetHalEffect.get());//shooterPivot.resetHalEffect.getDirection());
 
 		SmartDashboard.putBoolean("Is shooter PID running" , shooterPIDIsRunning);

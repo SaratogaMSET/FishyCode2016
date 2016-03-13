@@ -23,7 +23,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	public Victor motorLeft, motorRight;
 	public Encoder encoderLeft, encoderRight;
 	public PIDController pid;
-	public Counter intermediateHalEffect; // unsure about validity of
+	public DigitalInput resetHalEffect; // unsure about validity of
 											// counter/hall effect
 	public DigitalInput resetBumperLeft;
 	public DigitalInput resetBumperRight;
@@ -108,8 +108,8 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		encoderLeft.setDistancePerPulse(PivotPID.ENCODER_DEGREES_PER_PULSE);
 		encoderRight.setDistancePerPulse(PivotPID.ENCODER_DEGREES_PER_PULSE);
 
-		intermediateHalEffect = new Counter(
-				RobotMap.ShooterPivot.HALL_EFFECT_LOW_SENSOR); // according to
+		resetHalEffect = new DigitalInput(
+				RobotMap.ShooterPivot.RESET_HAL_EFFECT); // according to
 															// wpilib?
 		resetBumperLeft = new DigitalInput(
 				RobotMap.ShooterPivot.RESET_BUMPER_LEFT);
@@ -132,23 +132,23 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	}
 
 	// //////////HALL EFFECTS
-	public void updateHalEffect() {
-		if (reachedResetLimit()) {
-			resetCounter();
-		}
-	}
+//	public void updateHalEffect() {
+//		if (reachedResetLimit()) {
+//			resetCounter();
+//		}
+//	}
 
 	// create a method to tell how fast you are going in Degrees/Second(goes in
 	// encoders.
 
-	public void resetCounter() {
-		intermediateHalEffect.reset();
-	}
-
-	//
-	public boolean reachedResetLimit() {
-		return intermediateHalEffect.get() > 0;
-	}
+//	public void resetCounter() {
+//		intermediateHalEffect.reset();
+//	}
+//
+//	//
+//	public boolean reachedResetLimit() {
+//		return intermediateHalEffect.get() > 0;
+//	}
 
 	public int getPivotState(){
 		return currentPivotState;
@@ -170,6 +170,10 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	public boolean isInIntakeZone() {
 		return !isBelowIntakeZone() && !isAboveIntakeZone();
 	}
+	
+	public boolean isResetHalTripped(){
+		return !resetHalEffect.get();
+	}
 	public void resetEncoders() {
 		encoderLeft.reset();
 		encoderRight.reset();
@@ -183,8 +187,19 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	}
 
 	public double getPivotAngle() {
-		return encoderLeft.getDistance();
-//		double dist2 = encoderRight.getDistance();
+		double diffEncoders = encoderLeft.getDistance()- encoderRight.getDistance();
+		if (Math.abs(diffEncoders) < 5){
+			return (encoderLeft.getDistance() + encoderRight.getDistance()) / 2.0;
+		}
+		else { 
+			if (encoderLeft.getDistance() - encoderRight.getDistance()> 0){
+				return encoderLeft.getDistance();
+			}
+			else{
+				return encoderRight.getDistance();
+			}
+		}
+			//		double dist2 = encoderRight.getDistance();
 //		return (dist1 + dist2) / 2;
 	}
 	
@@ -193,7 +208,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		double diffR = Math.abs(encoderRight.getDistance() - setpoint);
 		double diffEncoders = encoderLeft.getDistance()- encoderRight.getDistance();
 		
-		if (Math.abs(diffEncoders) < 10){
+		if (Math.abs(diffEncoders) < 8){
 			if (diffL <= diffR){
 				return encoderLeft.getDistance();
 			}
@@ -301,6 +316,6 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	}
 	
 	public boolean isOnTarget(double setpoint){
-		return Math.abs(getPivotAngle() - setpoint) < PivotPID.ABS_TOLERANCE;
+		return Math.abs(getClosestAngleToSetpoint(setpoint) - setpoint) < PivotPID.ABS_TOLERANCE;
 	}
 }

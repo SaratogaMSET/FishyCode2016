@@ -89,10 +89,9 @@ public class RobotMap {
 		public static final int[] RIGHT_ENCODER = { 2, 3 };
 		public static final int[] LEFT_ENCODER = { 4, 5 };
 		
-		public static final int HALL_EFFECT_LOW_SENSOR = 23;
-		public static final int HALL_EFFECT_HIGH_SENSOR = 14;
 		public static final int RESET_BUMPER_LEFT = 10;
 		public static final int RESET_BUMPER_RIGHT = 11;
+		public static final int RESET_HAL_EFFECT = 23;
 		public static final int [] LEFT_SOLENOID_PORTS = {1,5,2};
 		//not used on pbot
 		public static final int [] RIGHT_SOLENOID_PORTS = {1,5,2};
