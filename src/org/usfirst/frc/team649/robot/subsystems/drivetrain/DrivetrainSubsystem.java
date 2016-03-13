@@ -36,7 +36,11 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	
 	public BuiltInAccelerometer accel;
 	public DoubleSolenoid driveSol;
-	public Gyro gyro;//ADXRS450_Gyro gyro;
+	public AnalogGyro gyro;//ADXRS450_Gyro gyro;
+	
+	
+	public static final double GYRO_SENSITIVITY = 10;
+	
 	
 	public Compressor compressor;
 	
@@ -50,19 +54,20 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	
 	
 	public static class PIDConstants {
-		public static final double PID_ABSOLUTE_TOLERANCE =1.0;
-		public static final double ABS_TOLERANCE = 1.0;
+		public static final double PID_ABSOLUTE_TOLERANCE =2.0;
+		public static final double ABS_TOLERANCE = 2.0;
 		public static  double k_P = .02; //0.2
 		public static double k_I = 0.0001;
 		public static double k_D = 0.03;
 	}
 	
 	public static class TurnConstants { 
-		public static final double P_VAL = .40;
+		public static final double P_VAL = .05;
 		public static final double I_VAL = 0;
 		public static final double D_VAL = 0.0;
 		
 		public static final double TOLERANCE = 0.8; //degrees
+		public static final double GYRO_SENSITIVITY = .007;
 		
 		public static final double LOW_BAR_TURN_ANGLE = -21.5; //change
 	}
@@ -102,6 +107,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		super ("Drivetrain", PIDConstants.k_P, PIDConstants.k_I, PIDConstants.k_D);
 		motors = new CANTalon[4];
 		gyro = new AnalogGyro(0);//new ADXRS450_Gyro();
+		gyro.setSensitivity(TurnConstants.GYRO_SENSITIVITY);
 		//compressor = new Compressor();
 		gyro.reset();
 		accel = new BuiltInAccelerometer();
@@ -201,6 +207,29 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		return leftEncoder.getDistance();
 	}
 
+	public double getClosestAngleToSetpoint(double setpoint){
+		double diffL = Math.abs(leftEncoder.getDistance() - setpoint);
+		double diffR = Math.abs(rightEncoder.getDistance() - setpoint);
+		double diffEncoders = leftEncoder.getDistance()- rightEncoder.getDistance();
+		
+		if (Math.abs(diffEncoders) < 10){
+			if (diffL <= diffR){
+				return leftEncoder.getDistance();
+			}
+			else {
+				return rightEncoder.getDistance();
+			}
+		}
+		else{
+			if (diffEncoders > 0){
+				//left is greater than right
+				return leftEncoder.getDistance();
+			}
+			else{
+				return rightEncoder.getDistance();
+			}
+		}
+	}
 	@Override
 	protected void usePIDOutput(double output) {
 		// TODO Auto-generated method stub
@@ -208,6 +237,10 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		
 	}
 
+	public double getTranslationalDistanceForTurn(double angle) {
+		 System.out.println((angle/ 360.0) * (25.125 * Math.PI));
+		 return (angle/ 360.0) * (25.125 * Math.PI);
+	}
 	public boolean isOnTarget(double distance) {
 		// TODO Auto-generated method stub
 		return Math.abs(getDistanceDTBoth() - distance) < DrivetrainSubsystem.PIDConstants.ABS_TOLERANCE;

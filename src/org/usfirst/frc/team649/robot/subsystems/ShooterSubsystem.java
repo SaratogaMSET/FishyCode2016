@@ -1,6 +1,8 @@
 package org.usfirst.frc.team649.robot.subsystems;
 
+import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
+import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -25,11 +27,24 @@ public class ShooterSubsystem extends Subsystem {
 	public static int OFF = 2;
 	
 	public static boolean UNTIL_IR = true;
-
-	public static final double FLYWHEEL_TARGET_RPM = 3500;
-	public static final double FLYWHEEL_MAX_SHOOT_POWER = .8;
-	public static final double FLYWHEEL_MIN_SHOOT_POWER = 0.6;
-	public static final double FLYWHEEL_TOLERANCE = 90;
+	
+	/*****CONSTANTS FOR FLYWHEEL****/
+	public static final double FARSHOT_FLYWHEEL_TARGET_RPM = 3500;
+	public static final double FARSHOT_FLYWHEEL_MAX_SHOOT_POWER = .8;
+	public static final double FARSHOT_FLYWHEEL_MIN_SHOOT_POWER = 0.6;
+	public static final double FARSHOT_FLYWHEEL_TOLERANCE = 90;
+	
+	public static final double BATTER_FLYWHEEL_TARGET_RPM = 2500;
+	public static final double BATTER_FLYWHEEL_MAX_SHOOT_POWER = 0.6;
+	public static final double BATTER_FLYWHEEL_MIN_SHOOT_POWER = 0.4;
+	public static final double BATTER_FLYWHEEL_TOLERANCE = 90;
+	
+	/*****EDITABLE FLYWHEEL RPM THAT IS UPDATED IN TELEOP*****/
+	public static double flywheelTargetRPM = 3500;
+	public static double flywheelMaxShootPower = .8;
+	public static double flywheelMinShootPower = 0.6;
+	public static double flywheelTolerance = 90;
+	
 	//doubles as purge speed when pivot is down (just inverted of course)
 	public static final double FLYWHEEL_INTAKE_POWER = -0.6;
 	
@@ -77,6 +92,25 @@ public class ShooterSubsystem extends Subsystem {
 	public void resetCounter() {
 		rightPhotoelectric.reset();
 		leftPhotoelectric.reset();
+	}
+	
+	public void updateShooterConstants(){
+		//if close-ish to batter shot
+		double TOLERANCE = 5;
+		if (Robot.shooterPivot.getPivotAngle() > PivotPID.CLOSE_SHOOT_POSITION - TOLERANCE 
+				&& Robot.shooterPivot.getPivotAngle() < PivotPID.CLOSE_SHOOT_POSITION + TOLERANCE){
+			flywheelTargetRPM = BATTER_FLYWHEEL_TARGET_RPM;
+			flywheelMinShootPower = BATTER_FLYWHEEL_MIN_SHOOT_POWER;
+			flywheelMaxShootPower = BATTER_FLYWHEEL_MAX_SHOOT_POWER;
+			flywheelTolerance =  BATTER_FLYWHEEL_TOLERANCE;
+		}
+		//else assume it is far shot
+		else{
+			flywheelTargetRPM = FARSHOT_FLYWHEEL_TARGET_RPM;
+			flywheelMinShootPower = FARSHOT_FLYWHEEL_MIN_SHOOT_POWER;
+			flywheelMaxShootPower = FARSHOT_FLYWHEEL_MAX_SHOOT_POWER;
+			flywheelTolerance =  FARSHOT_FLYWHEEL_TOLERANCE;
+		}
 	}
 	
 	public void initDefaultCommand() {

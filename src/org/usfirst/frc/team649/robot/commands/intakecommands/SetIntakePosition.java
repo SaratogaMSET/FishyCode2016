@@ -37,6 +37,9 @@ public class SetIntakePosition extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
+        if(deploy) {
+        	return Robot.intake.isIntakeDeployed();
+        }
         return true;
     }
 

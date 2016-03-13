@@ -88,6 +88,7 @@ public class RobotMap {
 		
 		public static final int[] RIGHT_ENCODER = { 2, 3 };
 		public static final int[] LEFT_ENCODER = { 4, 5 };
+		
 		public static final int HALL_EFFECT_LOW_SENSOR = 23;
 		public static final int HALL_EFFECT_HIGH_SENSOR = 14;
 		public static final int RESET_BUMPER_LEFT = 10;
@@ -101,8 +102,8 @@ public class RobotMap {
 	public static class ShooterSubsystem
 	{
 		public static final int[] MOTOR_PORTS = {7,2};
-		public static final int LEFT_EINSTEIN = 16;
-		public static final int RIGHT_EINSTEIN = 17;
+		public static final int LEFT_EINSTEIN = 17;
+		public static final int RIGHT_EINSTEIN = 16;
 		public static final int[] PUNCH_SOLENOID_PORTS = {1,1,6};
 		public static final int IR_GATE_PORT = 1;
 	}

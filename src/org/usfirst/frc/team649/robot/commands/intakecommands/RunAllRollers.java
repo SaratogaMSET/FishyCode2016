@@ -93,7 +93,7 @@ public class RunAllRollers extends Command {
     protected boolean isFinished() {
         if (untilIR){
         	//end if IR has been tripped (false)
-        	return !Robot.shooter.infraredSensor.get() || isCenterersStalling
+        	return !Robot.shooter.infraredSensor.get()
         			|| Robot.oi.driver.isManualOverride();
         }
         else{

@@ -11,11 +11,12 @@ public class TurnWithGyro extends Command {
 	public double angle;
 	public double setpoint;
 	public Timer timer;
+	public double error, last_error;
 	//positive is clockwise
 	public TurnWithGyro(double angle) {
 		// TODO Auto-generated constructor stub
 		this.angle = angle;
-	
+		error = angle;
 	}
 	
 	@Override
@@ -30,8 +31,10 @@ public class TurnWithGyro extends Command {
 	@Override
 	protected void execute() {
 		// TODO Auto-generated method stub
-		double error = angle - Robot.drivetrain.gyro.getAngle();
-		Robot.drivetrain.rawDrive(-error * TurnConstants.P_VAL, error * TurnConstants.P_VAL);
+		last_error = error;
+		error = angle - Robot.drivetrain.gyro.getAngle();
+		Robot.drivetrain.rawDrive(-error * TurnConstants.P_VAL /*+  -TurnConstants.D_VAL * (error - last_error)/0.05*/,
+				error * TurnConstants.P_VAL /*+ TurnConstants.D_VAL * (error - last_error)/0.05*/);
 
     	SmartDashboard.putString("DT Current Command", this.getName());
 	}
@@ -40,7 +43,7 @@ public class TurnWithGyro extends Command {
 	protected boolean isFinished() {
 		// TODO Auto-generated method stub
 		return Math.abs(angle - Robot.drivetrain.gyro.getAngle()) < TurnConstants.TOLERANCE
-				|| Robot.oi.driver.isManualOverride() || timer.get() > 1.0; //Math.abs(angle - Robot.drivetrain.gyro.getAngle()) < TurnConstants.TOLERANCE;
+				|| Robot.oi.driver.isManualOverride(); //Math.abs(angle - Robot.drivetrain.gyro.getAngle()) < TurnConstants.TOLERANCE;
 	}
 
 	@Override

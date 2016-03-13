@@ -18,9 +18,13 @@ import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 import org.usfirst.frc.team649.robot.subsystems.ShooterSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.AutonomousSequences;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.drivetrain.LeftDTPID;
+import org.usfirst.frc.team649.robot.subsystems.drivetrain.RightDTPID;
 import org.usfirst.frc.team649.robot.util.Center;
 
 import java.util.ArrayList;
+
+import javax.swing.text.StyleContext.SmallAttributeSet;
 
 import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
 import org.usfirst.frc.team649.robot.commandgroups.SemiAutoLoadBall;
@@ -29,6 +33,7 @@ import org.usfirst.frc.team649.robot.commandgroups.ShootTheShooter;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
 import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.SetCameraServo;
+import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossChevalDeFrise;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoTwoBallLowBar;
 import org.usfirst.frc.team649.robot.commands.intakecommands.RunAllRollers;
@@ -58,6 +63,8 @@ public class Robot extends IterativeRobot {
 
 	public static OI oi;
 	public static DrivetrainSubsystem drivetrain;
+	public static LeftDTPID leftDT;
+	public static RightDTPID rightDT;
 	public static IntakeSubsystem intake;
 	public static ShooterPivotSubsystem shooterPivot;
 	public static ShooterSubsystem shooter;
@@ -106,6 +113,10 @@ public class Robot extends IterativeRobot {
 	public boolean prevStateManualFirePiston;
 
 	public static boolean isPIDActive;
+	public static boolean isPIDActiveLeft;
+	public static boolean isPIDActiveRight;
+	
+	public static boolean isManualPressed;
 	
 	public void robotInit() {
 		oi = new OI();
@@ -113,6 +124,8 @@ public class Robot extends IterativeRobot {
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
 		drivetrain = new DrivetrainSubsystem();
+		leftDT = new LeftDTPID();
+		rightDT = new RightDTPID();
 		intake = new IntakeSubsystem();
 		shooterPivot = new ShooterPivotSubsystem();
 		shooter = new ShooterSubsystem();
@@ -143,6 +156,7 @@ public class Robot extends IterativeRobot {
 		prevStateDefenseMode = false;
 		prevStateManualFirePiston = false;
 		
+		isManualPressed = false;
 	}
 
 	public void disabledInit() {
@@ -176,10 +190,12 @@ public class Robot extends IterativeRobot {
 		new DriveForwardRotate(0, 0).start();
 //		new MatchAutoDrive(AutonomousSequences.fromPos1, 1).start();;
 		//new ResetPivot().start();;
-		new AutoTwoBallLowBar().start();;
-		
+	//	new AutoTwoBallLowBar().start();;
+		new AutoCrossChevalDeFrise().start();
 		//new BangBangFlywheels(false).start();
 		
+	//	new TurnWithGyro(60).start();
+		System.out.println(drivetrain.gyro.getAngle());
 		shooterPivot.currentPivotState = -1;
 	}
 
@@ -207,6 +223,8 @@ public class Robot extends IterativeRobot {
 		}
 	
 		logAndDashboard();
+		//update the flywheel speed constants
+		shooter.updateShooterConstants();
 	}
 
 	public void teleopInit() {
@@ -345,7 +363,7 @@ public class Robot extends IterativeRobot {
 //					flywheelShootRunning = true;
 //				} else 
 				if(oi.operator.shootBallFlywheels()) {
-					//new SetFlywheels(1.0, -1.0).start();
+					//new SetFlywheels(0.7, -0.7).start();
 					new BangBangFlywheels(true).start();
 					flywheelShootRunning = true;
 				} else {
@@ -370,8 +388,8 @@ public class Robot extends IterativeRobot {
 			}
 		}
 		//tells us if bang bang works
-		readyToShoot = ((Math.abs(shooter.getRightFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE)
-				&& (Math.abs(shooter.getLeftFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE));
+		readyToShoot = ((Math.abs(shooter.getRightFlywheelRPM() - ShooterSubsystem.flywheelTargetRPM) < ShooterSubsystem.flywheelTolerance)
+				&& (Math.abs(shooter.getLeftFlywheelRPM() - ShooterSubsystem.flywheelTargetRPM) < ShooterSubsystem.flywheelTolerance));
 		
 		
 		if (oi.operator.isManualFirePiston() && !prevStateManualFirePiston){
@@ -387,11 +405,12 @@ public class Robot extends IterativeRobot {
 			currentGear = !DrivetrainSubsystem.HIGH_GEAR;
 		}
 		
+		isManualPressed = oi.operator.isManualOverrideOperator();
+		
 		if (!shooterPIDIsRunning){
-			if(oi.operator.isManualPivotReset()) {
-				double pivotPower = correctForDeadZone(oi.operator.getManualPower()/2.0);
+			if(isManualPressed) {
+				double pivotPower = oi.operator.getManualPower()/2.0;
 				//shooterPivot.engageBrake(false);
-				boolean manual = false;
 				if (pivotPower > 0 && shooterPivot.pastMax() || pivotPower < 0 && shooterPivot.lowerLimitsTriggered()){
 					pivotPower = 0;
 				}
@@ -402,6 +421,7 @@ public class Robot extends IterativeRobot {
 				new SetPivotPower(0).start();
 			}
 		}
+		
 		
 		
 		//PREV STATES
@@ -425,25 +445,35 @@ public class Robot extends IterativeRobot {
 		
 		//shooter hal effect counter
 		shooterPivot.updateHalEffect();
+		
+		//update the flywheel speed constants
+		shooter.updateShooterConstants();
+		
 		//brake
-		if (!shooterPIDIsRunning && shooterPivot.motorLeft.get() < DEAD_ZONE_TOLERANCE && shooterPivot.motorRight.get() < DEAD_ZONE_TOLERANCE){
-			
-			if (pivotTimer.get() > MIN_STOPPED_TIME){
-				new EngageBrakes().start();
+		if (!isManualPressed){ //if manual override isn't running
+			if (!shooterPIDIsRunning && shooterPivot.motorLeft.get() < DEAD_ZONE_TOLERANCE && shooterPivot.motorRight.get() < DEAD_ZONE_TOLERANCE){
+				
+				if (pivotTimer.get() > MIN_STOPPED_TIME){
+					new EngageBrakes().start();
+				}
+				//if motor is 0 for the first time, start the timer
+				if (!prevStateMotorPowerIs0){
+					pivotTimer.reset();
+					pivotTimer.start();
+				}
+				//keep this at the end
+				prevStateMotorPowerIs0 = true;
 			}
-			//if motor is 0 for the first time, start the timer
-			if (!prevStateMotorPowerIs0){
+			else{
+				shooterPivot.engageBrake(false);
+				//keep this at the end
 				pivotTimer.reset();
-				pivotTimer.start();
+				prevStateMotorPowerIs0 = false;
 			}
-			//keep this at the end
-			prevStateMotorPowerIs0 = true;
 		}
 		else{
 			shooterPivot.engageBrake(false);
-			//keep this at the end
 			pivotTimer.reset();
-			prevStateMotorPowerIs0 = false;
 		}
 		//System.out.println(shooterPivot.motorLeft.get());
 		
@@ -463,7 +493,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("is flywheel command running", flywheelShootRunning);
 		SmartDashboard.putBoolean("is all rollers command running", allIntakeRunning);
 		
-		SmartDashboard.putBoolean("IR Tripped", Robot.shooter.infraredSensor.get());
+		SmartDashboard.putBoolean("No ball(IR)", !Robot.shooter.infraredSensor.get());
 		
 		SmartDashboard.putNumber("Shooter Pivot current right", pdp.getCurrent(0));
 		SmartDashboard.putNumber("Shooter pivot current left", pdp.getCurrent(15));
@@ -501,6 +531,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("CHOSEN PIVOT ANGLE", shooterPivot.getClosestAngleToSetpoint(shooterPivot.getSetpoint()));
 		
 		SmartDashboard.putNumber("Joy POV", oi.operatorJoystick.getPOV());
+		SmartDashboard.putNumber("Left Centering Module Current", pdp.getCurrent(5));
+		SmartDashboard.putNumber("Left Centering Module Current", pdp.getCurrent(10));
 	}
 	
 	public double correctForDeadZone(double joyVal){

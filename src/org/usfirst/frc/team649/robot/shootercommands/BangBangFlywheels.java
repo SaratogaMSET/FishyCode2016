@@ -35,24 +35,24 @@ public class BangBangFlywheels extends Command {
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
 
-		if(Robot.shooter.getLeftFlywheelRPM() <= ShooterSubsystem.FLYWHEEL_TARGET_RPM){
-			Robot.shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MAX_SHOOT_POWER);
+		if(Robot.shooter.getLeftFlywheelRPM() <= ShooterSubsystem.flywheelTargetRPM){
+			Robot.shooter.setLeftFlywheelPower(ShooterSubsystem.flywheelMaxShootPower);
 		}	
 		else{
-			Robot.shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_MIN_SHOOT_POWER);
+			Robot.shooter.setLeftFlywheelPower(ShooterSubsystem.flywheelMinShootPower);
 		}
 		
-		if(Robot.shooter.getRightFlywheelRPM() <= ShooterSubsystem.FLYWHEEL_TARGET_RPM){
-			Robot.shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MAX_SHOOT_POWER);
+		if(Robot.shooter.getRightFlywheelRPM() <= ShooterSubsystem.flywheelTargetRPM){
+			Robot.shooter.setRightFlywheelPower(-ShooterSubsystem.flywheelMaxShootPower);
 		}
 		else{
-			Robot.shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_MIN_SHOOT_POWER);
+			Robot.shooter.setRightFlywheelPower(-ShooterSubsystem.flywheelMinShootPower);
 		}
 		
 		//if in autonomous loop, shoot the shooter when we reach our target RPM
 		if (!endOnOneLoop){
-			if (!hasStartedShot && (Math.abs(Robot.shooter.getLeftFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE
-					&& Math.abs(Robot.shooter.getRightFlywheelRPM() - ShooterSubsystem.FLYWHEEL_TARGET_RPM) < ShooterSubsystem.FLYWHEEL_TOLERANCE)){
+			if (!hasStartedShot && (Math.abs(Robot.shooter.getLeftFlywheelRPM() - ShooterSubsystem.flywheelTargetRPM) < ShooterSubsystem.flywheelTolerance
+					&& Math.abs(Robot.shooter.getRightFlywheelRPM() - ShooterSubsystem.flywheelTargetRPM) < ShooterSubsystem.flywheelTolerance)){
 				new ShootTheShooter().start();
 				hasStartedShot = true;
 				extraWaitTime.reset();
@@ -71,10 +71,11 @@ public class BangBangFlywheels extends Command {
         else{
         	if (!Robot.isShooting && prevStateIsShooting){
         		shootingSequenceFinished = true;
+        		System.out.println("Finished shooooting");
         	}
         	prevStateIsShooting = Robot.isShooting;
         	System.out.println("Ready: " + shootingSequenceFinished + ", TIME " + Math.round(extraWaitTime.get()) + ", hasShot: " + hasStartedShot);
-        	return shootingSequenceFinished && extraWaitTime.get() >  waitTime && hasStartedShot; //hasShot as a safeguard
+        	return shootingSequenceFinished || extraWaitTime.get() >  waitTime; //hasShot as a safeguard
         	
         }
     }

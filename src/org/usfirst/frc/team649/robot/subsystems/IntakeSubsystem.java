@@ -10,7 +10,7 @@ import org.usfirst.frc.team649.robot.util.DoubleSolenoid649;
 
 public class IntakeSubsystem extends Subsystem {
 
-	public static final double FORWARD_ROLLER_INTAKE_SPEED = 0.35;
+	public static final double FORWARD_ROLLER_INTAKE_SPEED = 0.4;
 	public static final double CENTERING_MODULE_INTAKE_SPEED = 1.0;
 	public static final double FORWARD_ROLLER_PURGE_SPEED = -1.0;
 	public static final double CENTERING_MODULE_PURGE_SPEED = -1.0;
