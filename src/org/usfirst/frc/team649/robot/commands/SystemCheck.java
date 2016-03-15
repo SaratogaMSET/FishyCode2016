@@ -1,8 +1,7 @@
 package org.usfirst.frc.team649.robot.commands;
 
-import org.omg.stub.java.rmi._Remote_Stub;
-import org.usfirst.frc.team649.robot.OI;
 import org.usfirst.frc.team649.robot.Robot;
+import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -14,44 +13,77 @@ public class SystemCheck extends Command {
 	
 	boolean[] dT_results, shooter_results, pivot_results, intake_results;
 	
-	//
+	////*****************************INITIALIZE AND RUN EVERYTHING****************************////
 	
 	@Override
 	protected void initialize() {
 		// TODO Auto-generated method stub
 		currentCommandState = 0;
+		
+		waitForButton();
+		currentCommandState++;
+		
+		dT_results = testDrivetrain();
+		
+		waitForButton();
+		currentCommandState++;
+		
+		shooter_results = testShooters();
+		
+		waitForButton();
+		currentCommandState++;
+		
+		intake_results = testIntakes();
+	}
+
+	public void waitForButton(){
 		prevStateTrigger = false;
-		
-		
+		while (Robot.oi.operatorJoystick.getRawButton(1)){
+			//WAITING in case button was originally held down and not released in time
+		}
 		while (! (Robot.oi.operatorJoystick.getRawButton(1) && !prevStateTrigger) ){ //wait for the click
 			prevStateTrigger = Robot.oi.operatorJoystick.getRawButton(1);
 		}
-		
-		dT_results = testDrivetrain();
 	}
-
+	
+	public void printOutResults(boolean[] results){
+		for (int i = 0; i < results.length; i++){
+			
+		}
+	}
+	
+	
+	////*****************************UNUSED COMMAND INHERITED METHODS******************************////
+	
 	@Override
 	protected void execute() {
 		// TODO Auto-generated method stub
-//		switch(currentCommandState){
-//			case 1:
-//				
-//				break;
-//			case 2:
-//				break;
-//			case 3:
-//				break;
-//			case 4:
-//				break;
-//			case 5:
-//				break;
-//			default:
-//				break;
-//		}
-		
+	}
+	
+	@Override
+	protected boolean isFinished() {
+		// TODO Auto-generated method stub
+		return currentCommandState == 8;
 	}
 
+	@Override
+	protected void end() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void interrupted() {
+		// TODO Auto-generated method stub
+
+	}
+	
+	////**********************************TEST SUBSYSTEMS**********************************////
+	
 	//RESULTS: (0): success or failure, (1-infinity): subsystem dependent variables
+	
+	
+	/// <<<<<<<<<<<<<<DRIVETRAIN>>>>>>>>>>>>>
 	
 	public boolean[] testDrivetrain(){
 		boolean[] results = new boolean[3];
@@ -85,6 +117,7 @@ public class SystemCheck extends Command {
 		return results;
 	}
 	
+	/// <<<<<<<<<<<<<<SHOOTERS>>>>>>>>>>>>>
 	public boolean[] testShooters(){
 		boolean[] results = new boolean[3];
 		Timer t = new Timer();
@@ -100,8 +133,6 @@ public class SystemCheck extends Command {
 		while(t.get() < 1.0){
 			//ramp up
 		}
-		
-		Robot.drivetrain.rawDrive(0, 0);
 		
 		double f_leftEinstein = Robot.shooter.getLeftFlywheelRPM(), f_rightEinstein = Robot.shooter.getRightFlywheelRPM();
 		
@@ -119,29 +150,54 @@ public class SystemCheck extends Command {
 		t.start();
 		
 		while(t.get() < 0.6){
-			//wait
+			//wait for slowing down
 		}
 		
 		//log
 		return results;
 	}
 	
-	@Override
-	protected boolean isFinished() {
-		// TODO Auto-generated method stub
-		return currentCommandState == 8;
-	}
-
-	@Override
-	protected void end() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void interrupted() {
-		// TODO Auto-generated method stub
-
+	/// <<<<<<<<<<<<<<INTAKES>>>>>>>>>>>>>
+	public boolean[] testIntakes(){
+		boolean[] results = new boolean[3];
+		Timer t = new Timer();
+		t.reset(); 
+		t.start(); 
+		boolean _intakeDeployed = Robot.intake.isIntakeDeployed();
+		
+		if (_intakeDeployed){
+//			Robot.intake.setSolenoids(IntakeSubsystem.UP);
+//			while (t.get() < 2.0){
+//				//wait
+//			}
+			results[0] = true; //because we know intakes work if they started true
+		}
+		else{
+			Robot.intake.setSolenoids(!IntakeSubsystem.UP);
+			while (t.get() < 2.3){
+				//wait
+			}
+			results[0] = Robot.intake.isIntakeDeployed();
+		}
+		
+		t.reset();
+		t.start();
+		
+		Robot.intake.setCenteringModuleSpeed(IntakeSubsystem.CENTERING_MODULE_INTAKE_SPEED);
+		Robot.intake.setFwdRolSpd(IntakeSubsystem.FORWARD_ROLLER_INTAKE_SPEED);
+		//turn right
+		while(!Robot.shooter.isIRTripped() || t.get() > 12){
+			 
+		}
+		
+		Robot.intake.setCenteringModuleSpeed(0);
+		Robot.intake.setFwdRolSpd(0);
+		
+		results[1] = t.get() <= 12 && Robot.shooter.isIRTripped(); 
+		
+		
+		//log
+		return results;
 	}
 
 }

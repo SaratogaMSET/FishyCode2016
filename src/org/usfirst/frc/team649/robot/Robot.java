@@ -33,7 +33,9 @@ import org.usfirst.frc.team649.robot.commandgroups.ShootTheShooter;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
 import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.SetCameraServo;
+import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
 import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
+import org.usfirst.frc.team649.robot.commands.VisionLoop;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossChevalDeFrise;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoTwoBallLowBar;
 import org.usfirst.frc.team649.robot.commands.intakecommands.RunAllRollers;
@@ -72,7 +74,9 @@ public class Robot extends IterativeRobot {
 	public static String ip = "169.254.110.201";
 	
 	public ArrayList<ArrayList<Double>> log;
+	public static VisionLoop visionCommand;
 	public static Center currCenter;
+	public static boolean runVision;
 	public static Timer timer, pivotTimer;
 	public DoubleSolenoid ds;
 	public static PowerDistributionPanel pdp;
@@ -131,6 +135,9 @@ public class Robot extends IterativeRobot {
 		shooter = new ShooterSubsystem();
 		camera = new CameraSubsystem(ip);
 		isPIDActive= false;
+		runVision = false;
+		
+		//visionCommand = new VisionLoop();
 		
 		if (Robot.camera.noOpencvErrors){
 			if (camera.vcap.isOpened()){
@@ -187,11 +194,16 @@ public class Robot extends IterativeRobot {
 		new SetIntakePosition(intakeState);
 		new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();;
 		
+		//runVision = true;
+		//visionLoop.start();
+		
+		
 		new DriveForwardRotate(0, 0).start();
 //		new MatchAutoDrive(AutonomousSequences.fromPos1, 1).start();;
 		//new ResetPivot().start();;
 	//	new AutoTwoBallLowBar().start();;
 		new AutoCrossChevalDeFrise().start();
+		//new TurnWithEncoders(27).start();
 		//new BangBangFlywheels(false).start();
 		
 	//	new TurnWithGyro(60).start();

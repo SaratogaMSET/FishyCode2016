@@ -16,11 +16,14 @@ public class TurnWithEncoders extends Command {
 	public Timer timer;
 	Command left, right;
 	public double deltaTranslationalDistance;
+	public double leftEncDist;
+	public boolean prevStateLeftPID, prevStateRightPID;
 	
-    public TurnWithEncoders(double angle) {
+    public TurnWithEncoders(double leftEncDist) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	deltaTranslationalDistance = (angle/360.0) * (25.125 * Math.PI);
+    	//deltaTranslationalDistance = (angle/360.0) * (25.125 * Math.PI);
+    	this.leftEncDist = leftEncDist;
     }
 
     // Called just before this Command runs the first time
@@ -28,11 +31,13 @@ public class TurnWithEncoders extends Command {
     	timer = new Timer();
     	timer.reset();
     	timer.start();
-    	left = new DrivePIDLeft(deltaTranslationalDistance);
+    	left = new DrivePIDLeft(leftEncDist);
     	
-    	right = new DrivePIDRight(-deltaTranslationalDistance);
+    	//right = new DrivePIDRight(-leftEncDist);
     	left.start();
-    	right.start();
+    	//right.start();
+    	
+    	
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -42,16 +47,20 @@ public class TurnWithEncoders extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return left.isRunning()||right.isRunning();
+        boolean done = Robot.isPIDActiveLeft && !prevStateLeftPID; 
+        prevStateLeftPID = Robot.isPIDActiveLeft;
+        //prevStateRightPID = Robot.isPIDActiveRight;
+        return done;
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	
+    	Robot.drivetrain.rawDrive(0, 0);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	end();
     }
 }

@@ -23,7 +23,9 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	public Victor motorLeft, motorRight;
 	public Encoder encoderLeft, encoderRight;
 	public PIDController pid;
-	public DigitalInput resetHalEffect; // unsure about validity of
+	public DigitalInput resetHalEffectLeft; 
+	public DigitalInput resetHalEffectRight;
+									// unsure about validity of
 											// counter/hall effect
 	public DigitalInput resetBumperLeft;
 	public DigitalInput resetBumperRight;
@@ -62,6 +64,8 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		
 		public static final double CLOSE_SHOOT_POSITION = 68.3;//62.2;
 		public static final double BACK_SHOOT_POSITION = 115.0;//62.2;
+		
+		public static final double AUTO_LOW_BAR_SHOOT_POSITION = 50.0;
 		
 		public static final double REGION_ERROR = 4.0; //degrees
 
@@ -108,9 +112,9 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		encoderLeft.setDistancePerPulse(PivotPID.ENCODER_DEGREES_PER_PULSE);
 		encoderRight.setDistancePerPulse(PivotPID.ENCODER_DEGREES_PER_PULSE);
 
-		resetHalEffect = new DigitalInput(
-				RobotMap.ShooterPivot.RESET_HAL_EFFECT); // according to
-															// wpilib?
+		resetHalEffectRight = new DigitalInput(
+				RobotMap.ShooterPivot.RESET_HAL_EFFECT_RIGHT); // according to
+		resetHalEffectLeft = new DigitalInput(RobotMap.ShooterPivot.RESET_HAL_EFFECT_LEFT);												// wpilib?
 		resetBumperLeft = new DigitalInput(
 				RobotMap.ShooterPivot.RESET_BUMPER_LEFT);
 		resetBumperRight = new DigitalInput(
@@ -172,8 +176,10 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	}
 	
 	public boolean isResetHalTripped(){
-		return !resetHalEffect.get();
+		return !resetHalEffectLeft.get() || !resetHalEffectRight.get();
 	}
+	
+	
 	public void resetEncoders() {
 		encoderLeft.reset();
 		encoderRight.reset();

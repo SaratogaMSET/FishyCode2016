@@ -37,6 +37,8 @@ public class TurnWithGyro extends Command {
 				error * TurnConstants.P_VAL /*+ TurnConstants.D_VAL * (error - last_error)/0.05*/);
 
     	SmartDashboard.putString("DT Current Command", this.getName());
+    	System.out.println("GYRO Angle: " + Robot.drivetrain.gyro.getAngle()
+    						+ ", TURN Error: " + error);
 	}
 
 	@Override

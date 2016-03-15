@@ -62,7 +62,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	}
 	
 	public static class TurnConstants { 
-		public static final double P_VAL = .05;
+		public static final double P_VAL = .027;
 		public static final double I_VAL = 0;
 		public static final double D_VAL = 0.0;
 		

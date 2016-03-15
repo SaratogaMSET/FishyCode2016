@@ -91,7 +91,10 @@ public class RobotMap {
 		
 		public static final int RESET_BUMPER_LEFT = 10;
 		public static final int RESET_BUMPER_RIGHT = 11;
-		public static final int RESET_HAL_EFFECT = 23;
+		
+		public static final int RESET_HAL_EFFECT_RIGHT = 23;
+		public static final int RESET_HAL_EFFECT_LEFT = 21;
+		
 		public static final int [] LEFT_SOLENOID_PORTS = {1,5,2};
 		//not used on pbot
 		public static final int [] RIGHT_SOLENOID_PORTS = {1,5,2};

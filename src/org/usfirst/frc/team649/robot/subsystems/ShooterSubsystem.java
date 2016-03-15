@@ -89,6 +89,10 @@ public class ShooterSubsystem extends Subsystem {
 		loader.set(punchPower);
 	}
 
+	public boolean isIRTripped(){
+		return !infraredSensor.get();
+	}
+	
 	public void resetCounter() {
 		rightPhotoelectric.reset();
 		leftPhotoelectric.reset();

@@ -12,11 +12,13 @@ import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
 import org.usfirst.frc.team649.robot.commands.intakecommands.RunAllRollers;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.ResetPivot;
+import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPosition;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
 import org.usfirst.frc.team649.robot.shootercommands.BangBangFlywheels;
 import org.usfirst.frc.team649.robot.shootercommands.SetFlywheels;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.*;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.AutoConstants;
 
@@ -44,14 +46,15 @@ public class AutoCrossChevalDeFrise extends CommandGroup {
 		addSequential(new DrivetrainPIDCommand(57));
 		*/
 		//addSequential(new ResetGyro());
-		addSequential(new TurnWithGyro(31));
-		//addSequential(new TurnWithEncoders(37));
-		addSequential(new DriveForwardRotate(0, 0));
-		addSequential(new SetPivotState(ShooterPivotSubsystem.PivotPID.FAR_SHOOT_STATE));
-		addSequential(new BangBangFlywheels(false));
-		addSequential(new WaitCommand(1.5));
-		addSequential(new ResetPivot());
-		addSequential(new ShootTheShooter());
+//		addSequential(new TurnWithGyro(51));
+//		//addSequential(new TurnWithEncoders(37));
+//		addSequential(new DriveForwardRotate(0, 0));
+//		addSequential(new SetPivotPosition(PivotPID.AUTO_LOW_BAR_SHOOT_POSITION));
+//		addSequential(new WaitCommand(1.0));
+//		addSequential(new BangBangFlywheels(false));
+//		addSequential(new WaitCommand(1.5));
+//		addSequential(new ResetPivot());
+		//addSequential(new ShootTheShooter());
 		
 		//addParallel(new putColordown)
 		//addParallel(new stopAtColor);

@@ -183,28 +183,28 @@ public class CameraSubsystem extends Subsystem {
 //	        	SmartDashboard.putData("Obj " + largest, contourObj);
 
 	        	
-	        	SmartDashboard.putNumber("Obj 0 Center X: ", center.x);
-	        	SmartDashboard.putNumber("Obj 0 Center Y: ", center.y);
-	        	SmartDashboard.putNumber("Obj 0 Area: ", Imgproc.contourArea(contours.get(largest)));
-	        	SmartDashboard.putNumber("Obj 0 width: ", r.width);
-	        	SmartDashboard.putNumber("Obj 0 height: ", r.height);
-	        	SmartDashboard.putNumber("Obj 0 Distance: ", dist);
+//	        	SmartDashboard.putNumber("Obj 0 Center X: ", center.x);
+//	        	SmartDashboard.putNumber("Obj 0 Center Y: ", center.y);
+//	        	SmartDashboard.putNumber("Obj 0 Area: ", Imgproc.contourArea(contours.get(largest)));
+//	        	SmartDashboard.putNumber("Obj 0 width: ", r.width);
+//	        	SmartDashboard.putNumber("Obj 0 height: ", r.height);
+//	        	SmartDashboard.putNumber("Obj 0 Distance: ", dist);
 	        	
 	        	//Imgcodecs.imwrite("output.png", imageHSV);
 	    	}
 	    	else{
-	    		SmartDashboard.putNumber("Obj 0 Center X: ", 0);
-	        	SmartDashboard.putNumber("Obj 0 Center Y: ", 0);
-	        	SmartDashboard.putNumber("Obj 0 Area: ", 0);
-	        	SmartDashboard.putNumber("Obj 0 width: ", 0);
-	        	SmartDashboard.putNumber("Obj 0 height: ", 0);
-	        	SmartDashboard.putNumber("Obj 0 Distance: ", 0);
+//	    		SmartDashboard.putNumber("Obj 0 Center X: ", 0);
+//	        	SmartDashboard.putNumber("Obj 0 Center Y: ", 0);
+//	        	SmartDashboard.putNumber("Obj 0 Area: ", 0);
+//	        	SmartDashboard.putNumber("Obj 0 width: ", 0);
+//	        	SmartDashboard.putNumber("Obj 0 height: ", 0);
+//	        	SmartDashboard.putNumber("Obj 0 Distance: ", 0);
 	    	}
 	    	
 	    	
-	    	SmartDashboard.putNumber("Number of contours in image", contours.size());
-	    	SmartDashboard.putNumber("Mat Height", image.height());
-	    	SmartDashboard.putNumber("Mat Width", image.width());
+//	    	SmartDashboard.putNumber("Number of contours in image", contours.size());
+//	    	SmartDashboard.putNumber("Mat Height", image.height());
+//	    	SmartDashboard.putNumber("Mat Width", image.width());
 	    	
 	        //mem save
 	        image.release();

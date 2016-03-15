@@ -21,8 +21,8 @@ public class RightDTPID extends PIDSubsystem {
        	
     	encoderDriveRightPID = this.getPIDController();
     	encoderDriveRightPID.setAbsoluteTolerance(0.8);
-    	//encoderDrivePID.setOutputRange(-EncoderBasedDriving.MAX_MOTOR_POWER, EncoderBasedDriving.MAX_MOTOR_POWER);
-        
+
+    	encoderDriveRightPID.setOutputRange(-0.4, 0.4);
     }
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
@@ -32,8 +32,8 @@ public class RightDTPID extends PIDSubsystem {
 	}
 
 	protected void usePIDOutput(double output) {
-        Robot.drivetrain.motors[2].set(-output);
-        Robot.drivetrain.motors[3].set(-output);
+        Robot.drivetrain.motors[0].set(-output);
+        Robot.drivetrain.motors[1].set(-output);
 	}
 
     public void initDefaultCommand() {

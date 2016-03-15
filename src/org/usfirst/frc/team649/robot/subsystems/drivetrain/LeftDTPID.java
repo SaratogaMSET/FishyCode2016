@@ -21,7 +21,8 @@ public class LeftDTPID extends PIDSubsystem {
        	
     	encoderDriveLeftPID = this.getPIDController();
     	encoderDriveLeftPID.setAbsoluteTolerance(0.8);
-    	//encoderDrivePID.setOutputRange(-EncoderBasedDriving.MAX_MOTOR_POWER, EncoderBasedDriving.MAX_MOTOR_POWER);
+    	
+    	encoderDriveLeftPID.setOutputRange(-0.4, 0.4);
         
     }
     // Put methods for controlling this subsystem
@@ -32,8 +33,8 @@ public class LeftDTPID extends PIDSubsystem {
 	}
 
 	protected void usePIDOutput(double output) {
-        Robot.drivetrain.motors[0].set(output);
-        Robot.drivetrain.motors[1].set(output);
+        Robot.drivetrain.motors[2].set(output);
+        Robot.drivetrain.motors[3].set(output);
 	}
 
     public void initDefaultCommand() {
