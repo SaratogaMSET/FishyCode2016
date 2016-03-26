@@ -31,6 +31,8 @@ import org.usfirst.frc.team649.robot.commandgroups.SemiAutoLoadBall;
 import org.usfirst.frc.team649.robot.commandgroups.SetDefenseMode;
 import org.usfirst.frc.team649.robot.commandgroups.ShootTheShooter;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
+import org.usfirst.frc.team649.robot.commands.DrivePIDLeft;
+import org.usfirst.frc.team649.robot.commands.DrivePIDRight;
 import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.SetCameraServo;
 import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
@@ -188,6 +190,8 @@ public class Robot extends IterativeRobot {
 		shooterPivot.resetEncoders();
 		new SetPivotState(ShooterPivotSubsystem.PivotPID.CURRENT_STATE).start();
 		new DriveForwardRotate(0, 0).start();
+		new DrivePIDRight(0).start();
+		new DrivePIDLeft(0).start();
 		intakeState = intake.isIntakeDeployed();
 		currentGear = drivetrain.driveSol.get() == Value.kForward;
 		drivetrain.shift(currentGear);
@@ -247,6 +251,8 @@ public class Robot extends IterativeRobot {
 		//drivetrain.gyro.reset();
 		drivetrain.resetEncoders();
 		drivetrain.gyro.reset();
+		new DrivePIDRight(0).start();
+		new DrivePIDLeft(0).start();
 		shooterPivot.resetEncoders();
 		new SetPivotState(ShooterPivotSubsystem.PivotPID.CURRENT_STATE).start();
 		new DriveForwardRotate(0, 0).start();

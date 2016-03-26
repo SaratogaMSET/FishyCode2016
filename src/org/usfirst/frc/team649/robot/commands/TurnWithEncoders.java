@@ -6,6 +6,7 @@ import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.T
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -14,15 +15,16 @@ public class TurnWithEncoders extends Command {
 
 	public double setpoint;
 	public Timer timer;
-	Command left, right;
+	DrivePIDLeft left;
+	DrivePIDRight right;
 	public double deltaTranslationalDistance;
 	public double leftEncDist;
 	public boolean prevStateLeftPID, prevStateRightPID;
 	
-    public TurnWithEncoders(double leftEncDist) {
+    public TurnWithEncoders(double angle) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	//deltaTranslationalDistance = (angle/360.0) * (25.125 * Math.PI);
+    	deltaTranslationalDistance = (angle/360.0) * (25.125 * Math.PI);
     	this.leftEncDist = leftEncDist;
     }
 
@@ -31,12 +33,10 @@ public class TurnWithEncoders extends Command {
     	timer = new Timer();
     	timer.reset();
     	timer.start();
-    	left = new DrivePIDLeft(leftEncDist);
-    	
-    	//right = new DrivePIDRight(-leftEncDist);
+    	left = new DrivePIDLeft(deltaTranslationalDistance);
+    	right = new DrivePIDRight(deltaTranslationalDistance);
     	left.start();
-    	//right.start();
-    	
+    	right.start();
     	
     }
 
@@ -47,10 +47,11 @@ public class TurnWithEncoders extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        boolean done = Robot.isPIDActiveLeft && !prevStateLeftPID; 
+        boolean done = !left.isRunning() && !right.isRunning();
+        SmartDashboard.putBoolean("Done?", done);
         prevStateLeftPID = Robot.isPIDActiveLeft;
-        //prevStateRightPID = Robot.isPIDActiveRight;
-        return done;
+        prevStateRightPID = Robot.isPIDActiveRight;
+        return false;
     }
 
     // Called once after isFinished returns true
