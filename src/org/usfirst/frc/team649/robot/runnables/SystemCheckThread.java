@@ -1,4 +1,4 @@
-package org.usfirst.frc.team649.robot.commands;
+package org.usfirst.frc.team649.robot.runnables;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,7 +18,6 @@ public class SystemCheckThread implements Runnable {
 	boolean prevStateTrigger;
 	
 	Map<String,Boolean> dT_results, shooter_results, pivot_results, intake_results;
-	
 	
 	@Override
 	public void run() {
@@ -110,10 +109,10 @@ public class SystemCheckThread implements Runnable {
 		dT_results.put("DT GYRO WORKING?", (Boolean)(Math.abs(f_gyro - _gyro) > 5.0));
 					
 		//left Enc moved forwards
-		dT_results.put("DT LEFT ENCODER WORKING?", (Boolean)(f_leftEnc - _leftEnc > 10.0));
+		dT_results.put("DT LEFT ENCODER WORKING?", (Boolean)(f_leftEnc - _leftEnc > 3.0));
 		
 		//right Enc moved back
-		dT_results.put("DT RIGHT ENCODER WORKING?", (Boolean)(f_rightEnc - _rightEnc < -10.0));
+		dT_results.put("DT RIGHT ENCODER WORKING?", (Boolean)(f_rightEnc - _rightEnc < -3.0));
 		
 	}
 	

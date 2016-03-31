@@ -1,5 +1,6 @@
 package org.usfirst.frc.team649.robot;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -23,6 +24,9 @@ import org.usfirst.frc.team649.robot.subsystems.drivetrain.RightDTPID;
 import org.usfirst.frc.team649.robot.util.Center;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.text.StyleContext.SmallAttributeSet;
 
@@ -35,7 +39,6 @@ import org.usfirst.frc.team649.robot.commands.DrivePIDLeft;
 import org.usfirst.frc.team649.robot.commands.DrivePIDRight;
 import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.SetCameraPiston;
-import org.usfirst.frc.team649.robot.commands.SystemCheckThread;
 import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
 import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
 import org.usfirst.frc.team649.robot.commands.VisionLoop;
@@ -48,6 +51,8 @@ import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.EngageBrakes;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.ResetPivot;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPower;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
+import org.usfirst.frc.team649.robot.runnables.PullVisionTxtThread;
+import org.usfirst.frc.team649.robot.runnables.SystemCheckThread;
 import org.usfirst.frc.team649.robot.shootercommands.BangBangFlywheels;
 import org.usfirst.frc.team649.robot.shootercommands.SetFlywheels;
 import org.usfirst.frc.team649.robot.shootercommands.ShooterSet;
@@ -66,6 +71,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 
+	//SUBSYSTEMS
 	public static OI oi;
 	public static DrivetrainSubsystem drivetrain;
 	public static LeftDTPID leftDT;
@@ -74,37 +80,56 @@ public class Robot extends IterativeRobot {
 	public static ShooterPivotSubsystem shooterPivot;
 	public static ShooterSubsystem shooter;
 	public static CameraSubsystem camera;
-	public static String ip = "169.254.110.201";
+	public static PowerDistributionPanel pdp;
+	public static Compressor c; 
 	
-	public ArrayList<ArrayList<Double>> log;
+	//OI
+	public static final double DEAD_ZONE_TOLERANCE = 0.043;
+	boolean manual;
+	public static boolean isManualPressed;
+	
+	//DT	
+	public static boolean isPIDActive;
+	public static boolean isPIDActiveLeft;
+	public static boolean isPIDActiveRight;
+	//true = high gear, false = low gear
+	public static boolean currentGear = true;
+	
+	//PIVOT
+	public static Timer pivotTimer;
+	public static final double MIN_STOPPED_TIME = 0.15; //seconds
+	public static boolean shooterPIDIsRunning = false;
+	
+	//INTAKE
+	public static boolean allIntakeRunning = false;
+	//true = down, false = up
+	public static boolean intakeState;
+	
+	//SHOOTER
+	public static boolean readyToShoot = false;
+	public static boolean flywheelShootRunning = false;
+	public static boolean isShooting = false;
+	
+	//VISION
+	public static String ip = "N/A";
+	public static String initPath = "/home/admin/initializeAdb.sh";
+	public static String pullPath = "/home/admin/pullTextFile.sh";
 	public static VisionLoop visionCommand;
 	public static Center currCenter;
 	public static boolean runVision;
-	public static Timer timer, pivotTimer;
-	public DoubleSolenoid ds;
-	public static PowerDistributionPanel pdp;
-
-	SendableChooser chooser;
-	boolean manual;
-	public static final double DEAD_ZONE_TOLERANCE = 0.043;
-	public static final double MIN_STOPPED_TIME = 0.15; //seconds
+	public static ScheduledExecutorService adbTimer;
 	
-	//true = down, false = up
-	public static boolean intakeState;
-	public static boolean shooterState = false;
-	//true = high gear, false = low gear
-	public static boolean currentGear = true;
-	public static boolean shooterPIDIsRunning = false;
-	public static boolean readyToShoot = false;
+	//LOGGING
+	public ArrayList<ArrayList<Double>> log;
+	public static Timer timer;
 	
-	public static boolean isShooting = false;
+	//MISC
+	public static boolean semiAutoIsRunning = false; //semi auto indicator
+	public static boolean robotEnabled = false; //indicator
+	public SendableChooser chooser; //autonomous selector
+	public Thread systemCheck; //thread stuff
 	
-	public static boolean allIntakeRunning = false;
-	public static boolean flywheelShootRunning = false;
-	public static boolean semiAutoIsRunning = false;
-	
-	public static boolean robotEnabled = false;
-	//prevStates
+	//PREV STATES
 	public boolean prevStateIntakeUp;
 	public boolean prevStateIntakeDeployed;
 	public boolean prevStateDriveShifter;
@@ -120,14 +145,8 @@ public class Robot extends IterativeRobot {
 	public boolean prevStateSemiAutoIntake;
 	
 	public boolean prevStateManualFirePiston;
-
-	public static boolean isPIDActive;
-	public static boolean isPIDActiveLeft;
-	public static boolean isPIDActiveRight;
 	
-	public static boolean isManualPressed;
-	
-	public Thread systemCheck;
+	///////**********************ROBOT INIT************************//////
 	
 	public void robotInit() {
 		oi = new OI();
@@ -151,7 +170,7 @@ public class Robot extends IterativeRobot {
 				System.out.println("R-INIT FINISHED VCAP, VALID IP -:- STREAM OPENED");
 			}
 		}
-//		
+		
 		log = new ArrayList<>();
 		timer = new Timer();
 		pivotTimer = new Timer();
@@ -174,29 +193,8 @@ public class Robot extends IterativeRobot {
 		
 		robotEnabled = false;
 	}
-
-	public void disabledInit() {
-		System.out.println("STARTING LOG: Time, MotorLeft, MotorRight ");
-//		for (int i = 0; i < log.size(); i++) {
-//			ArrayList<Double> d = log.get(i);
-//			System.out.println("BEGINNING_TAG " + d.get(0) + ", " + d.get(1)
-//					+ ", " + d.get(2) + ", " + d.get(3) + ", " + d.get(4)
-//					+ ", " + d.get(4) + " ENDING_TAG"); //change from 4 to 5 when gyro works
-//		}
-		
-		robotEnabled = false;
-		if (systemCheck != null){
-			systemCheck.interrupt();
-		}
-	}
-
-	public void disabledPeriodic() {
-		Scheduler.getInstance().run();
-		
-	}
-
 	
-	
+	/////////////****************AUTONOMOUS***************//////////////
 	
 	public void autonomousInit() {
 		drivetrain.resetEncoders();
@@ -217,20 +215,16 @@ public class Robot extends IterativeRobot {
 		
 		
 		new DriveForwardRotate(0, 0).start();
-//		new MatchAutoDrive(AutonomousSequences.fromPos1, 1).start();;
-		//new ResetPivot().start();;
-	//	new AutoTwoBallLowBar().start();;
 														//new AutoCrossChevalDeFrise().start();
-		//new TurnWithEncoders(27).start();
-		//new BangBangFlywheels(false).start();
-		
-	//	new TurnWithGyro(60).start();
+
 		System.out.println(drivetrain.gyro.getAngle());
 		shooterPivot.currentPivotState = -1;
 
+		//VERY IMPORTANT
 		robotEnabled = true;
-//		systemCheck = new Thread(new SystemCheckThread());
-//		systemCheck.start();
+		
+		//start pulling txt and updating it
+		startVisionThreads();
 		
 	}
 
@@ -262,6 +256,8 @@ public class Robot extends IterativeRobot {
 		shooter.updateShooterConstants();
 	}
 
+	/////////////****************TELEOP***************//////////////
+	
 	public void teleopInit() {
 		timer.reset();
 		timer.start();
@@ -286,7 +282,12 @@ public class Robot extends IterativeRobot {
 		//camera.vcap.open("http://axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
 
 		shooterPivot.currentPivotState = -1;
+		
+		//VERY IMPORTANT
 		robotEnabled = true;
+		
+		//start pulling txt and updating it
+		startVisionThreads();	
 	}
 
 	public void teleopPeriodic() {
@@ -298,27 +299,13 @@ public class Robot extends IterativeRobot {
 		
 		Scheduler.getInstance().run();
 		
-		//new DriveForwardRotate(correctForDeadZone(oi.driver.getForward()), correctForDeadZone(oi.driver.getRotation())).start();
-		new DriveForwardRotate(oi.driver.getForward(), oi.driver.getRotation()).start();
-
-
+		new DriveForwardRotate(correctForDeadZone(oi.driver.getForward()), correctForDeadZone(oi.driver.getRotation())).start();
+		//new DriveForwardRotate(oi.driver.getForward(), oi.driver.getRotation()).start();
 		
 		if (readyToShoot && oi.operator.shootBallFlywheels() && oi.operator.shoot() && !prevStateShootButton){
 			new ShootTheShooter().start();
 		}
 		
-		//INTAKE ----- toggle
-//		if (oi.operator.toggleIntake() && !prevStateOpTrigger) {
-//			//shooter.loadBall(DoubleSolenoid.Value.kForward);
-//			///	new SetPivotCommand(ShooterPivotSubsystem.PivotPID.STORING_STATE).start();
-//			new SetIntakePosition(!intakeState).start();
-//			//intakeState = !intakeState;
-		
-		//THIS NOW HAPPENS WITHIN THE COMMAND
-//		} else {
-//		//	shooter.loadBall(DoubleSolenoid.Value.kReverse);
-//
-//		}
 		
 		//INTAKE ------2 button
 		if (oi.operator.intakeUp() && !prevStateIntakeUp){
@@ -519,6 +506,100 @@ public class Robot extends IterativeRobot {
 		logAndDashboard();
 	}
 	
+	
+	/////////////****************TEST***************//////////////
+	
+	public void testInit(){
+		timer.reset();
+		timer.start();
+		pivotTimer.reset();
+		log = new ArrayList<>();
+		//drivetrain.gyro.reset();
+		drivetrain.resetEncoders();
+		drivetrain.gyro.reset();
+		new DrivePIDRight(0).start();
+		new DrivePIDLeft(0).start();
+		shooterPivot.resetEncoders();
+		new SetPivotState(ShooterPivotSubsystem.PivotPID.CURRENT_STATE).start();
+		new DriveForwardRotate(0, 0).start();
+		intakeState = intake.isIntakeDeployed();
+		currentGear = drivetrain.driveSol.get() == Value.kForward;
+		drivetrain.shift(currentGear);
+		new SetIntakePosition(intakeState);
+		new SetCameraPiston(!CameraSubsystem.CAM_UP).start();
+		new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();;
+
+		//VERY IMPORTANT
+		robotEnabled = true;
+		
+		System.out.println("TEST MODE");
+		systemCheck = new Thread(new SystemCheckThread());
+		systemCheck.start();
+		
+	}
+	
+	public void testPeriodic() {
+		//LiveWindow.run();
+		Scheduler.getInstance().run();
+
+	}
+	
+	
+	/////////////****************DISABLED***************//////////////
+
+	public void disabledInit() {
+		System.out.println("STARTING LOG: Time, MotorLeft, MotorRight ");
+		//saveLog();
+		
+		//stop reading from file
+		this.adbTimer.shutdown();
+		this.adbTimer.awaitTermination(33, TimeUnit.MILLISECONDS);
+		
+		//SUPER IMPORTANT
+		robotEnabled = false;
+		//stop vision
+		endVisionThreads();
+	}
+
+	public void disabledPeriodic() {
+		Scheduler.getInstance().run();
+		
+	}
+
+	
+	
+	//////////////***************MISC***************//////////////
+	
+	public void saveLog(){
+		if (log != null){
+			for (int i = 0; i < log.size(); i++) {
+				ArrayList<Double> d = log.get(i);
+				System.out.println("BEGINNING_TAG " + d.get(0) + ", " + d.get(1)
+						+ ", " + d.get(2) + ", " + d.get(3) + ", " + d.get(4)
+						+ ", " + d.get(4) + " ENDING_TAG"); //change from 4 to 5 when gyro works
+			}
+			System.out.println("FINISHED PRINT");
+		}
+		else {
+			System.out.println("PRINT FAILED: Log is null");
+		}
+	}
+	
+	public void startVisionThreads(){
+		System.out.println("STARTING VISION");
+		
+		this.adbTimer = Executors.newSingleThreadScheduledExecutor();
+		this.adbTimer.scheduleAtFixedRate(new Thread(new PullVisionTxtThread()), 0, 50, TimeUnit.MILLISECONDS);
+	}
+	
+	public void endVisionThreads(){
+		if (systemCheck != null){
+			System.out.println("ENDING VISION");
+			systemCheck.interrupt();
+		}
+	}
+	
+	//////SUPER IMPORTANT///////
 	public void logAndDashboard(){
 		log.add(drivetrain.getLoggingData());
 		
@@ -579,43 +660,6 @@ public class Robot extends IterativeRobot {
 	
 	public boolean isStalling(Victor motor, int pdpPort){
 		return false;
-	}
-	/**
-	 * This function is called periodically during test mode
-	 */
-	
-	public void testInit(){
-		timer.reset();
-		timer.start();
-		pivotTimer.reset();
-		log = new ArrayList<>();
-		//drivetrain.gyro.reset();
-		drivetrain.resetEncoders();
-		drivetrain.gyro.reset();
-		new DrivePIDRight(0).start();
-		new DrivePIDLeft(0).start();
-		shooterPivot.resetEncoders();
-		new SetPivotState(ShooterPivotSubsystem.PivotPID.CURRENT_STATE).start();
-		new DriveForwardRotate(0, 0).start();
-		intakeState = intake.isIntakeDeployed();
-		currentGear = drivetrain.driveSol.get() == Value.kForward;
-		drivetrain.shift(currentGear);
-		new SetIntakePosition(intakeState);
-		new SetCameraPiston(!CameraSubsystem.CAM_UP).start();
-		new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();;
-
-		robotEnabled = true;
-		
-		systemCheck = new Thread(new SystemCheckThread());
-		System.out.println("TEST MODE");
-		
-		systemCheck.start();
-		
-	}
-	public void testPeriodic() {
-		//LiveWindow.run();
-		Scheduler.getInstance().run();
-
 	}
 	
 }
