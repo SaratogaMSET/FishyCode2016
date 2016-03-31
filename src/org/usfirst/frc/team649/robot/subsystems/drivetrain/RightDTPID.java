@@ -16,7 +16,8 @@ public class RightDTPID extends PIDSubsystem {
     
     
     public RightDTPID() {
-    	super("DT Right", DrivetrainSubsystem.PIDConstants.k_P, DrivetrainSubsystem.PIDConstants.k_I, DrivetrainSubsystem.PIDConstants.k_D);
+//    	super("DT Right", DrivetrainSubsystem.PIDConstants.k_P, DrivetrainSubsystem.PIDConstants.k_I, DrivetrainSubsystem.PIDConstants.k_D);
+    	super("DT Left", .03, 0, 2);
 
        	
     	encoderDriveRightPID = this.getPIDController();

@@ -33,11 +33,13 @@ public class AutoCrossChevalDeFrise extends CommandGroup {
 		addSequential(new ResetPivot());
 		addSequential(new ShiftDrivetrain(false));
 		addSequential(new SetIntakePosition(true));
-		addSequential(new DrivetrainPIDCommand(215));
+		//addSequential(new DrivetrainPIDCommand(215)); 
 		
 		addSequential(new SetIntakePosition(true));
 		
-		//addSequential(new WaitCommand(15.0));
+	//	addSequential(new WaitCommand(1.0));
+		addSequential(new TurnWithEncoders(60));
+		
 		/*
 		addSequential(new ResetDTEncoders());
 		addSequential(new WaitCommand(1.0));

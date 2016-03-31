@@ -36,7 +36,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 	public static class PivotPID {
 
 		public static final double ENCODER_DEGREES_PER_PULSE = 360.0 / 256.0
-				* 20.0 / 50.0 * 20.0 / 48.0 * 16.0 / 34.0; 
+				* 20.0 / 50.0 * 20.0 / 48.0 * 16.0 / 48.0; 
 		public static final double k_P = 0.12;
 		public static final double k_I = 0.000;
 		public static final double k_D = 0.055;

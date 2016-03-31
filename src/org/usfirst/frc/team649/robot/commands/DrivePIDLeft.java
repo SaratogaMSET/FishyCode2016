@@ -41,11 +41,12 @@ public class  DrivePIDLeft extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	drivePID.enable();
     	Robot.isPIDActiveLeft = true;
     	double setpoint = Robot.leftDT.getPosition() + distance;
     	drivePID.setSetpoint(setpoint);
     	SmartDashboard.putNumber("setpoint left", setpoint);
+    	drivePID.enable();
+
     }
 
     // Called repeatedly when this Command is scheduled to run

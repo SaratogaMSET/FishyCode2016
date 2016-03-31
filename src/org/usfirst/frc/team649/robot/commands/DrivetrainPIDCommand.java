@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class  DrivetrainPIDCommand extends Command {
 	double distance;
-	double tolerance = 0.25;
+	double tolerance = 1.0;
 	public PIDController drivePIDLeft;
 	
     public DrivetrainPIDCommand(double distance) {

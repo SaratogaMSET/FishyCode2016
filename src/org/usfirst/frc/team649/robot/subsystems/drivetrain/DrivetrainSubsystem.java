@@ -204,7 +204,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	@Override
 	protected double returnPIDInput() {
 		// TODO Auto-generated method stub
-		return leftEncoder.getDistance();
+		return -leftEncoder.getDistance();
 	}
 
 	public double getClosestAngleToSetpoint(double setpoint){
