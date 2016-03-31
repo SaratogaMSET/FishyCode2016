@@ -2,6 +2,7 @@ package org.usfirst.frc.team649.robot.commands;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
+import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -34,6 +35,13 @@ public class SystemCheck extends Command {
 		currentCommandState++;
 		
 		intake_results = testIntakes();
+		
+		waitForButton();
+		currentCommandState++;
+		
+		pivot_results = testPivot();
+		
+		currentCommandState = 100;
 	}
 
 	public void waitForButton(){
@@ -63,7 +71,7 @@ public class SystemCheck extends Command {
 	@Override
 	protected boolean isFinished() {
 		// TODO Auto-generated method stub
-		return currentCommandState == 8;
+		return currentCommandState == 100;
 	}
 
 	@Override
@@ -195,6 +203,41 @@ public class SystemCheck extends Command {
 		
 		results[1] = t.get() <= 12 && Robot.shooter.isIRTripped(); 
 		
+		
+		//log
+		return results;
+	}
+	
+	// <<<<<<<<<<<<<<<<<<<<<<<<PIVOT>>>>>>>>>>>>>>>>>>>>>>>>
+	public boolean[] testPivot() {
+		boolean[] results = new boolean[3];
+		Timer t = new Timer();
+		t.reset(); 
+		t.start();
+		
+		Robot.shooterPivot.setPower(ShooterPivotSubsystem.PivotPID.MAX_MOTOR_DOWN_POWER);
+		while (!Robot.shooterPivot.isResetHalTripped() && t.get() < 5.0){
+			System.out.println("waiting for pivot to trip");
+		}
+		Robot.shooterPivot.setPower(0);
+		
+		results[0] = t.get() <= 5.0 && Robot.shooterPivot.isResetHalTripped();
+		
+		t.reset();
+		t.start();
+
+		double _encLeft = Robot.shooterPivot.encoderLeft.getDistance(), _encRight = Robot.shooterPivot.encoderRight.getDistance();
+		
+		Robot.shooterPivot.setPower(ShooterPivotSubsystem.PivotPID.REGULAR_MAX_UP_POWER);
+		if (t.get() > 1.0){
+			//going up
+		}
+		Robot.shooterPivot.setPower(0);
+		
+		double f_encLeft = Robot.shooterPivot.encoderLeft.getDistance(), f_encRight = Robot.shooterPivot.encoderRight.getDistance();
+		
+		results[1] = f_encLeft - _encLeft > 3;
+		results[2] = f_encRight - _encRight > 3;
 		
 		//log
 		return results;
