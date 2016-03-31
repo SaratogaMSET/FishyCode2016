@@ -35,6 +35,7 @@ import org.usfirst.frc.team649.robot.commands.DrivePIDLeft;
 import org.usfirst.frc.team649.robot.commands.DrivePIDRight;
 import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.SetCameraPiston;
+import org.usfirst.frc.team649.robot.commands.SystemCheckThread;
 import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
 import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
 import org.usfirst.frc.team649.robot.commands.VisionLoop;
@@ -101,6 +102,8 @@ public class Robot extends IterativeRobot {
 	public static boolean allIntakeRunning = false;
 	public static boolean flywheelShootRunning = false;
 	public static boolean semiAutoIsRunning = false;
+	
+	public static boolean robotEnabled = false;
 	//prevStates
 	public boolean prevStateIntakeUp;
 	public boolean prevStateIntakeDeployed;
@@ -123,6 +126,8 @@ public class Robot extends IterativeRobot {
 	public static boolean isPIDActiveRight;
 	
 	public static boolean isManualPressed;
+	
+	public Thread systemCheck;
 	
 	public void robotInit() {
 		oi = new OI();
@@ -166,6 +171,8 @@ public class Robot extends IterativeRobot {
 		prevStateManualFirePiston = false;
 		
 		isManualPressed = false;
+		
+		robotEnabled = false;
 	}
 
 	public void disabledInit() {
@@ -177,12 +184,19 @@ public class Robot extends IterativeRobot {
 //					+ ", " + d.get(4) + " ENDING_TAG"); //change from 4 to 5 when gyro works
 //		}
 		
+		robotEnabled = false;
+		if (systemCheck != null){
+			systemCheck.interrupt();
+		}
 	}
 
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
+		
 	}
 
+	
+	
 	
 	public void autonomousInit() {
 		drivetrain.resetEncoders();
@@ -206,13 +220,18 @@ public class Robot extends IterativeRobot {
 //		new MatchAutoDrive(AutonomousSequences.fromPos1, 1).start();;
 		//new ResetPivot().start();;
 	//	new AutoTwoBallLowBar().start();;
-		new AutoCrossChevalDeFrise().start();
+														//new AutoCrossChevalDeFrise().start();
 		//new TurnWithEncoders(27).start();
 		//new BangBangFlywheels(false).start();
 		
 	//	new TurnWithGyro(60).start();
 		System.out.println(drivetrain.gyro.getAngle());
 		shooterPivot.currentPivotState = -1;
+
+		robotEnabled = true;
+//		systemCheck = new Thread(new SystemCheckThread());
+//		systemCheck.start();
+		
 	}
 
 	public void autonomousPeriodic() {
@@ -267,6 +286,7 @@ public class Robot extends IterativeRobot {
 		//camera.vcap.open("http://axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
 
 		shooterPivot.currentPivotState = -1;
+		robotEnabled = true;
 	}
 
 	public void teleopPeriodic() {
@@ -563,7 +583,39 @@ public class Robot extends IterativeRobot {
 	/**
 	 * This function is called periodically during test mode
 	 */
-	public void testPeriodic() {
-		LiveWindow.run();
+	
+	public void testInit(){
+		timer.reset();
+		timer.start();
+		pivotTimer.reset();
+		log = new ArrayList<>();
+		//drivetrain.gyro.reset();
+		drivetrain.resetEncoders();
+		drivetrain.gyro.reset();
+		new DrivePIDRight(0).start();
+		new DrivePIDLeft(0).start();
+		shooterPivot.resetEncoders();
+		new SetPivotState(ShooterPivotSubsystem.PivotPID.CURRENT_STATE).start();
+		new DriveForwardRotate(0, 0).start();
+		intakeState = intake.isIntakeDeployed();
+		currentGear = drivetrain.driveSol.get() == Value.kForward;
+		drivetrain.shift(currentGear);
+		new SetIntakePosition(intakeState);
+		new SetCameraPiston(!CameraSubsystem.CAM_UP).start();
+		new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();;
+
+		robotEnabled = true;
+		
+		systemCheck = new Thread(new SystemCheckThread());
+		System.out.println("TEST MODE");
+		
+		systemCheck.start();
+		
 	}
+	public void testPeriodic() {
+		//LiveWindow.run();
+		Scheduler.getInstance().run();
+
+	}
+	
 }

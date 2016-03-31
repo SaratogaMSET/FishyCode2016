@@ -1,89 +1,83 @@
 package org.usfirst.frc.team649.robot.commands;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
 
-public class SystemCheck extends Command {
+public class SystemCheckThread implements Runnable {
 
 	int currentCommandState;
 	boolean prevStateTrigger;
 	
-	boolean[] dT_results, shooter_results, pivot_results, intake_results;
+	Map<String,Boolean> dT_results, shooter_results, pivot_results, intake_results;
 	
-	////*****************************INITIALIZE AND RUN EVERYTHING****************************////
 	
 	@Override
-	protected void initialize() {
+	public void run() {
+		
 		// TODO Auto-generated method stub
 		currentCommandState = 0;
+		System.out.println("STARTED SYSTEM CHECK");
 		
 		waitForButton();
 		currentCommandState++;
+		System.out.println("button 1");
 		
-		dT_results = testDrivetrain();
+		if (Robot.robotEnabled) testDrivetrain();
 		
-		waitForButton();
-		currentCommandState++;
-		
-		shooter_results = testShooters();
+		printOutResults(dT_results);
 		
 		waitForButton();
 		currentCommandState++;
+		System.out.println("button 2");
 		
-		intake_results = testIntakes();
+		//if (Robot.robotEnabled) testShooters();
 		
 		waitForButton();
 		currentCommandState++;
+		System.out.println("button 3");
 		
-		pivot_results = testPivot();
+		//if (Robot.robotEnabled) testIntakes();
+		
+		waitForButton();
+		currentCommandState++;
+		System.out.println("button 4");
+		
+		//if (Robot.robotEnabled) testPivot();
 		
 		currentCommandState = 100;
 	}
+	
 
 	public void waitForButton(){
 		prevStateTrigger = false;
-		while (Robot.oi.operatorJoystick.getRawButton(1)){
+		while (Robot.oi.operatorJoystick.getRawButton(1) && Robot.robotEnabled){
 			//WAITING in case button was originally held down and not released in time
+//			System.out.println("WAITING FOR UNPRESS");
 		}
-		while (! (Robot.oi.operatorJoystick.getRawButton(1) && !prevStateTrigger) ){ //wait for the click
+		while (!Robot.oi.operatorJoystick.getRawButton(1) && Robot.robotEnabled){ //wait for the click
+			//System.out.println("prev: " + prevStateTrigger + ", current: " + Robot.oi.operatorJoystick.getRawButton(1));
+			
+			
 			prevStateTrigger = Robot.oi.operatorJoystick.getRawButton(1);
 		}
+		System.out.println("DONE WAITING FOR BUTTON");
 	}
 	
-	public void printOutResults(boolean[] results){
-		for (int i = 0; i < results.length; i++){
-			
+	public void printOutResults(Map<String, Boolean> results){
+		Iterator it = results.entrySet().iterator();
+		while (it.hasNext()){
+			Map.Entry pair = (Map.Entry)it.next();
+			System.out.println((String)pair.getKey() + ", " + ((Boolean)pair.getValue()).booleanValue());
 		}
-	}
-	
-	
-	////*****************************UNUSED COMMAND INHERITED METHODS******************************////
-	
-	@Override
-	protected void execute() {
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	protected boolean isFinished() {
-		// TODO Auto-generated method stub
-		return currentCommandState == 100;
-	}
-
-	@Override
-	protected void end() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void interrupted() {
-		// TODO Auto-generated method stub
-
 	}
 	
 	////**********************************TEST SUBSYSTEMS**********************************////
@@ -93,8 +87,8 @@ public class SystemCheck extends Command {
 	
 	/// <<<<<<<<<<<<<<DRIVETRAIN>>>>>>>>>>>>>
 	
-	public boolean[] testDrivetrain(){
-		boolean[] results = new boolean[3];
+	public void testDrivetrain(){
+		dT_results = new HashMap<>();
 		Timer t = new Timer();
 		
 		double _gyro = Robot.drivetrain.gyro.getAngle(), _leftEnc = Robot.drivetrain.getDistanceDTLeft(), _rightEnc = Robot.drivetrain.getDistanceDTRight();
@@ -103,7 +97,7 @@ public class SystemCheck extends Command {
 		t.start();
 		
 		Robot.drivetrain.rawDrive(0.3, -0.3); //turn right
-		while(t.get() < 0.4){
+		while(t.get() < 0.8){
 			
 		}
 		
@@ -113,16 +107,14 @@ public class SystemCheck extends Command {
 		
 		
 		//gyro moved clockwise
-		results[0] = Math.abs(f_gyro - _gyro) > 5.0;
+		dT_results.put("DT GYRO WORKING?", (Boolean)(Math.abs(f_gyro - _gyro) > 5.0));
 					
 		//left Enc moved forwards
-		results[1] = f_leftEnc - _leftEnc > 10.0;
+		dT_results.put("DT LEFT ENCODER WORKING?", (Boolean)(f_leftEnc - _leftEnc > 10.0));
 		
 		//right Enc moved back
-		results[2] = f_rightEnc - _rightEnc < -10.0;
+		dT_results.put("DT RIGHT ENCODER WORKING?", (Boolean)(f_rightEnc - _rightEnc < -10.0));
 		
-		//log
-		return results;
 	}
 	
 	/// <<<<<<<<<<<<<<SHOOTERS>>>>>>>>>>>>>
@@ -242,5 +234,6 @@ public class SystemCheck extends Command {
 		//log
 		return results;
 	}
+
 
 }
