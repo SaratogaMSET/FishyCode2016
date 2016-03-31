@@ -24,10 +24,13 @@ import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import org.usfirst.frc.team649.robot.RobotMap;
+import org.usfirst.frc.team649.robot.RobotMap.Drivetrain;
 import org.usfirst.frc.team649.robot.util.Center;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
@@ -35,11 +38,13 @@ import edu.wpi.first.wpilibj.vision.AxisCamera;
 public class CameraSubsystem extends Subsystem {
 	public VideoCapture vcap;
 	public Servo camServo;
+	public DoubleSolenoid camPiston;
 	
 	public boolean noOpencvErrors;
 	
 	public static double CAM_UP_ANGLE = 5; //TODO
 	public static double CAM_DOWN_ANGLE = 110;
+	public static boolean CAM_UP = true;
 	
 	public static double WIDTH_TARGET = 18.5; //in
 	public static double STANDARD_VIEW_ANGLE = 0.454885;//0.9424778; //radians, for an Axis Camera 206 /////...54 degrees
@@ -65,7 +70,8 @@ public class CameraSubsystem extends Subsystem {
 	
 	public CameraSubsystem(String ip){
 		camServo = new Servo(RobotMap.Drivetrain.CAM_SERVO);
-	
+		camPiston = new DoubleSolenoid(Drivetrain.SOLENOID_PORTS[0], Drivetrain.SOLENOID_PORTS[1], Drivetrain.SOLENOID_PORTS[2]);
+		
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
 		
 		
@@ -216,6 +222,10 @@ public class CameraSubsystem extends Subsystem {
 	        
 	        return center;
     }
+	 
+	 public void setCamera(boolean up){
+		 camPiston.set(up ? Value.kForward : Value.kReverse);
+	 }
 	 
 	 public double calcDistAxis206(double obj_pix, double obj_in, double view_pix, double max_cam_angle){
     	return view_pix * obj_in / (2*Math.tan(max_cam_angle) * obj_pix);

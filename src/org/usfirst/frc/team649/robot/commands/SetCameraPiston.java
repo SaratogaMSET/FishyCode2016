@@ -8,10 +8,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  *
  */
-public class SetCameraServo extends Command {
-	double cameraServoAngle;
-    public SetCameraServo(double angle) {
-    	cameraServoAngle = angle;
+public class SetCameraPiston extends Command {
+	boolean up;
+    public SetCameraPiston(boolean u) {
+    	up = u;
     	
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
@@ -19,7 +19,7 @@ public class SetCameraServo extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.camera.camServo.setAngle(cameraServoAngle);
+    	Robot.camera.setCamera(up);
     }
 
     // Called repeatedly when this Command is scheduled to run

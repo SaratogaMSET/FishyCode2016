@@ -34,7 +34,7 @@ import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
 import org.usfirst.frc.team649.robot.commands.DrivePIDLeft;
 import org.usfirst.frc.team649.robot.commands.DrivePIDRight;
 import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
-import org.usfirst.frc.team649.robot.commands.SetCameraServo;
+import org.usfirst.frc.team649.robot.commands.SetCameraPiston;
 import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
 import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
 import org.usfirst.frc.team649.robot.commands.VisionLoop;
@@ -260,7 +260,7 @@ public class Robot extends IterativeRobot {
 		currentGear = drivetrain.driveSol.get() == Value.kForward;
 		drivetrain.shift(currentGear);
 		new SetIntakePosition(intakeState);
-		new SetCameraServo(CameraSubsystem.CAM_UP_ANGLE).start();
+		new SetCameraPiston(!CameraSubsystem.CAM_UP).start();
 		new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();;
 		
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
@@ -308,14 +308,14 @@ public class Robot extends IterativeRobot {
 			new SetIntakePosition(!IntakeSubsystem.UP).start();
 		}
 		
-		//CAMERA SERVO
+		//CAMERA PISTON
 		
 		//move up
 		if (oi.driver.isCameraUpPressed()){
-			new SetCameraServo(CameraSubsystem.CAM_UP_ANGLE).start();
+			new SetCameraPiston(CameraSubsystem.CAM_UP).start();
 		}
 		else{
-			new SetCameraServo(CameraSubsystem.CAM_DOWN_ANGLE).start();
+			new SetCameraPiston(!CameraSubsystem.CAM_UP).start();
 		}
 		
 		
@@ -511,7 +511,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putBoolean("is flywheel command running", flywheelShootRunning);
 		SmartDashboard.putBoolean("is all rollers command running", allIntakeRunning);
 		
-		SmartDashboard.putBoolean("No ball(IR)", !Robot.shooter.infraredSensor.get());
+		SmartDashboard.putBoolean("No ball(IR)", Robot.shooter.infraredSensor.get());
 		
 		SmartDashboard.putNumber("Shooter Pivot current right", pdp.getCurrent(0));
 		SmartDashboard.putNumber("Shooter pivot current left", pdp.getCurrent(15));

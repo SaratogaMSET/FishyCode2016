@@ -35,8 +35,7 @@ public class RunAllRollers extends Command {
     	intakeTimer = new Timer();
     	
     	if (dir == ShooterSubsystem.IN){
-	    	Robot.shooter.setLeftFlywheelPower(ShooterSubsystem.FLYWHEEL_INTAKE_POWER);
-	    	Robot.shooter.setRightFlywheelPower(-ShooterSubsystem.FLYWHEEL_INTAKE_POWER);
+	    	Robot.shooter.setFlywheelPowerBangBang(ShooterSubsystem.INTAKE_MAX_SHOOT_POWER, ShooterSubsystem.INTAKE_MIN_SHOOT_POWER, ShooterSubsystem.INTAKE_TARGET_RPM);
 	    
 	    	if(Robot.shooterPivot.isReadyToPickUp()) {
 	    		Robot.intake.setFwdRolSpd(IntakeSubsystem.FORWARD_ROLLER_INTAKE_SPEED);

@@ -34,9 +34,9 @@ public class ShooterSubsystem extends Subsystem {
 	public static final double FARSHOT_FLYWHEEL_MIN_SHOOT_POWER = 0.6;
 	public static final double FARSHOT_FLYWHEEL_TOLERANCE = 90;
 	
-	public static final double BATTER_FLYWHEEL_TARGET_RPM = 2500;
-	public static final double BATTER_FLYWHEEL_MAX_SHOOT_POWER = 0.6;
-	public static final double BATTER_FLYWHEEL_MIN_SHOOT_POWER = 0.4;
+	public static final double BATTER_FLYWHEEL_TARGET_RPM = 2300;
+	public static final double BATTER_FLYWHEEL_MAX_SHOOT_POWER = 0.5;
+	public static final double BATTER_FLYWHEEL_MIN_SHOOT_POWER = 0.3;
 	public static final double BATTER_FLYWHEEL_TOLERANCE = 90;
 	
 	/*****EDITABLE FLYWHEEL RPM THAT IS UPDATED IN TELEOP*****/
@@ -48,6 +48,10 @@ public class ShooterSubsystem extends Subsystem {
 	//doubles as purge speed when pivot is down (just inverted of course)
 	public static final double FLYWHEEL_INTAKE_POWER = -0.6;
 	
+	//intaking bang bang
+	public static final double INTAKE_TARGET_RPM = 2000;
+	public static final double INTAKE_MAX_SHOOT_POWER = -1.0;
+	public static final double INTAKE_MIN_SHOOT_POWER = -0.3;
 	
 	public ShooterSubsystem() {
 		super("shooter subsystem");
@@ -84,6 +88,24 @@ public class ShooterSubsystem extends Subsystem {
 		rightMotor.set(pwr);
 		SmartDashboard.putNumber("Right Flywheel power", pwr);
 	}
+	
+	//bang bang
+	public void setFlywheelPowerBangBang(double max_pwr, double min_pwr, double target_rpm) {
+		if(getLeftFlywheelRPM() <= target_rpm){
+			setLeftFlywheelPower(max_pwr);
+		}	
+		else{
+			setLeftFlywheelPower(min_pwr);
+		}
+		
+		if(getRightFlywheelRPM() <= target_rpm){
+			setRightFlywheelPower(-max_pwr);
+		}
+		else{
+			setRightFlywheelPower(-min_pwr);
+		}
+	}
+	
 	
 	public void loadBall(Value punchPower) {
 		loader.set(punchPower);

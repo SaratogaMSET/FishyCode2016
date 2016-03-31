@@ -69,6 +69,7 @@ public class RobotMap {
 		public static final int RIGHT_ENCODER_REVERSE_CHANNEL = 7;
 		
 		public static final int CAM_SERVO = 18;
+		public static final int[] SOLENOID_PORTS = {0,3,4};
 	}
 
 	public static class Intake {

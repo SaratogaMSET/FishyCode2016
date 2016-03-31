@@ -45,7 +45,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		public static double max_motor_up_power = 0.6; //changed in pivot state command
 		public static final double MIDDLE_STATE_MAX_UP_POWER = 0.3;
 		public static final double REGULAR_MAX_UP_POWER = 0.6;
-		public static final double MAX_MOTOR_DOWN_POWER = -0.3;
+		public static final double MAX_MOTOR_DOWN_POWER = -0.4;
 		public static final double MIN_PIVOT_SPEED = 0;
 		public static final double ZEROING_CONSTANT_MOVE_POWER = -0.3;
 		
@@ -62,7 +62,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		public static final double STORE_POSITION = 4.5;// temp value
 		public static final double FAR_SHOOT_POSITION = 45.0; //44.7
 		
-		public static final double CLOSE_SHOOT_POSITION = 68.3;//62.2;
+		public static final double CLOSE_SHOOT_POSITION = 72.4;//68.3;//62.2;
 		public static final double BACK_SHOOT_POSITION = 115.0;//62.2;
 		
 		public static final double AUTO_LOW_BAR_SHOOT_POSITION = 50.0;
