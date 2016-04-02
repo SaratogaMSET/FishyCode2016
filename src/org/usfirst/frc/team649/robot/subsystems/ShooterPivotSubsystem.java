@@ -2,15 +2,10 @@ package org.usfirst.frc.team649.robot.subsystems;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
-import org.usfirst.frc.team649.robot.util.DoubleSolenoid649;
-
-import edu.wpi.first.wpilibj.Counter;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -272,6 +267,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		}
 	}
 
+	@Override
 	public double returnPIDInput() {
 		//return getPivotAngle();
 		return getClosestAngleToSetpoint(this.pid.getSetpoint());
@@ -288,6 +284,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		}
 	}
 
+	@Override
 	protected void usePIDOutput(double output) {
 		if (output > PivotPID.max_motor_up_power) {
 			output = PivotPID.max_motor_up_power;
@@ -311,6 +308,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		return ((Robot.shooterPivot.encoderLeft.getRate() + Robot.shooterPivot.encoderRight.getRate())/2);
 	}
 
+	@Override
 	public void initDefaultCommand() {
 		// Set the default command for a subsystem here.
 		// setDefaultCommand(new MySpecialCommand());

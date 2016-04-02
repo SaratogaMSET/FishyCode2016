@@ -1,15 +1,10 @@
 package org.usfirst.frc.team649.robot.commands.shooterpivotcommands;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.RobotMap;
-import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
-import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
-import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,6 +38,7 @@ public class SetPivotPosition extends Command {
 	}
 
 	// Called just before this Command runs the first time
+	@Override
 	protected void initialize() {
 		//oldState = Robot.shooterPivot.currentPivotState;
 		
@@ -90,6 +86,7 @@ public class SetPivotPosition extends Command {
 	}
 
 	// Called repeatedly when this Command is scheduled to run
+	@Override
 	protected void execute() {
 		Robot.shooterPIDIsRunning = true;
 		
@@ -117,6 +114,7 @@ public class SetPivotPosition extends Command {
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
+	@Override
 	protected boolean isFinished() {
 		// inDangerOfIntakes = Robot.intake.isIntakeDeployed(); //TODO any
 		// ending cases not below
@@ -131,6 +129,7 @@ public class SetPivotPosition extends Command {
 	}
 	
 	// Called once after isFinished returns true
+	@Override
 	protected void end() {
 		//do this to minimize time pivot has power of zero and prevent slip
 		pid.disable();
@@ -150,6 +149,7 @@ public class SetPivotPosition extends Command {
 
 	// Called when another command which requires one or more of the same
 	// subsystems is scheduled to run
+	@Override
 	protected void interrupted() {
 		end();
 	}

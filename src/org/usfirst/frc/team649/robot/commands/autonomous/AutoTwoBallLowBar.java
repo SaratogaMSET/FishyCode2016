@@ -1,7 +1,6 @@
 package org.usfirst.frc.team649.robot.commands.autonomous;
 
 import org.usfirst.frc.team649.robot.commandgroups.SemiAutoLoadBall;
-import org.usfirst.frc.team649.robot.commandgroups.ShootTheShooter;
 import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
 import org.usfirst.frc.team649.robot.commands.ShiftDrivetrain;
 import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
@@ -9,9 +8,7 @@ import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.ResetPivot;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
 import org.usfirst.frc.team649.robot.shootercommands.BangBangFlywheels;
-import org.usfirst.frc.team649.robot.shootercommands.SetFlywheels;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 

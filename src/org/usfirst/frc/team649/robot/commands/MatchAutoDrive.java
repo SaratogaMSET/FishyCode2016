@@ -1,9 +1,6 @@
 package org.usfirst.frc.team649.robot.commands;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.AutonomousSequences;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
-
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

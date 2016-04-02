@@ -28,16 +28,19 @@ public class RightDTPID extends PIDSubsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
+	@Override
 	protected double returnPIDInput() {
 		return Robot.drivetrain.getDistanceDTRight();
 	}
 
+	@Override
 	protected void usePIDOutput(double output) {
         Robot.drivetrain.motors[0].set(-output);
         Robot.drivetrain.motors[1].set(-output);
 	}
 
-    public void initDefaultCommand() {
+    @Override
+	public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
     }

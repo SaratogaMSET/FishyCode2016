@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.image.ColorImage;
 import edu.wpi.first.wpilibj.image.NIVisionException;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
-import org.opencv.core.*;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 import org.usfirst.frc.team649.robot.subsystems.ShooterSubsystem;
@@ -46,6 +45,7 @@ import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
 import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
 import org.usfirst.frc.team649.robot.commands.VisionLoop;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossChevalDeFrise;
+import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossLowBar;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoTwoBallLowBar;
 import org.usfirst.frc.team649.robot.commands.intakecommands.RunAllRollers;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
@@ -163,6 +163,7 @@ public class Robot extends IterativeRobot {
 	
 	///////**********************ROBOT INIT************************//////
 	
+	@Override
 	public void robotInit() {
 		oi = new OI();
 		chooser = new SendableChooser();
@@ -207,6 +208,7 @@ public class Robot extends IterativeRobot {
 	
 	/////////////****************AUTONOMOUS***************//////////////
 	
+	@Override
 	public void autonomousInit() {
 		drivetrain.resetEncoders();
 		drivetrain.gyro.reset();
@@ -221,12 +223,9 @@ public class Robot extends IterativeRobot {
 		new SetIntakePosition(intakeState);
 		new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();;
 		
-		//runVision = true;
-		//visionLoop.start();
-		
 		
 		new DriveForwardRotate(0, 0).start();
-														//new AutoCrossChevalDeFrise().start();
+		//new AutoCrossLowBar().start(); //this is actually low bar now, instead of cheval being low bar
 
 		System.out.println(drivetrain.gyro.getAngle());
 		shooterPivot.currentPivotState = -1;
@@ -241,6 +240,7 @@ public class Robot extends IterativeRobot {
 		
 	}
 
+	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
 		
@@ -271,6 +271,7 @@ public class Robot extends IterativeRobot {
 
 	/////////////****************TELEOP***************//////////////
 	
+	@Override
 	public void teleopInit() {
 		timer.reset();
 		timer.start();
@@ -303,6 +304,7 @@ public class Robot extends IterativeRobot {
 		startVisionThreads();	
 	}
 
+	@Override
 	public void teleopPeriodic() {
 		//these may or may not be overriden by commands
 		SmartDashboard.putString("DT Current Command", " ");
@@ -530,6 +532,7 @@ public class Robot extends IterativeRobot {
 	
 	/////////////****************TEST***************//////////////
 	
+	@Override
 	public void testInit(){
 		timer.reset();
 		timer.start();
@@ -559,6 +562,7 @@ public class Robot extends IterativeRobot {
 		
 	}
 	
+	@Override
 	public void testPeriodic() {
 		//LiveWindow.run();
 		Scheduler.getInstance().run();
@@ -568,6 +572,7 @@ public class Robot extends IterativeRobot {
 	
 	/////////////****************DISABLED***************//////////////
 
+	@Override
 	public void disabledInit() {
 		System.out.println("STARTING LOG: Time, MotorLeft, MotorRight ");
 		//saveLog();
@@ -577,6 +582,8 @@ public class Robot extends IterativeRobot {
 		
 		//SUPER IMPORTANT
 		robotEnabled = false;
+		
+		isReceivingData = false; //for good measure
 
 		if (systemCheck != null){
 			System.out.println("ENDING VISION");
@@ -585,6 +592,7 @@ public class Robot extends IterativeRobot {
 		
 	}
 
+	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 		
@@ -647,6 +655,7 @@ public class Robot extends IterativeRobot {
 		else{
 			SmartDashboard.putString("CENTER OF VISION", "VISION NOT ACTIVE");
 		}
+		SmartDashboard.putBoolean("Is receiving data regularly?", isReceivingData);
 		
 		SmartDashboard.putData("Shooter Pivot left", shooterPivot.encoderLeft);
 		SmartDashboard.putData("Shooter Pivot Right", shooterPivot.encoderRight);

@@ -4,8 +4,6 @@ import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.AutonomousSequences;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.AutoConstants;
-
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 

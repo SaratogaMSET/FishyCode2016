@@ -20,7 +20,8 @@ public class SetIntakePosition extends Command {
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
+    @Override
+	protected void initialize() {
     	if (!deploy && Robot.shooterPivot.isInIntakeZone()){
     		//don't execute anything if shooter is in the way and we are trying to move up
     	}
@@ -31,12 +32,14 @@ public class SetIntakePosition extends Command {
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    @Override
+	protected void execute() {
     	SmartDashboard.putString("INTAKE Current Command", this.getName());
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
+    @Override
+	protected boolean isFinished() {
         if(deploy) {
         	return Robot.intake.isIntakeDeployed();
         }
@@ -44,11 +47,13 @@ public class SetIntakePosition extends Command {
     }
 
     // Called once after isFinished returns true
-    protected void end() {
+    @Override
+	protected void end() {
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
-    protected void interrupted() {
+    @Override
+	protected void interrupted() {
     }
 }

@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import org.usfirst.frc.team649.robot.util.DoubleSolenoid649;
 
 public class IntakeSubsystem extends Subsystem {
 
@@ -75,6 +74,7 @@ public class IntakeSubsystem extends Subsystem {
 		return !hal.get();
 	}
 	
+	@Override
 	protected void initDefaultCommand() {
 
 	}

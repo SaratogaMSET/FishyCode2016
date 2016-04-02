@@ -1,11 +1,8 @@
 package org.usfirst.frc.team649.robot.runnables;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
@@ -106,13 +103,13 @@ public class SystemCheckThread implements Runnable {
 		
 		
 		//gyro moved clockwise
-		dT_results.put("DT GYRO WORKING?", (Boolean)(Math.abs(f_gyro - _gyro) > 5.0));
+		dT_results.put("DT GYRO WORKING?", Math.abs(f_gyro - _gyro) > 5.0);
 					
 		//left Enc moved forwards
-		dT_results.put("DT LEFT ENCODER WORKING?", (Boolean)(f_leftEnc - _leftEnc > 3.0));
+		dT_results.put("DT LEFT ENCODER WORKING?", f_leftEnc - _leftEnc > 3.0);
 		
 		//right Enc moved back
-		dT_results.put("DT RIGHT ENCODER WORKING?", (Boolean)(f_rightEnc - _rightEnc < -3.0));
+		dT_results.put("DT RIGHT ENCODER WORKING?", f_rightEnc - _rightEnc < -3.0);
 		
 	}
 	

@@ -1,9 +1,6 @@
 package org.usfirst.frc.team649.robot.commands;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.LeftDTPID;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.TurnConstants;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,7 +26,8 @@ public class TurnWithEncoders extends Command {
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
+    @Override
+	protected void initialize() {
     	timer = new Timer();
     	timer.reset();
     	timer.start();
@@ -41,12 +39,14 @@ public class TurnWithEncoders extends Command {
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    @Override
+	protected void execute() {
     	
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
+    @Override
+	protected boolean isFinished() {
         boolean done = !left.isRunning() && !right.isRunning();
         SmartDashboard.putBoolean("Done?", done);
         prevStateLeftPID = Robot.isPIDActiveLeft;
@@ -55,13 +55,15 @@ public class TurnWithEncoders extends Command {
     }
 
     // Called once after isFinished returns true
-    protected void end() {
+    @Override
+	protected void end() {
     	Robot.drivetrain.rawDrive(0, 0);
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
-    protected void interrupted() {
+    @Override
+	protected void interrupted() {
     	end();
     }
 }

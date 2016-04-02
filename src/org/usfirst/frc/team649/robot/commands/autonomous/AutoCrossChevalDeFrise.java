@@ -1,29 +1,11 @@
 package org.usfirst.frc.team649.robot.commands.autonomous;
 
-import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.commandgroups.ShootTheShooter;
-import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
-import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
 import org.usfirst.frc.team649.robot.commands.ResetDTEncoders;
-import org.usfirst.frc.team649.robot.commands.ResetGyro;
 import org.usfirst.frc.team649.robot.commands.ShiftDrivetrain;
 import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
-import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
-import org.usfirst.frc.team649.robot.commands.intakecommands.RunAllRollers;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.ResetPivot;
-import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPosition;
-import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
-import org.usfirst.frc.team649.robot.shootercommands.BangBangFlywheels;
-import org.usfirst.frc.team649.robot.shootercommands.SetFlywheels;
-import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.*;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.AutoConstants;
-
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.WaitCommand;
 
 public class AutoCrossChevalDeFrise extends CommandGroup {
 	

@@ -15,12 +15,14 @@ public class ResetPivot extends Command {
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
+    @Override
+	protected void initialize() {
     	Robot.shooterPivot.currentPivotState = PivotPID.PICKUP_STATE;
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    @Override
+	protected void execute() {
     	
     	Robot.shooterPivot.setPower(ShooterPivotSubsystem.PivotPID.ZEROING_CONSTANT_MOVE_POWER);
     	Robot.shooterPIDIsRunning = true;
@@ -37,13 +39,15 @@ public class ResetPivot extends Command {
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
+    @Override
+	protected boolean isFinished() {
         return Robot.shooterPivot.lowerLimitsTriggered()|| inDangerOfIntakes
         		|| Robot.oi.driver.isManualOverride() || Robot.shooterPivot.isResetHalTripped();
     }
 
     // Called once after isFinished returns true
-    protected void end() {
+    @Override
+	protected void end() {
     	//Robot.shooterPivot.resetCounter();
     	Robot.shooterPivot.setPower(0);
     	System.out.println(Robot.shooterPivot.getPivotAngle());
@@ -65,7 +69,8 @@ public class ResetPivot extends Command {
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
-    protected void interrupted() {
+    @Override
+	protected void interrupted() {
     	Robot.shooterPivot.setPower(0);
     	Robot.shooterPIDIsRunning = false;
     }

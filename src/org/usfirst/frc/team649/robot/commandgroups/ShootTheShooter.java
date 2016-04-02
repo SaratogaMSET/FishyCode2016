@@ -14,14 +14,17 @@ public class ShootTheShooter extends CommandGroup {
 		addSequential(new WaitCommand(0.5));
 		addSequential(new ShooterSet(DoubleSolenoid.Value.kReverse));
 	}
+	@Override
 	public void initialize(){
 		Robot.isShooting = true;
 	}
 	
+	@Override
 	public boolean isFinished(){
 		return Robot.oi.driver.isManualOverride();
 	}
 	
+	@Override
 	public void end(){
 		Robot.isShooting = false;
 	}

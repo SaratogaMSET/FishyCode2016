@@ -1,10 +1,6 @@
 package org.usfirst.frc.team649.robot.runnables;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;

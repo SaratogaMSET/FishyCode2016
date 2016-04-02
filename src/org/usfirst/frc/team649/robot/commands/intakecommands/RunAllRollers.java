@@ -2,7 +2,6 @@ package org.usfirst.frc.team649.robot.commands.intakecommands;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
-import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterSubsystem;
 
@@ -31,7 +30,8 @@ public class RunAllRollers extends Command {
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
+    @Override
+	protected void initialize() {
     	intakeTimer = new Timer();
     	
     	if (dir == ShooterSubsystem.IN){
@@ -62,7 +62,8 @@ public class RunAllRollers extends Command {
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    @Override
+	protected void execute() {
     	
     	if (Robot.pdp.getCurrent(RobotMap.Intake.PDP_PORTS[0]) > IntakeSubsystem.CURRENT_THRESHOLD
     			|| Robot.pdp.getCurrent(RobotMap.Intake.PDP_PORTS[1]) > IntakeSubsystem.CURRENT_THRESHOLD){
@@ -89,7 +90,8 @@ public class RunAllRollers extends Command {
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
+    @Override
+	protected boolean isFinished() {
         if (untilIR){
         	//end if IR has been tripped (false)
         	return !Robot.shooter.infraredSensor.get()
@@ -101,7 +103,8 @@ public class RunAllRollers extends Command {
     }
 
     // Called once after isFinished returns true
-    protected void end() {
+    @Override
+	protected void end() {
     	if (untilIR){
     		Robot.shooter.setLeftFlywheelPower(0);
 	    	Robot.shooter.setRightFlywheelPower(0);
@@ -113,6 +116,7 @@ public class RunAllRollers extends Command {
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
-    protected void interrupted() {
+    @Override
+	protected void interrupted() {
     }
 }

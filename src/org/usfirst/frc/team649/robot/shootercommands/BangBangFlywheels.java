@@ -24,7 +24,8 @@ public class BangBangFlywheels extends Command {
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
+    @Override
+	protected void initialize() {
     	hasStartedShot = false;
     	prevStateIsShooting = false;
     	shootingSequenceFinished = false;
@@ -33,7 +34,8 @@ public class BangBangFlywheels extends Command {
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    @Override
+	protected void execute() {
 
 		if(Robot.shooter.getLeftFlywheelRPM() <= ShooterSubsystem.flywheelTargetRPM){
 			Robot.shooter.setLeftFlywheelPower(ShooterSubsystem.flywheelMaxShootPower);
@@ -64,7 +66,8 @@ public class BangBangFlywheels extends Command {
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
+    @Override
+	protected boolean isFinished() {
         if (endOnOneLoop){
         	return true;
         }
@@ -81,7 +84,8 @@ public class BangBangFlywheels extends Command {
     }
 
     // Called once after isFinished returns true
-    protected void end() {
+    @Override
+	protected void end() {
     	if (!endOnOneLoop){
     		//if looping, at the end we can assume we want to set all motors to 0,
     		Robot.shooter.setLeftFlywheelPower(0);
@@ -91,7 +95,8 @@ public class BangBangFlywheels extends Command {
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
-    protected void interrupted() {
+    @Override
+	protected void interrupted() {
     	Robot.shooter.setLeftFlywheelPower(0);
     	Robot.shooter.setRightFlywheelPower(0);
     }

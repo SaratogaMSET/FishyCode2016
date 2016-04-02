@@ -1,12 +1,9 @@
 package org.usfirst.frc.team649.robot.commands;
 
-import org.usfirst.frc.team649.robot.OI;
 import org.usfirst.frc.team649.robot.Robot;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
-
-import org.usfirst.frc.team649.robot.Robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -32,7 +29,8 @@ public class  DrivetrainPIDCommand extends Command {
     }
 
     // Called just before this Command runs the first time
-    protected void initialize() {
+    @Override
+	protected void initialize() {
     	drivePIDLeft.enable();
     	//drivePIDRight.enable();
     	Robot.isPIDActive = true;
@@ -42,12 +40,14 @@ public class  DrivetrainPIDCommand extends Command {
     }
 
     // Called repeatedly when this Command is scheduled to run
-    protected void execute() {
+    @Override
+	protected void execute() {
     	SmartDashboard.putString("DT Current Command", this.getName());
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    protected boolean isFinished() {
+    @Override
+	protected boolean isFinished() {
 
 
         return drivePIDLeft.onTarget()
@@ -55,7 +55,8 @@ public class  DrivetrainPIDCommand extends Command {
     }
 
     // Called once after isFinished returns true
-    protected void end() {
+    @Override
+	protected void end() {
     	drivePIDLeft.disable();
     	//drivePIDRight.disable();
     	Robot.isPIDActive = false;
@@ -63,7 +64,8 @@ public class  DrivetrainPIDCommand extends Command {
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
-    protected void interrupted() {
+    @Override
+	protected void interrupted() {
     	end();
     }
 }
