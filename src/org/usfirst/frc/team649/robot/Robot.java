@@ -23,6 +23,9 @@ import org.usfirst.frc.team649.robot.subsystems.drivetrain.LeftDTPID;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.RightDTPID;
 import org.usfirst.frc.team649.robot.util.Center;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -51,6 +54,8 @@ import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.EngageBrakes;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.ResetPivot;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPower;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
+import org.usfirst.frc.team649.robot.runnables.EndAppThread;
+import org.usfirst.frc.team649.robot.runnables.InitializeAdbThread;
 import org.usfirst.frc.team649.robot.runnables.PullVisionTxtThread;
 import org.usfirst.frc.team649.robot.runnables.SystemCheckThread;
 import org.usfirst.frc.team649.robot.shootercommands.BangBangFlywheels;
@@ -94,6 +99,7 @@ public class Robot extends IterativeRobot {
 	public static boolean isPIDActiveRight;
 	//true = high gear, false = low gear
 	public static boolean currentGear = true;
+	static boolean cameraUp = false;
 	
 	//PIVOT
 	public static Timer pivotTimer;
@@ -114,6 +120,9 @@ public class Robot extends IterativeRobot {
 	public static String ip = "N/A";
 	public static String initPath = "/home/admin/initializeAdb.sh";
 	public static String pullPath = "/home/admin/pullTextFile.sh";
+	public static String endPath = "/home/admin/endApp.sh";
+	public static String visionFile = "/home/admin/vision.txt";
+	public static int PULL_PERIOD = 20;
 	public static VisionLoop visionCommand;
 	public static Center currCenter;
 	public static boolean runVision;
@@ -145,6 +154,7 @@ public class Robot extends IterativeRobot {
 	public boolean prevStateSemiAutoIntake;
 	
 	public boolean prevStateManualFirePiston;
+	public boolean prevStateCameraUp;
 	
 	///////**********************ROBOT INIT************************//////
 	
@@ -163,14 +173,6 @@ public class Robot extends IterativeRobot {
 		isPIDActive= false;
 		runVision = false;
 		
-		//visionCommand = new VisionLoop();
-		
-		if (Robot.camera.noOpencvErrors){
-			if (camera.vcap.isOpened()){
-				System.out.println("R-INIT FINISHED VCAP, VALID IP -:- STREAM OPENED");
-			}
-		}
-		
 		log = new ArrayList<>();
 		timer = new Timer();
 		pivotTimer = new Timer();
@@ -188,10 +190,13 @@ public class Robot extends IterativeRobot {
 		prevStateSemiAutoIntake = false;
 		prevStateDefenseMode = false;
 		prevStateManualFirePiston = false;
+		prevStateCameraUp = false;
 		
 		isManualPressed = false;
 		
 		robotEnabled = false;
+		
+		currCenter = new Center(-1,-1);
 	}
 	
 	/////////////****************AUTONOMOUS***************//////////////
@@ -251,7 +256,7 @@ public class Robot extends IterativeRobot {
 			prevStateMotorPowerIs0 = false;
 		}
 	
-		logAndDashboard();
+		logAndDashboard(); //TODO put back in
 		//update the flywheel speed constants
 		shooter.updateShooterConstants();
 	}
@@ -278,8 +283,6 @@ public class Robot extends IterativeRobot {
 		new SetCameraPiston(!CameraSubsystem.CAM_UP).start();
 		new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();;
 		
-		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
-		//camera.vcap.open("http://axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
 
 		shooterPivot.currentPivotState = -1;
 		
@@ -318,13 +321,20 @@ public class Robot extends IterativeRobot {
 		//CAMERA PISTON
 		
 		//move up
-		if (oi.driver.isCameraUpPressed()){
-			new SetCameraPiston(CameraSubsystem.CAM_UP).start();
+//		if (oi.driver.isCameraUpPressed()){
+//			new SetCameraPiston(CameraSubsystem.CAM_UP).start();
+//		}
+//		else{
+//			new SetCameraPiston(!CameraSubsystem.CAM_UP).start();
+//		}
+		
+		if (oi.driver.isCameraUpPressed() && !prevStateCameraUp){
+			new SetCameraPiston(cameraUp ? !CameraSubsystem.CAM_UP : CameraSubsystem.CAM_UP).start();
+			cameraUp = !cameraUp;
 		}
 		else{
-			new SetCameraPiston(!CameraSubsystem.CAM_UP).start();
+			new SetCameraPiston(cameraUp ? CameraSubsystem.CAM_UP : !CameraSubsystem.CAM_UP).start();
 		}
-		
 		
 		
 		if (oi.operator.isSemiAutonomousIntakePressed() && !prevStateSemiAutoIntake){
@@ -464,6 +474,7 @@ public class Robot extends IterativeRobot {
 		prevStateDefenseMode = oi.operator.isDefenseState();
 		
 		prevStateManualFirePiston = oi.operator.isManualFirePiston();
+		prevStateCameraUp = oi.driver.isCameraUpPressed();
 		
 		
 		//********updating subsystem*******//
@@ -552,12 +563,17 @@ public class Robot extends IterativeRobot {
 		//saveLog();
 		
 		//stop reading from file
-		this.adbTimer.shutdown();
-		this.adbTimer.awaitTermination(33, TimeUnit.MILLISECONDS);
+		
 		
 		//SUPER IMPORTANT
 		robotEnabled = false;
-		//stop vision
+
+		if (systemCheck != null){
+			System.out.println("ENDING VISION");
+			systemCheck.interrupt();
+		}
+		
+		//end vision
 		endVisionThreads();
 	}
 
@@ -587,21 +603,53 @@ public class Robot extends IterativeRobot {
 	
 	public void startVisionThreads(){
 		System.out.println("STARTING VISION");
+
+		Thread init = new Thread(new InitializeAdbThread());
+		init.start();
+		
+		//wait for thread to die
+		try {
+			init.join();
+			System.out.println(">--VISION initialized --ROBOT");
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("X--VISION initialize FAILED --ROBOT");
+		}
 		
 		this.adbTimer = Executors.newSingleThreadScheduledExecutor();
-		this.adbTimer.scheduleAtFixedRate(new Thread(new PullVisionTxtThread()), 0, 50, TimeUnit.MILLISECONDS);
+		this.adbTimer.scheduleAtFixedRate(new Thread(new PullVisionTxtThread()), 0, PULL_PERIOD, TimeUnit.MILLISECONDS);
 	}
 	
 	public void endVisionThreads(){
-		if (systemCheck != null){
-			System.out.println("ENDING VISION");
-			systemCheck.interrupt();
+		if (adbTimer != null){
+			this.adbTimer.shutdown();
+			try {
+				this.adbTimer.awaitTermination(33, TimeUnit.MILLISECONDS);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		Thread end = new Thread(new EndAppThread());
+		end.start();
+		try {
+			end.join();
+			System.out.println("App CLOSED --ROBOT");
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
+	
 	
 	//////SUPER IMPORTANT///////
 	public void logAndDashboard(){
 		log.add(drivetrain.getLoggingData());
+		
+		SmartDashboard.putString("CENTER OF VISION", "(" + currCenter.x + ", " + currCenter.y + ")");
 		
 		SmartDashboard.putData("Shooter Pivot left", shooterPivot.encoderLeft);
 		SmartDashboard.putData("Shooter Pivot Right", shooterPivot.encoderRight);
@@ -645,7 +693,6 @@ public class Robot extends IterativeRobot {
 		//SmartDashboard.putNumber("Shooter Hall Effect", shooterPivot.resetHalEffect.get());//shooterPivot.resetHalEffect.getDirection());
 
 		SmartDashboard.putBoolean("Is shooter PID running" , shooterPIDIsRunning);
-		SmartDashboard.putNumber("Current Servo", camera.camServo.getAngle());
 		SmartDashboard.putNumber("PIVOT ANGLE", shooterPivot.getPivotAngle());
 		SmartDashboard.putNumber("CHOSEN PIVOT ANGLE", shooterPivot.getClosestAngleToSetpoint(shooterPivot.getSetpoint()));
 		
