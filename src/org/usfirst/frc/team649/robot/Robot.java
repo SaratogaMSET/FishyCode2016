@@ -118,14 +118,19 @@ public class Robot extends IterativeRobot {
 	
 	//VISION
 	public static String ip = "N/A";
+	//old and deprecated
 	public static String initPath = "/home/admin/initializeAdb.sh";
 	public static String pullPath = "/home/admin/pullTextFile.sh";
 	public static String endPath = "/home/admin/endApp.sh";
 	public static String visionFile = "/home/admin/vision.txt";
 	public static int PULL_PERIOD = 20;
-	public static VisionLoop visionCommand;
+	//good new socket stuff
 	public static Center currCenter;
-	public static boolean runVision;
+	public static int PORT = 5050;
+	public static boolean isRIOServerStarted; //makes sure we are connected
+	public static boolean isReceivingData; //makes sure data is being sent regularly
+	public static double VISION_INIT_TIME_OUT = 6; //seconds
+	public static double MAX_PERIOD_BETWEEN_RECIEVING_DATA = 1.5; //seconds
 	public static ScheduledExecutorService adbTimer;
 	
 	//LOGGING
@@ -171,7 +176,8 @@ public class Robot extends IterativeRobot {
 		shooter = new ShooterSubsystem();
 		camera = new CameraSubsystem(ip);
 		isPIDActive= false;
-		runVision = false;
+		isRIOServerStarted = false;
+		isReceivingData = false;
 		
 		log = new ArrayList<>();
 		timer = new Timer();
@@ -228,6 +234,8 @@ public class Robot extends IterativeRobot {
 		//VERY IMPORTANT
 		robotEnabled = true;
 		
+		isRIOServerStarted = false; //these should be changed by the call below
+		isReceivingData = false;
 		//start pulling txt and updating it
 		startVisionThreads();
 		
@@ -287,8 +295,10 @@ public class Robot extends IterativeRobot {
 		shooterPivot.currentPivotState = -1;
 		
 		//VERY IMPORTANT
-		robotEnabled = true;
+		robotEnabled = true; //WE ALLLLLIVE
 		
+		isRIOServerStarted = false; //should be updated if call below succeeds
+		isReceivingData = false;
 		//start pulling txt and updating it
 		startVisionThreads();	
 	}
@@ -573,8 +583,6 @@ public class Robot extends IterativeRobot {
 			systemCheck.interrupt();
 		}
 		
-		//end vision
-		endVisionThreads();
 	}
 
 	public void disabledPeriodic() {
@@ -604,12 +612,19 @@ public class Robot extends IterativeRobot {
 	public void startVisionThreads(){
 		System.out.println("STARTING VISION");
 
+		//
 		Thread init = new Thread(new InitializeServerSocketThread());
 		init.start();
 		
-		//wait for thread to die
+		//wait for thread to finish the socket initialization
 		try {
-			init.join();
+			Timer t = new Timer();
+			t.start();
+			while (!isRIOServerStarted){
+				if (t.get() > VISION_INIT_TIME_OUT){
+					throw new InterruptedException("DUN GOOFED -----> VISION TIMED OUT IN INIT");
+				}
+			}
 			System.out.println(">--VISION initialized & running --ROBOT");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -621,36 +636,17 @@ public class Robot extends IterativeRobot {
 //		this.adbTimer.scheduleAtFixedRate(new Thread(new PullVisionTxtThread()), 0, PULL_PERIOD, TimeUnit.MILLISECONDS);
 	}
 	
-	//not useful with sockets
-	public void endVisionThreads(){
-//		if (adbTimer != null){
-//			this.adbTimer.shutdown();
-//			try {
-//				this.adbTimer.awaitTermination(33, TimeUnit.MILLISECONDS);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//		}
-		
-//		Thread end = new Thread(new EndAppThread());
-//		end.start();
-//		try {
-//			end.join();
-//			System.out.println("App CLOSED --ROBOT");
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-	}
-	
 	
 	//////SUPER IMPORTANT///////
 	public void logAndDashboard(){
 		log.add(drivetrain.getLoggingData());
 		
-		SmartDashboard.putString("CENTER OF VISION", "(" + currCenter.x + ", " + currCenter.y + ")");
+		if (isRIOServerStarted){
+			SmartDashboard.putString("CENTER OF VISION", "(" + currCenter.x + ", " + currCenter.y + ")");
+		}
+		else{
+			SmartDashboard.putString("CENTER OF VISION", "VISION NOT ACTIVE");
+		}
 		
 		SmartDashboard.putData("Shooter Pivot left", shooterPivot.encoderLeft);
 		SmartDashboard.putData("Shooter Pivot Right", shooterPivot.encoderRight);
