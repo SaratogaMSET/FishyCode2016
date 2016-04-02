@@ -55,7 +55,7 @@ import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.ResetPivot;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPower;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
 import org.usfirst.frc.team649.robot.runnables.EndAppThread;
-import org.usfirst.frc.team649.robot.runnables.InitializeAdbThread;
+import org.usfirst.frc.team649.robot.runnables.InitializeServerSocketThread;
 import org.usfirst.frc.team649.robot.runnables.PullVisionTxtThread;
 import org.usfirst.frc.team649.robot.runnables.SystemCheckThread;
 import org.usfirst.frc.team649.robot.shootercommands.BangBangFlywheels;
@@ -604,44 +604,45 @@ public class Robot extends IterativeRobot {
 	public void startVisionThreads(){
 		System.out.println("STARTING VISION");
 
-		Thread init = new Thread(new InitializeAdbThread());
+		Thread init = new Thread(new InitializeServerSocketThread());
 		init.start();
 		
 		//wait for thread to die
 		try {
 			init.join();
-			System.out.println(">--VISION initialized --ROBOT");
+			System.out.println(">--VISION initialized & running --ROBOT");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("X--VISION initialize FAILED --ROBOT");
 		}
 		
-		this.adbTimer = Executors.newSingleThreadScheduledExecutor();
-		this.adbTimer.scheduleAtFixedRate(new Thread(new PullVisionTxtThread()), 0, PULL_PERIOD, TimeUnit.MILLISECONDS);
+//		this.adbTimer = Executors.newSingleThreadScheduledExecutor();
+//		this.adbTimer.scheduleAtFixedRate(new Thread(new PullVisionTxtThread()), 0, PULL_PERIOD, TimeUnit.MILLISECONDS);
 	}
 	
+	//not useful with sockets
 	public void endVisionThreads(){
-		if (adbTimer != null){
-			this.adbTimer.shutdown();
-			try {
-				this.adbTimer.awaitTermination(33, TimeUnit.MILLISECONDS);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
+//		if (adbTimer != null){
+//			this.adbTimer.shutdown();
+//			try {
+//				this.adbTimer.awaitTermination(33, TimeUnit.MILLISECONDS);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			
+//		}
 		
-		Thread end = new Thread(new EndAppThread());
-		end.start();
-		try {
-			end.join();
-			System.out.println("App CLOSED --ROBOT");
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		Thread end = new Thread(new EndAppThread());
+//		end.start();
+//		try {
+//			end.join();
+//			System.out.println("App CLOSED --ROBOT");
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	
