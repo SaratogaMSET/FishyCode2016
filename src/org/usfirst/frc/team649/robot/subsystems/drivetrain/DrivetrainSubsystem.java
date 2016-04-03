@@ -61,13 +61,26 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		public static final double GYRO_SENSITIVITY = .007;
 		
 		public static final double LOW_BAR_TURN_ANGLE = -21.5; //change
+		
+		public static final double VISION_TURN_POWER = 0.3;
 	}
 	
 	public static class AutoConstants {
 		public static final double LOW_GOAL_DRIVE_DISTANCE = 146; //in inches, remember to add extra for slope of ramp
 		public static final double TWO_BALL_MIDLINE_DISTANCE = -156;
 	
+		//pos turns
+		public static final double TURN_FROM_POS_1 = 60;
+		public static final double TURN_FROM_POS_2 = 40;
+		public static final double TURN_FROM_POS_3 = 0;
+		public static final double TURN_FROM_POS_4 = -40;
 		
+		//defense id
+		public static final int LOW_BAR = 0;
+		public static final int CHEVAL = 1;
+		public static final int PORTCULLIS = 2;
+		public static final int ROCK_WALL = 3;
+		public static final int ROUGH_TERRAIN = 4;
 		
 		//CHEVAL CONSTANTS
 		public static final double DISTANCE_START_TO_RAMP_CHEVAL = 68.0;
@@ -108,11 +121,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		}
 		leftEncoder = new Encoder(RobotMap.Drivetrain.LEFT_ENCODER_FORWARD_CHANNEL, 
 				RobotMap.Drivetrain.LEFT_ENCODER_REVERSE_CHANNEL, false);
-		leftEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
 		
 		rightEncoder = new Encoder(RobotMap.Drivetrain.RIGHT_ENCODER_FORWARD_CHANNEL, 
 				RobotMap.Drivetrain.RIGHT_ENCODER_REVERSE_CHANNEL, true);
-		leftEncoder.setDistancePerPulse(highGearEncoderDistancePerPulse);
 		
 		driveSol  = new DoubleSolenoid(RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[0],
 				RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[1], RobotMap.Drivetrain.DRIVE_SOLENOID_PORTS[2]);

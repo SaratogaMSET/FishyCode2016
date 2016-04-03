@@ -12,7 +12,15 @@ package org.usfirst.frc.team649.robot.subsystems;
 import java.util.ArrayList;
 import java.util.List;
 
-
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.highgui.VideoCapture;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 import org.usfirst.frc.team649.robot.RobotMap;
 import org.usfirst.frc.team649.robot.RobotMap.Drivetrain;
 import org.usfirst.frc.team649.robot.util.Center;

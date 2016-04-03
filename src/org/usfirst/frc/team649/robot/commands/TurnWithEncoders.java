@@ -15,14 +15,12 @@ public class TurnWithEncoders extends Command {
 	DrivePIDLeft left;
 	DrivePIDRight right;
 	public double deltaTranslationalDistance;
-	public double leftEncDist;
 	public boolean prevStateLeftPID, prevStateRightPID;
 	
     public TurnWithEncoders(double angle) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	deltaTranslationalDistance = (angle/360.0) * (25.125 * Math.PI);
-    	this.leftEncDist = leftEncDist;
+    	deltaTranslationalDistance = Robot.drivetrain.getTranslationalDistanceForTurn(angle);
     }
 
     // Called just before this Command runs the first time
@@ -32,7 +30,7 @@ public class TurnWithEncoders extends Command {
     	timer.reset();
     	timer.start();
     	left = new DrivePIDLeft(deltaTranslationalDistance);
-    	right = new DrivePIDRight(deltaTranslationalDistance);
+    	right = new DrivePIDRight(-deltaTranslationalDistance);
     	left.start();
     	right.start();
     	

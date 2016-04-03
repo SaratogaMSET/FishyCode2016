@@ -1,9 +1,12 @@
 package org.usfirst.frc.team649.robot.runnables;
 
 import java.io.DataInputStream;
+import java.io.IOException;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.util.Center;
@@ -11,21 +14,29 @@ import org.usfirst.frc.team649.robot.util.Center;
 import edu.wpi.first.wpilibj.Timer;
 
 //stands on its own, run at the beginning of match, runs in parallel and does all the work
-public class InitializeServerSocketThread implements Runnable {
+public class InitializeServerSocketThread extends Thread {
 	
 	public Timer t;
+	public ServerSocket serverSocket;
 	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 
+		t = new Timer();
+		
 		t.reset();
 		t.start();
 		
 		try{
-			ServerSocket serverSocket = new ServerSocket();
+			serverSocket = new ServerSocket();
 			serverSocket.setReuseAddress(true);
-			serverSocket.bind(new InetSocketAddress(Robot.PORT));
+			try {
+				serverSocket.bind(new InetSocketAddress(Robot.PORT));
+			} catch (BindException e){
+				System.out.println("Caught a bind exception: SERVER ALREADY UP"); // <--- that is very bad and will cause quits
+				//server
+			}
 			
 			System.out.println("Server is running and listening...Boot Up Time: " + t.get());
 			Robot.isRIOServerStarted = true; //must be called before starting RateChecker
@@ -43,6 +54,7 @@ public class InitializeServerSocketThread implements Runnable {
 				//READ ONCE MESSAGE RECIEVED
 				DataInputStream dis = new DataInputStream(socket.getInputStream());
 				String s = dis.readUTF();
+				//System.out.println("Recieved: " + s);
 				String[] message = s.split(",");
 				//UPDATE CENTER
 				Robot.currCenter = new Center(Double.parseDouble(message[0]), Double.parseDouble(message[1]));
@@ -51,15 +63,34 @@ public class InitializeServerSocketThread implements Runnable {
 				socket.close();
 			}
 			
+			System.out.println("Socket about to be closed");
 			serverSocket.close();
 			Robot.isRIOServerStarted = false;
 
+		}
+		catch(SocketException e){
+			System.out.println("Server Socket ---> " + e.getMessage());
 		}
 		catch(Exception e){
 			e.printStackTrace();
 			
 		}
 
+		System.out.println("VISION THREAD ENDING");
+	}
+	
+	@Override
+	public void interrupt(){
+//		System.out.println("CALLED interrupt");
+		if (serverSocket != null){
+			try {
+				serverSocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				System.out.println("Failed closing on interrupt: " + e.getMessage());
+			}
+		}
+		super.interrupt();
 	}
 	
 	//just updates variable, doesnt really do anything else
@@ -97,6 +128,7 @@ public class InitializeServerSocketThread implements Runnable {
 		}
 		
 		public void alertPackageReceived(){
+			//System.out.println("ALERTED THREAD");
 			timeSinceLastAlert = t.get();
 		}
 		

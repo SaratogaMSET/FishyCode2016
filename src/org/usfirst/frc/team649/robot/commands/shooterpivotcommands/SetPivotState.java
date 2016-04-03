@@ -145,7 +145,8 @@ public class SetPivotState extends Command {
 		exit = inDangerOfIntakes || up && Robot.shooterPivot.pastMax() || !up
 				&& Robot.shooterPivot.lowerLimitsTriggered() || Robot.shooterPivot.isOnTarget(setPoint) ||
 				timer.get() > 5.0 || isStalling || (timer.get() > 0.8 && Math.abs(averageMotorSpeed) < PivotPID.MIN_PIVOT_SPEED)
-				|| Robot.oi.driver.isManualOverride();
+				|| Robot.oi.driver.isManualOverride()
+				|| state == ShooterPivotSubsystem.PivotPID.CURRENT_STATE;
 		return exit;
 	}
 	

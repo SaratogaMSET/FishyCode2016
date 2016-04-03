@@ -25,6 +25,7 @@ import org.usfirst.frc.team649.robot.util.Center;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -43,7 +44,6 @@ import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.SetCameraPiston;
 import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
 import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
-import org.usfirst.frc.team649.robot.commands.VisionLoop;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossChevalDeFrise;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossLowBar;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoTwoBallLowBar;
@@ -66,6 +66,7 @@ import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import jdk.nashorn.internal.codegen.ClassEmitter;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -132,6 +133,10 @@ public class Robot extends IterativeRobot {
 	public static double VISION_INIT_TIME_OUT = 6; //seconds
 	public static double MAX_PERIOD_BETWEEN_RECIEVING_DATA = 1.5; //seconds
 	public static ScheduledExecutorService adbTimer;
+	public static InitializeServerSocketThread initThread;
+	public static double GOOD_X = 288 / 2.0;
+	public static double GOOD_Y = 352 / 2.0;
+	public static double CENTER_TOLERANCE = 5;
 	
 	//LOGGING
 	public ArrayList<ArrayList<Double>> log;
@@ -225,8 +230,10 @@ public class Robot extends IterativeRobot {
 		
 		
 		new DriveForwardRotate(0, 0).start();
-		//new AutoCrossLowBar().start(); //this is actually low bar now, instead of cheval being low bar
-
+		new AutoCrossLowBar().start(); //this is actually low bar now, instead of cheval being low bar
+//		new TurnWithEncoders(60).start();
+		
+		
 		System.out.println(drivetrain.gyro.getAngle());
 		shooterPivot.currentPivotState = -1;
 
@@ -318,6 +325,7 @@ public class Robot extends IterativeRobot {
 		//new DriveForwardRotate(oi.driver.getForward(), oi.driver.getRotation()).start();
 		
 		if (readyToShoot && oi.operator.shootBallFlywheels() && oi.operator.shoot() && !prevStateShootButton){
+//			System.out.println("SHOOT THE SHOOTER -- ready to shoot");
 			new ShootTheShooter().start();
 		}
 		
@@ -440,6 +448,7 @@ public class Robot extends IterativeRobot {
 		
 		
 		if (oi.operator.isManualFirePiston() && !prevStateManualFirePiston){
+//			System.out.println("SHOOT THE SHOOTER -- manual");
 			new ShootTheShooter().start();
 		}
 		
@@ -577,7 +586,8 @@ public class Robot extends IterativeRobot {
 		System.out.println("STARTING LOG: Time, MotorLeft, MotorRight ");
 		//saveLog();
 		
-		//stop reading from file
+		//stop
+		new DriveForwardRotate(0, 0);
 		
 		
 		//SUPER IMPORTANT
@@ -586,8 +596,14 @@ public class Robot extends IterativeRobot {
 		isReceivingData = false; //for good measure
 
 		if (systemCheck != null){
-			System.out.println("ENDING VISION");
+			System.out.println("ENDING System check");
 			systemCheck.interrupt();
+		}
+		
+		//END VISION
+		if (initThread != null){
+			System.out.println("DISABLED INIT: ENDING VISION");
+			initThread.interrupt();
 		}
 		
 	}
@@ -621,8 +637,8 @@ public class Robot extends IterativeRobot {
 		System.out.println("STARTING VISION");
 
 		//
-		Thread init = new Thread(new InitializeServerSocketThread());
-		init.start();
+		initThread = new InitializeServerSocketThread();
+		initThread.start();
 		
 		//wait for thread to finish the socket initialization
 		try {
@@ -649,11 +665,15 @@ public class Robot extends IterativeRobot {
 	public void logAndDashboard(){
 		log.add(drivetrain.getLoggingData());
 		
-		if (isRIOServerStarted){
-			SmartDashboard.putString("CENTER OF VISION", "(" + currCenter.x + ", " + currCenter.y + ")");
+		if (isRIOServerStarted && isReceivingData){
+			DecimalFormat df = new DecimalFormat("#.##");
+			String formattedX = df.format(currCenter.x), formattedY = df.format(currCenter.y);
+			SmartDashboard.putString("CENTER OF VISION", "(" + formattedX + ", " + formattedY + ")");
+			SmartDashboard.putString("IS TARGET IN CENTER", ""+isCenterWithinTolerance(true, false)); //just x
 		}
 		else{
 			SmartDashboard.putString("CENTER OF VISION", "VISION NOT ACTIVE");
+			SmartDashboard.putString("IS TARGET IN CENTER", "VISION NOT ACTIVE"); //just x
 		}
 		SmartDashboard.putBoolean("Is receiving data regularly?", isReceivingData);
 		
@@ -710,6 +730,24 @@ public class Robot extends IterativeRobot {
 	public double correctForDeadZone(double joyVal){
 		   return Math.abs(joyVal) >= DEAD_ZONE_TOLERANCE ? joyVal : 0;
    }
+	
+	public static boolean isCenterWithinTolerance(boolean x, boolean y){
+		boolean x_inrange = Math.abs(GOOD_X - currCenter.x) < CENTER_TOLERANCE;
+		boolean y_inrange = Math.abs(GOOD_Y - currCenter.y) < CENTER_TOLERANCE;
+		
+		if (x && y){
+			return x_inrange && y_inrange;
+		}
+		else if (x){
+			return x_inrange;
+		}
+		else if (y){
+			return y_inrange;
+		}
+		else{
+			return false;
+		}
+	}
 	
 	public boolean isStalling(Victor motor, int pdpPort){
 		return false;
