@@ -45,8 +45,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	
 	
 	public static class PIDConstants {
-		public static final double PID_ABSOLUTE_TOLERANCE =2.0;
-		public static final double ABS_TOLERANCE = 2.0;
+		public static final double PID_ABSOLUTE_TOLERANCE =1.0;
+		public static final double ABS_TOLERANCE = 1.0;
 		public static  double k_P = .02; //0.2
 		public static double k_I = 0.0001;
 		public static double k_D = 0.03;
@@ -62,12 +62,13 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		
 		public static final double LOW_BAR_TURN_ANGLE = -21.5; //change
 		
-		public static final double VISION_TURN_POWER = 0.3;
+		public static final double VISION_TURN_POWER = 0.25;
+		public static final double VISION_KP = 0.7; //this basically means start visibly slowing down when within 10 px
 	}
 	
 	public static class AutoConstants {
 		public static final double LOW_GOAL_DRIVE_DISTANCE = 146; //in inches, remember to add extra for slope of ramp
-		public static final double TWO_BALL_MIDLINE_DISTANCE = -156;
+		public static final double TWO_BALL_MIDLINE_DISTANCE = -156
 	
 		//pos turns
 		public static final double TURN_FROM_POS_1 = 60;

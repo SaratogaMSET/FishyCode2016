@@ -49,7 +49,7 @@ public class TurnWithEncoders extends Command {
         SmartDashboard.putBoolean("Done?", done);
         prevStateLeftPID = Robot.isPIDActiveLeft;
         prevStateRightPID = Robot.isPIDActiveRight;
-        return false;
+        return done;
     }
 
     // Called once after isFinished returns true

@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 
 public class AutoShootSequence extends CommandGroup {
 	public AutoShootSequence(int pos){
-		double turnAngle;
+		double turnAngle; //must be under the actual turn distance
 		switch (pos){
 			case 1:
 				turnAngle = AutoConstants.TURN_FROM_POS_1;
@@ -35,9 +35,10 @@ public class AutoShootSequence extends CommandGroup {
 		
 		addSequential(new ResetDTEncoders());
 		addSequential(new WaitCommand(1.0));
-		addSequential(new TurnWithEncoders(turnAngle), 7);
+		addSequential(new TurnWithEncoders(turnAngle));
 		addSequential(new DriveForwardRotate(0, 0));
 		//insert VISION turn here
+		//addSequential(new TurnWithVision(
 
 		//different than SetPivotState, this allows for a non state machine
 		addSequential(new SetPivotPosition(PivotPID.AUTO_LOW_BAR_SHOOT_POSITION));

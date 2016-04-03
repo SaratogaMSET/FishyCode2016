@@ -24,7 +24,7 @@ public class AutoCrossLowBar extends CommandGroup {
 		
 		addSequential(new ResetDTEncoders());
 		addSequential(new WaitCommand(1.0));
-		addSequential(new TurnWithEncoders(60), 5); //time out
+		addSequential(new TurnWithEncoders(60)); //time out
 		addSequential(new DriveForwardRotate(0, 0));
 		//insert VISION turn here
 		

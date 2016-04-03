@@ -134,8 +134,11 @@ public class Robot extends IterativeRobot {
 	public static double MAX_PERIOD_BETWEEN_RECIEVING_DATA = 1.5; //seconds
 	public static ScheduledExecutorService adbTimer;
 	public static InitializeServerSocketThread initThread;
-	public static double GOOD_X = 288 / 2.0;
-	public static double GOOD_Y = 352 / 2.0;
+	public static double SCREEN_X = 288;
+	public static double SCREEN_Y = 352;
+	public static double GOOD_X = SCREEN_X / 2.0;
+	public static double GOOD_Y = SCREEN_Y / 2.0;
+	public static double FIELD_OF_VIEW = 0.8339;
 	public static double CENTER_TOLERANCE = 5;
 	
 	//LOGGING
