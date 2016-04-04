@@ -29,9 +29,9 @@ public class TurnWithEncoders extends Command {
     	timer = new Timer();
     	timer.reset();
     	timer.start();
-    	left = new DrivePIDLeft(deltaTranslationalDistance);
+//    	left = new DrivePIDLeft(deltaTranslationalDistance);
     	right = new DrivePIDRight(-deltaTranslationalDistance);
-    	left.start();
+//    	left.start();
     	right.start();
     	
     }
@@ -45,17 +45,18 @@ public class TurnWithEncoders extends Command {
     // Make this return true when this Command no longer needs to run execute()
     @Override
 	protected boolean isFinished() {
-        boolean done = !left.isRunning() && !right.isRunning();
+        boolean done = !right.isRunning(); //&& !right.isRunning();
         SmartDashboard.putBoolean("Done?", done);
         prevStateLeftPID = Robot.isPIDActiveLeft;
         prevStateRightPID = Robot.isPIDActiveRight;
-        return false;
+        return done;
     }
 
     // Called once after isFinished returns true
     @Override
 	protected void end() {
     	Robot.drivetrain.rawDrive(0, 0);
+    	System.out.println("DONE TURNING ENCODER");
     }
 
     // Called when another command which requires one or more of the same

@@ -44,9 +44,10 @@ import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.SetCameraPiston;
 import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
 import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
+import org.usfirst.frc.team649.robot.commands.TurnWithVision;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossChevalDeFrise;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossLowBar;
-import org.usfirst.frc.team649.robot.commands.autonomous.AutoTwoBallLowBar;
+import org.usfirst.frc.team649.robot.commands.autonomous.AutoFullSequence;
 import org.usfirst.frc.team649.robot.commands.intakecommands.RunAllRollers;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeed;
@@ -134,8 +135,11 @@ public class Robot extends IterativeRobot {
 	public static double MAX_PERIOD_BETWEEN_RECIEVING_DATA = 1.5; //seconds
 	public static ScheduledExecutorService adbTimer;
 	public static InitializeServerSocketThread initThread;
-	public static double GOOD_X = 288 / 2.0;
-	public static double GOOD_Y = 352 / 2.0;
+	public static double SCREEN_X = 288;
+	public static double SCREEN_Y = 352;
+	public static double GOOD_X = SCREEN_X / 2.0;
+	public static double GOOD_Y = SCREEN_Y / 2.0;
+	public static double FIELD_OF_VIEW = 0.8339;
 	public static double CENTER_TOLERANCE = 5;
 	
 	//LOGGING
@@ -228,11 +232,13 @@ public class Robot extends IterativeRobot {
 		new SetIntakePosition(intakeState);
 		new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();;
 		
+		new SetCameraPiston(CameraSubsystem.CAM_UP);
 		
 		new DriveForwardRotate(0, 0).start();
-		new AutoCrossLowBar().start(); //this is actually low bar now, instead of cheval being low bar
-//		new TurnWithEncoders(60).start();
-		
+		new AutoFullSequence(drivetrain.getAutoDefense(), drivetrain.getAutoPosition()).start();	
+		//new AutoCrossLowBar().start(); //this is actually low bar now, instead of cheval being low bar
+		//new TurnWithEncoders(60).start();
+		//new TurnWithVision().start();
 		
 		System.out.println(drivetrain.gyro.getAngle());
 		shooterPivot.currentPivotState = -1;
@@ -244,6 +250,7 @@ public class Robot extends IterativeRobot {
 		isReceivingData = false;
 		//start pulling txt and updating it
 		startVisionThreads();
+		
 		
 	}
 
@@ -478,6 +485,8 @@ public class Robot extends IterativeRobot {
 			}
 		}
 		
+		System.out.println("Left: " + Robot.drivetrain.motors[2].get() + ", Right: " + (-Robot.drivetrain.motors[0].get()));
+		
 		
 		
 		//PREV STATES
@@ -576,6 +585,25 @@ public class Robot extends IterativeRobot {
 		//LiveWindow.run();
 		Scheduler.getInstance().run();
 
+		if (!shooterPIDIsRunning && shooterPivot.motorLeft.get() < DEAD_ZONE_TOLERANCE && shooterPivot.motorRight.get() < DEAD_ZONE_TOLERANCE){
+			
+			if (pivotTimer.get() > MIN_STOPPED_TIME){
+				new EngageBrakes().start();
+			}
+			//if motor is 0 for the first time, start the timer
+			if (!prevStateMotorPowerIs0){
+				pivotTimer.reset();
+				pivotTimer.start();
+			}
+			//keep this at the end
+			prevStateMotorPowerIs0 = true;
+		}
+		else{
+			shooterPivot.engageBrake(false);
+			//keep this at the end
+			pivotTimer.reset();
+			prevStateMotorPowerIs0 = false;
+		}
 	}
 	
 	

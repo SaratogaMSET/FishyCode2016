@@ -45,11 +45,13 @@ public class  DrivePIDRight extends Command {
     	double setpoint = Robot.rightDT.getPosition() + distance;
     	drivePID.setSetpoint(setpoint);
     	SmartDashboard.putNumber("setpoint right", setpoint);
+    	System.out.println("INIT RIGHT PID");
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
 	protected void execute() {
+    	System.out.println("RUNNING RIGHT PID");
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -64,6 +66,7 @@ public class  DrivePIDRight extends Command {
 	protected void end() {
     	drivePID.disable();
     	Robot.isPIDActiveRight = false;
+    	System.out.println("END RIGHT PID");
     }
 
     // Called when another command which requires one or more of the same

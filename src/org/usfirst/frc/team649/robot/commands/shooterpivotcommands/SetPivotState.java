@@ -145,8 +145,7 @@ public class SetPivotState extends Command {
 		exit = inDangerOfIntakes || up && Robot.shooterPivot.pastMax() || !up
 				&& Robot.shooterPivot.lowerLimitsTriggered() || Robot.shooterPivot.isOnTarget(setPoint) ||
 				timer.get() > 5.0 || isStalling || (timer.get() > 0.8 && Math.abs(averageMotorSpeed) < PivotPID.MIN_PIVOT_SPEED)
-				|| Robot.oi.driver.isManualOverride()
-				|| state == ShooterPivotSubsystem.PivotPID.CURRENT_STATE;
+				|| Robot.oi.driver.isManualOverride();
 		return exit;
 	}
 	
@@ -159,7 +158,7 @@ public class SetPivotState extends Command {
 		if(Robot.shooterPivot.getPivotAngle() > 80) {
 			powerUpOrDown = -1.0;
 		}
-		Robot.shooterPivot.setPower(powerUpOrDown*ShooterPivotSubsystem.PivotPID.HOLD_PIVOT_POSITION_POWER);
+		Robot.shooterPivot.setPower(state == ShooterPivotSubsystem.PivotPID.CURRENT_STATE ? 0 : powerUpOrDown*ShooterPivotSubsystem.PivotPID.HOLD_PIVOT_POSITION_POWER);
 		Robot.shooterPIDIsRunning = false;
 		SmartDashboard.putString("  Current Command", " "+ "");
 		System.out.println("end: " + timer.get() );

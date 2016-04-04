@@ -18,12 +18,12 @@ public class LeftDTPID extends PIDSubsystem {
     public LeftDTPID() {
 //    	super("DT Left", DrivetrainSubsystem.PIDConstants.k_P, DrivetrainSubsystem.PIDConstants.k_I, DrivetrainSubsystem.PIDConstants.k_D);
 
-    	super("DT Left", .03, 0, 0);
+    	super("DT Left", 0.8, 0, 0);
        	
     	encoderDriveLeftPID = this.getPIDController();
     	encoderDriveLeftPID.setAbsoluteTolerance(0.8);
     	
-    	encoderDriveLeftPID.setOutputRange(-0.4, 0.4);
+    	//encoderDriveLeftPID.setOutputRange(-0.8, 0.8);
         
     }
     // Put methods for controlling this subsystem
@@ -38,6 +38,8 @@ public class LeftDTPID extends PIDSubsystem {
 	protected void usePIDOutput(double output) {
         Robot.drivetrain.motors[2].set(output);
         Robot.drivetrain.motors[3].set(output);
+//        Robot.drivetrain.motors[0].set(output);
+//        Robot.drivetrain.motors[1].set(output);
 	}
 
     @Override
@@ -47,7 +49,7 @@ public class LeftDTPID extends PIDSubsystem {
     }
     
 //    public PIDController getGyroPIDControler() {
-//    	return encoderTurnPID;
+//    	return encoderTurnP ID;
 //    }
 //	@Override
 //	public void pidWrite(double output) {

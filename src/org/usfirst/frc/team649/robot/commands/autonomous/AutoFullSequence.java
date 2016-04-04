@@ -17,6 +17,7 @@ public class AutoFullSequence extends CommandGroup {
 		switch (defense){
 		case AutoConstants.LOW_BAR:
 			addSequential(new AutoCrossLowBar());
+			//pos = 1;//has to be
 			break;
 		case AutoConstants.CHEVAL:
 			addSequential(new AutoCrossChevalDeFrise());
@@ -31,9 +32,10 @@ public class AutoFullSequence extends CommandGroup {
 			addSequential(new AutoCrossRoughTerrain());
 			break;
 		default:
+			addSequential(new AutoCrossLowBar());
 			return;
 	}
-		
+	
 		
 	//shoot from the pos
 	addSequential(new AutoShootSequence(pos));

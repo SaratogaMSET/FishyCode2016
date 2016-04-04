@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
 import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Compressor;
@@ -28,6 +30,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public BuiltInAccelerometer accel;
 	public DoubleSolenoid driveSol;
 	public AnalogGyro gyro;//ADXRS450_Gyro gyro;
+	public AnalogPotentiometer autoDefenseSelector, autoPositionSelector;
 	
 	
 	public static final double GYRO_SENSITIVITY = 10;
@@ -45,8 +48,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	
 	
 	public static class PIDConstants {
-		public static final double PID_ABSOLUTE_TOLERANCE =2.0;
-		public static final double ABS_TOLERANCE = 2.0;
+		public static final double PID_ABSOLUTE_TOLERANCE =1.0;
+		public static final double ABS_TOLERANCE = 1.0;
 		public static  double k_P = .02; //0.2
 		public static double k_I = 0.0001;
 		public static double k_D = 0.03;
@@ -62,7 +65,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		
 		public static final double LOW_BAR_TURN_ANGLE = -21.5; //change
 		
-		public static final double VISION_TURN_POWER = 0.3;
+		public static final double VISION_TURN_POWER = 0.30;
+		public static final double VISION_KP = 0.0; //this basically means start visibly slowing down when within 10 px
 	}
 	
 	public static class AutoConstants {
@@ -135,6 +139,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		encoderDrivePID.setAbsoluteTolerance(PIDConstants.PID_ABSOLUTE_TOLERANCE);
 		encoderDrivePID.setOutputRange(-.5, .5);
 		
+		autoDefenseSelector = new AnalogPotentiometer(RobotMap.Drivetrain.AUTO_DEFENSE_SELECTOR);
+		autoPositionSelector = new AnalogPotentiometer(RobotMap.Drivetrain.AUTO_POSITION_SELECTOR);
+		
 	}
 
 	public void driveFwdRot(double fwd, double rot) {
@@ -146,7 +153,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
     }
 
     public void rawDrive(double left, double right) {
-        motors[0].set(powerRatio* right);
+        motors[0].set(powerRatio * right);
         motors[1].set(powerRatio * right);
         motors[2].set(-left);
         motors[3].set(-left);
@@ -247,6 +254,16 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public boolean isOnTarget(double distance) {
 		// TODO Auto-generated method stub
 		return Math.abs(getDistanceDTBoth() - distance) < DrivetrainSubsystem.PIDConstants.ABS_TOLERANCE;
+	}
+
+	public int getAutoDefense() {
+		// TODO Auto-generated method stub
+		return (int)Math.round(autoDefenseSelector.get());
+	}
+
+	public int getAutoPosition() {
+		// TODO Auto-generated method stub
+		return (int)Math.round(autoPositionSelector.get());
 	}
 }
 

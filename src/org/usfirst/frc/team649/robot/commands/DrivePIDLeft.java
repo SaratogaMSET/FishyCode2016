@@ -45,12 +45,14 @@ public class  DrivePIDLeft extends Command {
     	drivePID.setSetpoint(setpoint);
     	SmartDashboard.putNumber("setpoint left", setpoint);
     	drivePID.enable();
+    	System.out.println("INIT LEFT PID");
 
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
 	protected void execute() {
+    	System.out.println("RUNNING LEFT PID");
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -65,6 +67,7 @@ public class  DrivePIDLeft extends Command {
 	protected void end() {
     	drivePID.disable();
     	Robot.isPIDActiveLeft = false;
+    	System.out.println("END LEFT PID");
     }
 
     // Called when another command which requires one or more of the same
