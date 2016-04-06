@@ -17,7 +17,7 @@ public class AutoFullSequence extends CommandGroup {
 		switch (defense){
 		case AutoConstants.LOW_BAR:
 			addSequential(new AutoCrossLowBar());
-			//pos = 1;//has to be
+			pos = AutoConstants.POS1;
 			break;
 		case AutoConstants.CHEVAL:
 			addSequential(new AutoCrossChevalDeFrise());
@@ -29,13 +29,15 @@ public class AutoFullSequence extends CommandGroup {
 			addSequential(new AutoCrossRockWall());
 			break;
 		case AutoConstants.ROUGH_TERRAIN:
-			addSequential(new AutoCrossRoughTerrain());
+		addSequential(new AutoCrossRoughTerrain());
 			break;
 		default:
 			addSequential(new AutoCrossLowBar());
+			pos = AutoConstants.POS1;
 			return;
 	}
 	
+	System.out.println("POS:  " + pos + " , Defense: " + defense);
 		
 	//shoot from the pos
 	addSequential(new AutoShootSequence(pos));

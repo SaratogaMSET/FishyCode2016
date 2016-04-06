@@ -18,12 +18,12 @@ public class LeftDTPID extends PIDSubsystem {
     public LeftDTPID() {
 //    	super("DT Left", DrivetrainSubsystem.PIDConstants.k_P, DrivetrainSubsystem.PIDConstants.k_I, DrivetrainSubsystem.PIDConstants.k_D);
 
-    	super("DT Left", 0.8, 0, 0);
+    	super("DT Left", 0.6, 0, 0.05);
        	
     	encoderDriveLeftPID = this.getPIDController();
     	encoderDriveLeftPID.setAbsoluteTolerance(0.8);
     	
-    	//encoderDriveLeftPID.setOutputRange(-0.8, 0.8);
+    	encoderDriveLeftPID.setOutputRange(-0.7, 0.7);
         
     }
     // Put methods for controlling this subsystem

@@ -21,6 +21,7 @@ import org.opencv.core.Size;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
+import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
 import org.usfirst.frc.team649.robot.RobotMap.Drivetrain;
 import org.usfirst.frc.team649.robot.util.Center;

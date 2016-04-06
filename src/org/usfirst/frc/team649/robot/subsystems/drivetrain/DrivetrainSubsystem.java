@@ -48,10 +48,10 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	
 	
 	public static class PIDConstants {
-		public static final double PID_ABSOLUTE_TOLERANCE =1.0;
-		public static final double ABS_TOLERANCE = 1.0;
-		public static  double k_P = .02; //0.2
-		public static double k_I = 0.0001;
+		public static final double PID_ABSOLUTE_TOLERANCE =3.0;
+		public static final double ABS_TOLERANCE = 3.0;
+		public static  double k_P = .05; //0.2
+		public static double k_I = 0;
 		public static double k_D = 0.03;
 	}
 	
@@ -65,7 +65,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		
 		public static final double LOW_BAR_TURN_ANGLE = -21.5; //change
 		
-		public static final double VISION_TURN_POWER = 0.30;
+		public static final double VISION_TURN_POWER = 0.295;
 		public static final double VISION_KP = 0.0; //this basically means start visibly slowing down when within 10 px
 	}
 	
@@ -74,10 +74,10 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		public static final double TWO_BALL_MIDLINE_DISTANCE = -156;
 	
 		//pos turns
-		public static final double TURN_FROM_POS_1 = 60;
-		public static final double TURN_FROM_POS_2 = 40;
-		public static final double TURN_FROM_POS_3 = 0;
-		public static final double TURN_FROM_POS_4 = -40;
+		public static final double TURN_FROM_POS_1 = 51;
+		public static final double TURN_FROM_POS_2 = 28;
+		public static final double TURN_FROM_POS_3 = 10;
+		public static final double TURN_FROM_POS_4 = -12;
 		
 		//defense id
 		public static final int LOW_BAR = 0;
@@ -85,6 +85,14 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		public static final int PORTCULLIS = 2;
 		public static final int ROCK_WALL = 3;
 		public static final int ROUGH_TERRAIN = 4;
+		
+		//pos id
+
+		public static final int POS1 = 1;
+		public static final int POS2 = 2;
+		public static final int POS3 = 3;
+		public static final int POS4 = 4;
+		public static final int POS5 = 5;
 		
 		//CHEVAL CONSTANTS
 		public static final double DISTANCE_START_TO_RAMP_CHEVAL = 68.0;
@@ -214,10 +222,10 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	@Override
 	protected double returnPIDInput() {
 		// TODO Auto-generated method stub
-		return -leftEncoder.getDistance();
+		return getDistanceDTBoth();
 	}
 
-	public double getClosestAngleToSetpoint(double setpoint){
+	public double getEncDistToSetpoint(double setpoint){
 		double diffL = Math.abs(leftEncoder.getDistance() - setpoint);
 		double diffR = Math.abs(rightEncoder.getDistance() - setpoint);
 		double diffEncoders = leftEncoder.getDistance()- rightEncoder.getDistance();
@@ -243,13 +251,13 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	@Override
 	protected void usePIDOutput(double output) {
 		// TODO Auto-generated method stub
-		driveFwdRot(-output, 0);
+		rawDrive(-output,-output);
 		
 	}
 
 	public double getTranslationalDistanceForTurn(double angle) {
 		 System.out.println((angle/ 360.0) * (25.125 * Math.PI));
-		 return (angle/ 360.0) * (25.125 * Math.PI);
+		 return (angle/ 360.0) * (25.125 * Math.PI) * 1.08;
 	}
 	public boolean isOnTarget(double distance) {
 		// TODO Auto-generated method stub

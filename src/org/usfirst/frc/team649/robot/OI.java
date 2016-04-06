@@ -129,5 +129,10 @@ public class OI {
     public class Manual {
     	
     }
+
+	public boolean autoAim() {
+		// TODO Auto-generated method stub
+		return driveJoystickHorizontal.getRawButton(3) || driveJoystickVertical.getRawButton(3);
+	}
 }
 

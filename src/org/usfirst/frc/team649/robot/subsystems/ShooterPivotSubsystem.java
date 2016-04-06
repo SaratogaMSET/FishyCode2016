@@ -61,11 +61,11 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		public static final double BACK_SHOOT_POSITION = 115.0;//62.2;
 		
 		public static final double AUTO_POS1_SHOOT_POSITION = 45.0;
-		public static final double AUTO_POS2_SHOOT_POSITION = 50.0;
-		public static final double AUTO_POS3_SHOOT_POSITION = 50.0;
-		public static final double AUTO_POS4_SHOOT_POSITION = 50.0;
-		public static final double AUTO_POS5_SHOOT_POSITION = 50.0;
-//		public static final double AUTO_CAMERA_AIM_POSITION = 12.0;
+		public static final double AUTO_POS2_SHOOT_POSITION = 42.0;
+		public static final double AUTO_POS3_SHOOT_POSITION = 37.0;
+		public static final double AUTO_POS4_SHOOT_POSITION = 37.0;
+		public static final double AUTO_POS5_SHOOT_POSITION = 37.0;
+		public static final double AUTO_CAMERA_AIM_POSITION = 32.0;
 		
 		public static final double REGION_ERROR = 4.0; //degrees
 

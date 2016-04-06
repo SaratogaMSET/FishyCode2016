@@ -123,7 +123,7 @@ public class SetPivotPosition extends Command {
 		//END
 		exit = inDangerOfIntakes || up && Robot.shooterPivot.pastMax() || !up
 				&& Robot.shooterPivot.lowerLimitsTriggered() || Robot.shooterPivot.isOnTarget(setpoint) ||
-				timer.get() > 5.0 || isStalling
+				timer.get() > 1.0 || isStalling
 				|| Robot.oi.driver.isManualOverride();
 		return exit;
 	}
@@ -151,6 +151,6 @@ public class SetPivotPosition extends Command {
 	// subsystems is scheduled to run
 	@Override
 	protected void interrupted() {
-		end();
+		//end();
 	}
 }

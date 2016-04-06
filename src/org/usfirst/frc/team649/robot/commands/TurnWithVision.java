@@ -17,7 +17,7 @@ public class TurnWithVision extends Command {
 
 	double coef;
 	int countTimesOffInARow;
-	double power;
+	public static double power;
 	double lDistance;
 	double original_diff, diff;
 	double prev_diff, prev2_diff, prev3_diff, prev4_diff, prev5_diff;
@@ -50,13 +50,26 @@ public class TurnWithVision extends Command {
 		done = false;
 		lDistance = 0;
 		df = new DecimalFormat("#.#");
+		power = TurnConstants.VISION_TURN_POWER;
 	}
 	
+	public TurnWithVision(double turnPower) {
+		// TODO Auto-generated constructor stub
+		requires(Robot.drivetrain);
+		findDirection = true;
+		noTarget = false;
+		done = false;
+		lDistance = 0;
+		df = new DecimalFormat("#.#");
+		power = turnPower;
+
+	}
 	
 	@Override
 	protected void initialize() {
 		// TODO Auto-generated method stub
 		onTarget = false;
+    	Robot.autoAiming = true;
 		countTimesOffInARow = 0;
 		Robot.drivetrain.resetEncoders();
 		initial_enc = Robot.drivetrain.getDistanceDTLeft();
@@ -72,14 +85,23 @@ public class TurnWithVision extends Command {
 		f.start();
 		
 		if (noTarget){
-			while (noTarget && f.get() < 1.0){
+			while (noTarget && f.get() < 1.5){
 				noTarget = Robot.currCenter.equals(new Center(-1,-1));
 			}
 			noTarget = Robot.currCenter.equals(new Center(-1,-1)); //if it is still bad
 		}
 		
-		
 		original_diff = Robot.currCenter.x - Robot.GOOD_X; //positive means turn right
+		
+		//compenstate for tilted target
+		if(original_diff > 0) {
+			System.out.println("-comp");
+			original_diff -= 10;
+		} else {
+			System.out.println("-comp");
+			original_diff +=10;
+		}
+		
 		diff = original_diff;
 		prev_diff = original_diff;
 		prev2_diff = original_diff;
@@ -96,7 +118,6 @@ public class TurnWithVision extends Command {
 		System.out.println("Init turning vision=> original_diff: " + df.format(original_diff) 
 							+"\n					angle: " + df.format(angle)
 							+"\n					lDistance: " + df.format(lDistance));
-		power = TurnConstants.VISION_TURN_POWER;
 		
 		if (!noTarget){
 			Robot.drivetrain.rawDrive(-coef * power, coef * power);
@@ -162,11 +183,11 @@ public class TurnWithVision extends Command {
 			System.out.println("ERROR: TRIED turning vision, but FAILED"
 					+ "\nWas there no target: " + noTarget + ", did we lose target? :" + lostTarget());
 		}
+		Robot.autoAiming = false;
 	}
 
 	@Override
 	protected void interrupted() {
-		// TODO Auto-generated method stub
 		end();
 	}
 	

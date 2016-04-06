@@ -26,32 +26,32 @@ public class AutoCrossLowBar extends CommandGroup {
 		addSequential(new ShiftDrivetrain(false));
 		addSequential(new DrivetrainPIDCommand(180)); 
 
-		addSequential(new SetCameraPiston(CameraSubsystem.CAM_UP));
-		
-		addSequential(new ResetDTEncoders());
-		addSequential(new WaitCommand(1.0));
-		addSequential(new TurnWithEncoders(31)); //time out
-		addSequential(new DriveForwardRotate(0, 0));
-		//insert VISION turn here
-		
-//		addSequential(new SetPivotPosition(PivotPID.AUTO_CAMERA_AIM_POSITION));
-		
-
-		addSequential(new WaitCommand(1.0));
-		//different than SetPivotState, this allows for a non state machine
-		addSequential(new SetPivotPosition(PivotPID.AUTO_POS1_SHOOT_POSITION));
-		
-
-		addSequential(new WaitCommand(1.0));
-		
-		addSequential(new TurnWithVision());
-		
-		addSequential(new TurnWithVision());
-
-		
-		addSequential(new WaitCommand(1.0));
-		//addSequential(new BangBangFlywheels(false)); //false for not in teleop
-		addSequential(new WaitCommand(1.5));
+//		addSequential(new SetCameraPiston(CameraSubsystem.CAM_UP));
+//		
+//		addSequential(new ResetDTEncoders());
+//		addSequential(new WaitCommand(1.0));
+//		addSequential(new TurnWithEncoders(31)); //time out
+//		addSequential(new DriveForwardRotate(0, 0));
+//		//insert VISION turn here
+//		
+////		addSequential(new SetPivotPosition(PivotPID.AUTO_CAMERA_AIM_POSITION));
+//		
+//
+//		addSequential(new WaitCommand(1.0));
+//		//different than SetPivotState, this allows for a non state machine
+//		addSequential(new SetPivotPosition(PivotPID.AUTO_POS1_SHOOT_POSITION));
+//		
+//
+//		addSequential(new WaitCommand(1.0));
+//		
+//		addSequential(new TurnWithVision());
+//		
+//		addSequential(new TurnWithVision());
+//
+//		
+//		addSequential(new WaitCommand(1.0));
+//		//addSequential(new BangBangFlywheels(false)); //false for not in teleop
+//		addSequential(new WaitCommand(1.5));
 		//addSequential(new ResetPivot());
 		
 		//addParallel(new putColordown)

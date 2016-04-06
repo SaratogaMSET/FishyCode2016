@@ -17,13 +17,13 @@ public class RightDTPID extends PIDSubsystem {
     
     public RightDTPID() {
 //    	super("DT Right", DrivetrainSubsystem.PIDConstants.k_P, DrivetrainSubsystem.PIDConstants.k_I, DrivetrainSubsystem.PIDConstants.k_D);
-    	super("DT Left", 1.0, 0, 0);
+    	super("DT Left", 0.6, 0, 0.05);
 
        	
     	encoderDriveRightPID = this.getPIDController();
     	encoderDriveRightPID.setAbsoluteTolerance(0.8);
 
-    	//encoderDriveRightPID.setOutputRange(-0.8, 0.8);
+    	encoderDriveRightPID.setOutputRange(-0.7, 0.7);
     }
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
@@ -38,8 +38,8 @@ public class RightDTPID extends PIDSubsystem {
 		
         Robot.drivetrain.motors[0].set(-output);
         Robot.drivetrain.motors[1].set(-output);
-        Robot.drivetrain.motors[2].set(-output);
-        Robot.drivetrain.motors[3].set(-output);
+//        Robot.drivetrain.motors[2].set(-output);
+//        Robot.drivetrain.motors[3].set(-output);
 	}
 
     @Override

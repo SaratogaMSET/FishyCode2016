@@ -29,9 +29,9 @@ public class ShooterSubsystem extends Subsystem {
 	public static boolean UNTIL_IR = true;
 	
 	/*****CONSTANTS FOR FLYWHEEL****/
-	public static final double FARSHOT_FLYWHEEL_TARGET_RPM = 3500;//3500
-	public static final double FARSHOT_FLYWHEEL_MAX_SHOOT_POWER = 0.8;//0.8
-	public static final double FARSHOT_FLYWHEEL_MIN_SHOOT_POWER = 0.6;//0.6
+	public static final double FARSHOT_FLYWHEEL_TARGET_RPM = 5000;//3500
+	public static final double FARSHOT_FLYWHEEL_MAX_SHOOT_POWER = 1.0;//0.8
+	public static final double FARSHOT_FLYWHEEL_MIN_SHOOT_POWER = 0.9;//0.6
 	public static final double FARSHOT_FLYWHEEL_TOLERANCE = 90;
 	
 	public static final double BATTER_FLYWHEEL_TARGET_RPM = 2300;

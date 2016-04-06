@@ -20,6 +20,7 @@ import org.usfirst.frc.team649.robot.subsystems.drivetrain.AutonomousSequences;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.LeftDTPID;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.RightDTPID;
+import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.AutoConstants;
 import org.usfirst.frc.team649.robot.util.Center;
 
 import java.io.BufferedReader;
@@ -34,25 +35,31 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.text.StyleContext.SmallAttributeSet;
 
 import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
+import org.usfirst.frc.team649.robot.commandgroups.AutoAim;
 import org.usfirst.frc.team649.robot.commandgroups.SemiAutoLoadBall;
 import org.usfirst.frc.team649.robot.commandgroups.SetDefenseMode;
 import org.usfirst.frc.team649.robot.commandgroups.ShootTheShooter;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
 import org.usfirst.frc.team649.robot.commands.DrivePIDLeft;
 import org.usfirst.frc.team649.robot.commands.DrivePIDRight;
+import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
 import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.SetCameraPiston;
+import org.usfirst.frc.team649.robot.commands.SetCompressorCommand;
 import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
 import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
 import org.usfirst.frc.team649.robot.commands.TurnWithVision;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossChevalDeFrise;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossLowBar;
+import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossRoughTerrain;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoFullSequence;
+import org.usfirst.frc.team649.robot.commands.autonomous.AutoShootSequence;
 import org.usfirst.frc.team649.robot.commands.intakecommands.RunAllRollers;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeed;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.EngageBrakes;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.ResetPivot;
+import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPosition;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPower;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
 import org.usfirst.frc.team649.robot.runnables.EndAppThread;
@@ -88,7 +95,7 @@ public class Robot extends IterativeRobot {
 	public static ShooterSubsystem shooter;
 	public static CameraSubsystem camera;
 	public static PowerDistributionPanel pdp;
-	public static Compressor c; 
+	public static Compressor comp; 
 	
 	//OI
 	public static final double DEAD_ZONE_TOLERANCE = 0.043;
@@ -149,6 +156,7 @@ public class Robot extends IterativeRobot {
 	//MISC
 	public static boolean semiAutoIsRunning = false; //semi auto indicator
 	public static boolean robotEnabled = false; //indicator
+	public static boolean autoAiming = false;
 	public SendableChooser chooser; //autonomous selector
 	public Thread systemCheck; //thread stuff
 	
@@ -169,6 +177,7 @@ public class Robot extends IterativeRobot {
 	
 	public boolean prevStateManualFirePiston;
 	public boolean prevStateCameraUp;
+	private boolean prevStateAutoAim;
 	
 	///////**********************ROBOT INIT************************//////
 	
@@ -207,6 +216,7 @@ public class Robot extends IterativeRobot {
 		prevStateDefenseMode = false;
 		prevStateManualFirePiston = false;
 		prevStateCameraUp = false;
+		prevStateAutoAim = false;
 		
 		isManualPressed = false;
 		
@@ -235,10 +245,15 @@ public class Robot extends IterativeRobot {
 		new SetCameraPiston(CameraSubsystem.CAM_UP);
 		
 		new DriveForwardRotate(0, 0).start();
-		new AutoFullSequence(drivetrain.getAutoDefense(), drivetrain.getAutoPosition()).start();	
-		//new AutoCrossLowBar().start(); //this is actually low bar now, instead of cheval being low bar
-		//new TurnWithEncoders(60).start();
+//		new AutoFullSequence(drivetrain.getAutoDefense(), drivetrain.getAutoPosition()).start();	
+	//	new AutoFullSequence(AutoConstants.ROUGH_TERRAIN, AutoConstants.POS4).start();	
+		new AutoShootSequence(DrivetrainSubsystem.AutoConstants.POS4).start();
+//		new AutoCrossRoughTerrain().start();
+//		new AutoCrossLowBar().start(); //this is actually low bar now, instead of cheval being low bar
+//		new TurnWithEncoders(60).start();
 		//new TurnWithVision().start();
+//		new AutoCrossChevalDeFrise().start();
+//		new DrivetrainPIDCommand(-4).start();
 		
 		System.out.println(drivetrain.gyro.getAngle());
 		shooterPivot.currentPivotState = -1;
@@ -305,7 +320,7 @@ public class Robot extends IterativeRobot {
 		new SetIntakePosition(intakeState);
 		new SetCameraPiston(!CameraSubsystem.CAM_UP).start();
 		new RunAllRollers(ShooterSubsystem.OFF, !ShooterSubsystem.UNTIL_IR).start();;
-		
+		new SetCompressorCommand(true).start();
 
 		shooterPivot.currentPivotState = -1;
 		
@@ -328,8 +343,16 @@ public class Robot extends IterativeRobot {
 		
 		Scheduler.getInstance().run();
 		
+		if(!autoAiming) {
 		new DriveForwardRotate(correctForDeadZone(oi.driver.getForward()), correctForDeadZone(oi.driver.getRotation())).start();
+		}
 		//new DriveForwardRotate(oi.driver.getForward(), oi.driver.getRotation()).start();
+		
+		if(oi.autoAim() && !prevStateAutoAim){
+			//new SetPivotPosition(PivotPID.AUTO_CAMERA_AIM_POSITION).start(
+			new AutoAim().start();
+			
+		}
 		
 		if (readyToShoot && oi.operator.shootBallFlywheels() && oi.operator.shoot() && !prevStateShootButton){
 //			System.out.println("SHOOT THE SHOOTER -- ready to shoot");
@@ -485,7 +508,7 @@ public class Robot extends IterativeRobot {
 			}
 		}
 		
-		System.out.println("Left: " + Robot.drivetrain.motors[2].get() + ", Right: " + (-Robot.drivetrain.motors[0].get()));
+//		System.out.println("Left: " + Robot.drivetrain.motors[2].get() + ", Right: " + (-Robot.drivetrain.motors[0].get()));
 		
 		
 		
@@ -505,7 +528,8 @@ public class Robot extends IterativeRobot {
 		
 		prevStateManualFirePiston = oi.operator.isManualFirePiston();
 		prevStateCameraUp = oi.driver.isCameraUpPressed();
-		
+		prevStateAutoAim = oi.autoAim();
+
 		
 		//********updating subsystem*******//
 		
