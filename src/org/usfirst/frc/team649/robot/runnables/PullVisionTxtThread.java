@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Calendar;
 
 import org.usfirst.frc.team649.robot.Robot;
+import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.util.Center;
 
 public class PullVisionTxtThread implements Runnable {
@@ -47,12 +48,30 @@ public class PullVisionTxtThread implements Runnable {
             if (line1.length >= 2){
             	Robot.currCenter = new Center(Double.parseDouble(line1[0]), Double.parseDouble(line1[1]));
             }
+            
+            updateLEDs();
         }
         catch (Exception e){
             System.out.println("Exception: File READ failed: " + e.toString());
             //default
             Robot.currCenter = new Center(-1,-1);
         }
+	}
+
+	private void updateLEDs() {
+		// TODO Auto-generated method stub
+		if(Robot.currCenter.x == -1) {
+			Robot.drivetrain.setLEDs(DrivetrainSubsystem.RED, DrivetrainSubsystem.RED);
+			return;
+		}
+		double diff = Robot.currCenter.x - Robot.GOOD_X; //positive means turn right
+		
+		if(diff > 5) {
+			Robot.drivetrain.setLEDs(DrivetrainSubsystem.RED, DrivetrainSubsystem.GREEN);
+		} else if (diff < -5) {
+			Robot.drivetrain.setLEDs(DrivetrainSubsystem.GREEN, DrivetrainSubsystem.RED);
+		} else 
+			Robot.drivetrain.setLEDs(DrivetrainSubsystem.GREEN, DrivetrainSubsystem.GREEN);
 	}
 
 }

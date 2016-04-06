@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
@@ -42,7 +43,11 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public static final double lowGearEncoderDistancePerPulse = 18.85 * 14.0/60.0 / 256;
 	
 	public static final double powerRatio = 0.97; //right : left (right motor has less power on pbot) //TODO TUNE
+	public static final boolean RED = false;
+	public static final boolean GREEN = true;
 	public PIDController encoderDrivePID;
+	private DigitalOutput leftLED;
+	private DigitalOutput rightLED;
 	
 	public static boolean HIGH_GEAR = true;
 	
@@ -65,7 +70,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		
 		public static final double LOW_BAR_TURN_ANGLE = -21.5; //change
 		
-		public static final double VISION_TURN_POWER = 0.295;
+		public static final double VISION_TURN_POWER = 0.31;
 		public static final double VISION_KP = 0.0; //this basically means start visibly slowing down when within 10 px
 	}
 	
@@ -149,6 +154,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		
 		autoDefenseSelector = new AnalogPotentiometer(RobotMap.Drivetrain.AUTO_DEFENSE_SELECTOR);
 		autoPositionSelector = new AnalogPotentiometer(RobotMap.Drivetrain.AUTO_POSITION_SELECTOR);
+		
+		leftLED = new DigitalOutput(RobotMap.Drivetrain.LED_PORTS[0]);
+		rightLED = new DigitalOutput(RobotMap.Drivetrain.LED_PORTS[1]);
 		
 	}
 
@@ -272,6 +280,11 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public int getAutoPosition() {
 		// TODO Auto-generated method stub
 		return (int)Math.round(autoPositionSelector.get());
+	}
+
+	public void setLEDs(boolean left, boolean right) {
+		leftLED.set(left);
+		rightLED.set(right);
 	}
 }
 

@@ -73,9 +73,11 @@ public class RobotMap {
 		public static final int CAM_SERVO = 18;
 		public static final int[] SOLENOID_PORTS = {0,3,4};
 		
-		public static final int[] LED_PORTS = {12,13,14};
+		public static final int[] LED_PORTS = {24,25};  //left, right
 		public static final int AUTO_DEFENSE_SELECTOR = 2;
 		public static final int AUTO_POSITION_SELECTOR = 3;
+		
+		
 	}
 
 	public static class Intake {

@@ -12,6 +12,7 @@ import com.sun.javafx.css.CalculatedValue;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TurnWithVision extends Command {
 
@@ -92,13 +93,13 @@ public class TurnWithVision extends Command {
 		}
 		
 		original_diff = Robot.currCenter.x - Robot.GOOD_X; //positive means turn right
-		
+		SmartDashboard.putNumber("dff", original_diff);
 		//compenstate for tilted target
 		if(original_diff > 0) {
 			System.out.println("-comp");
 			original_diff -= 10;
 		} else {
-			System.out.println("-comp");
+			System.out.println("comp");
 			original_diff +=10;
 		}
 		
@@ -188,6 +189,7 @@ public class TurnWithVision extends Command {
 
 	@Override
 	protected void interrupted() {
+		System.out.println("turn interupted");
 		end();
 	}
 	

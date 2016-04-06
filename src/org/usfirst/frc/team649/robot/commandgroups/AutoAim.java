@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.command.WaitCommand;
 public class AutoAim extends CommandGroup {
     
     public  AutoAim() {
-    	addParallel(new SetPivotPosition(PivotPID.AUTO_CAMERA_AIM_POSITION));
+    	addParallel(new SetPivotState(PivotPID.FAR_SHOOT_STATE));
     //	addSequential(new WaitCommand(.3));
     	//addSequential(new SetPivotState(PivotPID.STORING_STATE));
     	//addSequential(new SetCameraPiston(true));

@@ -55,7 +55,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 
 		public static final double PICKUP_POSITION = 1.0;
 		public static final double STORE_POSITION = 8.0;// temp value
-		public static final double FAR_SHOOT_POSITION = 45.0; //44.7
+		public static final double FAR_SHOOT_POSITION = 43.0; //44.7
 		
 		public static final double CLOSE_SHOOT_POSITION = 72.4;//68.3;//62.2;
 		public static final double BACK_SHOOT_POSITION = 115.0;//62.2;
@@ -63,7 +63,7 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		public static final double AUTO_POS1_SHOOT_POSITION = 45.0;
 		public static final double AUTO_POS2_SHOOT_POSITION = 42.0;
 		public static final double AUTO_POS3_SHOOT_POSITION = 37.0;
-		public static final double AUTO_POS4_SHOOT_POSITION = 37.0;
+		public static final double AUTO_POS4_SHOOT_POSITION = 42.0;
 		public static final double AUTO_POS5_SHOOT_POSITION = 37.0;
 		public static final double AUTO_CAMERA_AIM_POSITION = 32.0;
 		

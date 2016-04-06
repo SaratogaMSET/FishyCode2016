@@ -197,7 +197,7 @@ public class Robot extends IterativeRobot {
 		isPIDActive= false;
 		isRIOServerStarted = false;
 		isReceivingData = false;
-		
+		comp = new Compressor();
 		log = new ArrayList<>();
 		timer = new Timer();
 		pivotTimer = new Timer();
@@ -343,6 +343,8 @@ public class Robot extends IterativeRobot {
 		
 		Scheduler.getInstance().run();
 		
+		
+
 		if(!autoAiming) {
 		new DriveForwardRotate(correctForDeadZone(oi.driver.getForward()), correctForDeadZone(oi.driver.getRotation())).start();
 		}
@@ -354,7 +356,7 @@ public class Robot extends IterativeRobot {
 			
 		}
 		
-		if (readyToShoot && oi.operator.shootBallFlywheels() && oi.operator.shoot() && !prevStateShootButton){
+		if (readyToShoot && oi.operator.shootBallFlywheels() && oi.operator.shoot()){
 //			System.out.println("SHOOT THE SHOOTER -- ready to shoot");
 			new ShootTheShooter().start();
 		}
@@ -538,6 +540,7 @@ public class Robot extends IterativeRobot {
 		
 		//update the flywheel speed constants
 		shooter.updateShooterConstants();
+		
 		
 		//brake
 		if (!isManualPressed){ //if manual override isn't running
@@ -777,6 +780,9 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Joy POV", oi.operatorJoystick.getPOV());
 		SmartDashboard.putNumber("Left Centering Module Current", pdp.getCurrent(5));
 		SmartDashboard.putNumber("Left Centering Module Current", pdp.getCurrent(10));
+		
+	
+		SmartDashboard.putNumber("Accel Z", Robot.drivetrain.accel.getZ());
 	}
 	
 	public double correctForDeadZone(double joyVal){

@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.SocketException;
 
 import org.usfirst.frc.team649.robot.Robot;
+import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.util.Center;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -61,6 +62,9 @@ public class InitializeServerSocketThread extends Thread {
 //				System.out.println("Received from Client: " + dis.readUTF());
 				dis.close();
 				socket.close();
+				
+			
+			
 			}
 			
 			System.out.println("Socket about to be closed");
@@ -123,6 +127,19 @@ public class InitializeServerSocketThread extends Thread {
 				}
 				else{
 					Robot.isReceivingData = true;
+					
+					double diff = Robot.currCenter.x - Robot.GOOD_X; //positive means turn right
+					
+					if(Robot.currCenter.x == -1) {
+						Robot.drivetrain.setLEDs(DrivetrainSubsystem.RED, DrivetrainSubsystem.RED);
+					} else if (diff < -8) {
+						Robot.drivetrain.setLEDs(DrivetrainSubsystem.RED, DrivetrainSubsystem.GREEN);
+					} else if(diff > 8) {
+						Robot.drivetrain.setLEDs(DrivetrainSubsystem.GREEN, DrivetrainSubsystem.RED);
+					} else if(Math.abs(diff) < 8) {
+						Robot.drivetrain.setLEDs(DrivetrainSubsystem.GREEN, DrivetrainSubsystem.GREEN);
+					}
+					
 				}
 			}
 		}

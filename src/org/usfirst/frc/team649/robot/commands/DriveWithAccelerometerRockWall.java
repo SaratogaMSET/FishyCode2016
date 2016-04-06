@@ -15,12 +15,12 @@ public class DriveWithAccelerometerRockWall extends Command {
 	double encoderValue;
 	boolean distanceIsEnough;
 	double currentSpeed;
-	Timer time;
+//	Timer time;
 	
     public DriveWithAccelerometerRockWall() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-    	time = new Timer();
+//    	time = new Timer();
     	highestAccelValue = 1;
     	lowestAccelValue = 1;
     	distanceIsEnough = false;
@@ -29,15 +29,15 @@ public class DriveWithAccelerometerRockWall extends Command {
     // Called just before this Command runs the first time
     @Override
 	protected void initialize() {
-    	Robot.drivetrain.rawDrive(.75, .75);
-    	time.start();
+    	Robot.drivetrain.rawDrive(.4, .4);
+//    	time.start();
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
 	protected void execute() {
     	encoderValue = Robot.drivetrain.getDistanceDTBoth();
-    	if(time.get()>0.75 && encoderValue > 60){
+    	if(encoderValue > 48){
     		if(Robot.drivetrain.accel.getZ() > highestAccelValue){
     			highestAccelValue = Robot.drivetrain.accel.getZ();
     		}else if(Robot.drivetrain.accel.getZ() < lowestAccelValue){

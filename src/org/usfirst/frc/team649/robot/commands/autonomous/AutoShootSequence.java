@@ -56,9 +56,8 @@ public class AutoShootSequence extends CommandGroup {
 
 		addSequential(new WaitCommand(0.5));
 		//different than SetPivotState, this allows for a non state machine
-		addSequential(new SetCompressorCommand(false));
-		addSequential(new SetPivotPosition(32));
-		
+		//addSequential(new SetCompressorCommand(false));
+
 		addSequential(new TurnWithVision()); //has a built in wait
 		addSequential(new TurnWithVision()); //in case of overshoot
 
@@ -66,7 +65,7 @@ public class AutoShootSequence extends CommandGroup {
 
 		addSequential(new WaitCommand(1.0));
 		addSequential(new BangBangFlywheels(false)); //false for not in teleop
-		addSequential(new SetCompressorCommand(true));
+		//addSequential(new SetCompressorCommand(true));
 
 		addSequential(new WaitCommand(1.5));
 		
