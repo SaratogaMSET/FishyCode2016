@@ -358,7 +358,7 @@ public class Robot extends IterativeRobot {
 		if(oi.autoAim() && !prevStateAutoAim){
 			//new SetPivotPosition(PivotPID.AUTO_CAMERA_AIM_POSITION).start(
 //			new AutoAim().start();
-			new AutoAim(TurnConstants.AIM_VELOCITY).start();
+			new AutoAim(TurnConstants.AIM_VELOCITY).start(); //this is a press and hold button 3 on joystick
 			
 		}
 		
