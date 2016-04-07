@@ -21,6 +21,7 @@ import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.LeftDTPID;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.RightDTPID;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.AutoConstants;
+import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.TurnConstants;
 import org.usfirst.frc.team649.robot.util.Center;
 
 import java.io.BufferedReader;
@@ -46,11 +47,13 @@ import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
 import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.SetCameraPiston;
 import org.usfirst.frc.team649.robot.commands.SetCompressorCommand;
+import org.usfirst.frc.team649.robot.commands.TurnVelocityPID;
 import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
 import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
 import org.usfirst.frc.team649.robot.commands.TurnWithVision;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossChevalDeFrise;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossLowBar;
+import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossRockWall;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossRoughTerrain;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoFullSequence;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoShootSequence;
@@ -147,7 +150,7 @@ public class Robot extends IterativeRobot {
 	public static double GOOD_X = SCREEN_X / 2.0;
 	public static double GOOD_Y = SCREEN_Y / 2.0;
 	public static double FIELD_OF_VIEW = 0.8339;
-	public static double CENTER_TOLERANCE = 5;
+	public static double CENTER_TOLERANCE = 8;
 	
 	//LOGGING
 	public ArrayList<ArrayList<Double>> log;
@@ -178,7 +181,8 @@ public class Robot extends IterativeRobot {
 	public boolean prevStateManualFirePiston;
 	public boolean prevStateCameraUp;
 	private boolean prevStateAutoAim;
-	
+
+	public boolean prevStateDefenseShot;
 	///////**********************ROBOT INIT************************//////
 	
 	@Override
@@ -217,6 +221,7 @@ public class Robot extends IterativeRobot {
 		prevStateManualFirePiston = false;
 		prevStateCameraUp = false;
 		prevStateAutoAim = false;
+		prevStateDefenseShot = false;
 		
 		isManualPressed = false;
 		
@@ -234,8 +239,6 @@ public class Robot extends IterativeRobot {
 		shooterPivot.resetEncoders();
 		new SetPivotState(ShooterPivotSubsystem.PivotPID.CURRENT_STATE).start();
 		new DriveForwardRotate(0, 0).start();
-		new DrivePIDRight(0).start();
-		new DrivePIDLeft(0).start();
 		intakeState = intake.isIntakeDeployed();
 		currentGear = drivetrain.driveSol.get() == Value.kForward;
 		drivetrain.shift(currentGear);
@@ -244,22 +247,23 @@ public class Robot extends IterativeRobot {
 		
 		new SetCameraPiston(CameraSubsystem.CAM_UP);
 		
-		new DriveForwardRotate(0, 0).start();
 //		new AutoFullSequence(drivetrain.getAutoDefense(), drivetrain.getAutoPosition()).start();	
-	//	new AutoFullSequence(AutoConstants.ROUGH_TERRAIN, AutoConstants.POS4).start();	
-		new AutoShootSequence(DrivetrainSubsystem.AutoConstants.POS4).start();
-//		new AutoCrossRoughTerrain().start();
+		new AutoFullSequence(AutoConstants.ROUGH_TERRAIN, AutoConstants.POS3).start();	
+//		new AutoShootSequence(DrivetrainSubsystem.AutoConstants.POS4).start();
+//		new AutoCrossRockWall().start();
 //		new AutoCrossLowBar().start(); //this is actually low bar now, instead of cheval being low bar
 //		new TurnWithEncoders(60).start();
 		//new TurnWithVision().start();
 //		new AutoCrossChevalDeFrise().start();
 //		new DrivetrainPIDCommand(-4).start();
 		
-		System.out.println(drivetrain.gyro.getAngle());
+//		System.out.println(drivetrain.gyro.getAngle());
 		shooterPivot.currentPivotState = -1;
 
 		//VERY IMPORTANT
 		robotEnabled = true;
+		
+		autoAiming = false;
 		
 		isRIOServerStarted = false; //these should be changed by the call below
 		isReceivingData = false;
@@ -326,6 +330,7 @@ public class Robot extends IterativeRobot {
 		
 		//VERY IMPORTANT
 		robotEnabled = true; //WE ALLLLLIVE
+		autoAiming = false;
 		
 		isRIOServerStarted = false; //should be updated if call below succeeds
 		isReceivingData = false;
@@ -346,13 +351,14 @@ public class Robot extends IterativeRobot {
 		
 
 		if(!autoAiming) {
-		new DriveForwardRotate(correctForDeadZone(oi.driver.getForward()), correctForDeadZone(oi.driver.getRotation())).start();
+			new DriveForwardRotate(correctForDeadZone(oi.driver.getForward()), correctForDeadZone(oi.driver.getRotation())).start();
 		}
 		//new DriveForwardRotate(oi.driver.getForward(), oi.driver.getRotation()).start();
 		
 		if(oi.autoAim() && !prevStateAutoAim){
 			//new SetPivotPosition(PivotPID.AUTO_CAMERA_AIM_POSITION).start(
-			new AutoAim().start();
+//			new AutoAim().start();
+			new AutoAim(TurnConstants.AIM_VELOCITY).start();
 			
 		}
 		
@@ -420,6 +426,9 @@ public class Robot extends IterativeRobot {
 		}
 		else if (oi.operator.pivotReset() && !prevStateResetSafety){
 			new ResetPivot().start();
+		}
+		else if (oi.driver.isDefenseShot() && prevStateDefenseShot){
+			new SetPivotPosition(ShooterPivotSubsystem.PivotPID.ANTI_DEFENSE_POSITION).start();
 		}
 	
 		
@@ -511,7 +520,8 @@ public class Robot extends IterativeRobot {
 		}
 		
 //		System.out.println("Left: " + Robot.drivetrain.motors[2].get() + ", Right: " + (-Robot.drivetrain.motors[0].get()));
-		
+//		System.out.println("Left V: " + Robot.drivetrain.leftEncoder.getRate() + ", Right V: " + Robot.drivetrain.rightEncoder.getRate());
+//		System.out.println("Accel z: " +  Robot.drivetrain.accel.getZ());
 		
 		
 		//PREV STATES
@@ -531,6 +541,7 @@ public class Robot extends IterativeRobot {
 		prevStateManualFirePiston = oi.operator.isManualFirePiston();
 		prevStateCameraUp = oi.driver.isCameraUpPressed();
 		prevStateAutoAim = oi.autoAim();
+		prevStateDefenseShot = oi.driver.isDefenseShot();
 
 		
 		//********updating subsystem*******//
@@ -781,6 +792,10 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Left Centering Module Current", pdp.getCurrent(5));
 		SmartDashboard.putNumber("Left Centering Module Current", pdp.getCurrent(10));
 		
+		SmartDashboard.putData("Auto Defense Pot", drivetrain.autoDefenseSelector);
+		SmartDashboard.putData("Auto Position Pot", drivetrain.autoPositionSelector);
+		SmartDashboard.putNumber("Pot defense state", drivetrain.getAutoDefense());
+		SmartDashboard.putNumber("Pot position state", drivetrain.getAutoPosition());
 	
 		SmartDashboard.putNumber("Accel Z", Robot.drivetrain.accel.getZ());
 	}

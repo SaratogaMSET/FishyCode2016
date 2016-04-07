@@ -124,6 +124,10 @@ public class OI {
 			return driveJoystickHorizontal.getRawButton(2) || driveJoystickVertical.getRawButton(2)
 					|| operator.isManualOverrideOperator();
 		}
+		
+		public boolean isDefenseShot(){
+			return driveJoystickHorizontal.getRawButton(9) || driveJoystickVertical.getRawButton(9);
+		}
     }
     
     public class Manual {

@@ -109,6 +109,9 @@ public class RobotMap {
 		public static final int [] RIGHT_SOLENOID_PORTS = {1,5,2};
 		public static final int LEFT_PDP_PORT = 15;
 		public static final int RIGHT_PDP_PORT = 0;
+		
+		public static final int POT_POSITION_PORT = 2;
+		public static final int POT_DEFENSE_PORT = 3;
 	}
 	public static class ShooterSubsystem
 	{

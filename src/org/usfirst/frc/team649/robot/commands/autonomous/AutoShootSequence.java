@@ -14,6 +14,7 @@ import org.usfirst.frc.team649.robot.subsystems.CameraSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.AutoConstants;
+import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.TurnConstants;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
@@ -55,13 +56,15 @@ public class AutoShootSequence extends CommandGroup {
 		addSequential(new DriveForwardRotate(0, 0));
 
 		addSequential(new WaitCommand(0.5));
+		
+
+		addSequential(new SetPivotPosition(pivotAngle));
 		//different than SetPivotState, this allows for a non state machine
 		//addSequential(new SetCompressorCommand(false));
 
-		addSequential(new TurnWithVision()); //has a built in wait
-		addSequential(new TurnWithVision()); //in case of overshoot
+		addSequential(new TurnWithVision(TurnConstants.AIM_VELOCITY, !TurnConstants.WAIT_IN_BEGINNING)); //has a built in wait
+		//addSequential(new TurnWithVision()); //in case of overshoot
 
-		addSequential(new SetPivotPosition(pivotAngle));
 
 		addSequential(new WaitCommand(1.0));
 		addSequential(new BangBangFlywheels(false)); //false for not in teleop

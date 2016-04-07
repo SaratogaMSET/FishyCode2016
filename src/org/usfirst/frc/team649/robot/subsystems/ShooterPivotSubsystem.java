@@ -60,6 +60,8 @@ public class ShooterPivotSubsystem extends PIDSubsystem {
 		public static final double CLOSE_SHOOT_POSITION = 72.4;//68.3;//62.2;
 		public static final double BACK_SHOOT_POSITION = 115.0;//62.2;
 		
+		public static final double ANTI_DEFENSE_POSITION = 61.5;
+		
 		public static final double AUTO_POS1_SHOOT_POSITION = 45.0;
 		public static final double AUTO_POS2_SHOOT_POSITION = 42.0;
 		public static final double AUTO_POS3_SHOOT_POSITION = 37.0;

@@ -34,6 +34,12 @@ public class RunAllRollers extends Command {
 	protected void initialize() {
     	intakeTimer = new Timer();
     	
+    }
+
+    // Called repeatedly when this Command is scheduled to run
+    @Override
+	protected void execute() {
+    	
     	if (dir == ShooterSubsystem.IN){
 	    	Robot.shooter.setFlywheelPowerBangBang(ShooterSubsystem.INTAKE_MAX_SHOOT_POWER, ShooterSubsystem.INTAKE_MIN_SHOOT_POWER, ShooterSubsystem.INTAKE_TARGET_RPM);
 	    
@@ -59,11 +65,6 @@ public class RunAllRollers extends Command {
 	    	Robot.intake.setFwdRolSpd(0);
 	    	Robot.intake.setCenteringModuleSpeed(0);
     	}
-    }
-
-    // Called repeatedly when this Command is scheduled to run
-    @Override
-	protected void execute() {
     	
     	if (Robot.pdp.getCurrent(RobotMap.Intake.PDP_PORTS[0]) > IntakeSubsystem.CURRENT_THRESHOLD
     			|| Robot.pdp.getCurrent(RobotMap.Intake.PDP_PORTS[1]) > IntakeSubsystem.CURRENT_THRESHOLD){

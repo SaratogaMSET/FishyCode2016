@@ -24,7 +24,7 @@ public class AutoCrossLowBar extends CommandGroup {
 		addSequential(new SetIntakePosition(true));
 		addSequential(new ResetPivot());
 		addSequential(new ShiftDrivetrain(false));
-		addSequential(new DrivetrainPIDCommand(180)); 
+		addSequential(new DrivetrainPIDCommand(200)); 
 
 //		addSequential(new SetCameraPiston(CameraSubsystem.CAM_UP));
 //		

@@ -60,6 +60,19 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		public static double k_D = 0.03;
 	}
 	
+	public static class PotConstants {
+		public static double[] POS_5_POT_RANGE = {0,0.2};
+		public static double[] POS_4_POT_RANGE = {0.2,0.4};
+		public static double[] POS_3_POT_RANGE = {0.4, 0.6};
+		public static double[] POS_2_POT_RANGE = {0.6,0.8};
+		public static double[] POS_1_POT_RANGE = {0.8,1.0};
+		
+
+		public static double[] LOW_BAR_POT_RANGE = {0.6, 1.0};
+		public static double[] ROUGH_TERRAIN_POT_RANGE = {0.3,0.6};
+		public static double[] ROCK_WALL_POT_RANGE = {0,0.3};
+	}
+	
 	public static class TurnConstants { 
 		public static final double P_VAL = .027;
 		public static final double I_VAL = 0;
@@ -69,9 +82,13 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		public static final double GYRO_SENSITIVITY = .007;
 		
 		public static final double LOW_BAR_TURN_ANGLE = -21.5; //change
+//		
+//		public static final double VISION_TURN_POWER = 0.31;
+		public static final double VELOCITY_KP = 0.01; //
+		public static final double VEL_KD = 0.05;
+		public static final double AIM_VELOCITY = 3.7;
+		public static final boolean WAIT_IN_BEGINNING = true;
 		
-		public static final double VISION_TURN_POWER = 0.31;
-		public static final double VISION_KP = 0.0; //this basically means start visibly slowing down when within 10 px
 	}
 	
 	public static class AutoConstants {
@@ -79,9 +96,9 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		public static final double TWO_BALL_MIDLINE_DISTANCE = -156;
 	
 		//pos turns
-		public static final double TURN_FROM_POS_1 = 51;
+		public static final double TURN_FROM_POS_1 = 40;
 		public static final double TURN_FROM_POS_2 = 28;
-		public static final double TURN_FROM_POS_3 = 10;
+		public static final double TURN_FROM_POS_3 = 0;
 		public static final double TURN_FROM_POS_4 = -12;
 		
 		//defense id
@@ -274,14 +291,49 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 
 	public int getAutoDefense() {
 		// TODO Auto-generated method stub
-		return (int)Math.round(autoDefenseSelector.get());
+		//return (int)Math.round(autoDefenseSelector.get());
+		if (isPotWithinRange(autoDefenseSelector, PotConstants.LOW_BAR_POT_RANGE)){
+			return AutoConstants.LOW_BAR;
+		}
+		else if (isPotWithinRange(autoDefenseSelector, PotConstants.ROUGH_TERRAIN_POT_RANGE)){
+			return AutoConstants.ROUGH_TERRAIN;
+		}
+		else if (isPotWithinRange(autoDefenseSelector, PotConstants.ROCK_WALL_POT_RANGE)){
+			return AutoConstants.ROCK_WALL;
+		}
+		else{
+			//default
+			return AutoConstants.LOW_BAR;
+		}
 	}
 
 	public int getAutoPosition() {
 		// TODO Auto-generated method stub
-		return (int)Math.round(autoPositionSelector.get());
+		if (isPotWithinRange(autoPositionSelector, PotConstants.POS_1_POT_RANGE)){
+			return AutoConstants.POS1;
+		}
+		else if (isPotWithinRange(autoPositionSelector, PotConstants.POS_2_POT_RANGE)){
+			return AutoConstants.POS2;
+		}
+		else if (isPotWithinRange(autoPositionSelector, PotConstants.POS_3_POT_RANGE)){
+			return AutoConstants.POS3;
+		}
+		else if (isPotWithinRange(autoPositionSelector, PotConstants.POS_4_POT_RANGE)){
+			return AutoConstants.POS4;
+		}
+		else{
+			//default
+			return AutoConstants.POS1;
+		}
 	}
-
+	
+    public boolean isPotWithinRange(AnalogPotentiometer pot, double[] range){
+    	if (range.length == 2){
+    		return pot.get() > range[0] && pot.get() < range[1];
+    	}
+    	return false;
+    }
+    
 	public void setLEDs(boolean left, boolean right) {
 		leftLED.set(left);
 		rightLED.set(right);

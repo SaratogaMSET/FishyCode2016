@@ -66,7 +66,7 @@ public class SetPivotPosition extends Command {
 				while (!exit && !Robot.intake.isIntakeDeployed()){ //wait for intakes to be down, t
 					System.out.println("waiting for intakes... Time: " + t.get());
 					if (t.get() > 2.0){
-						exit = true;
+						inDangerOfIntakes = true;
 						System.out.println("Timed out at t = " + t.get());
 					}
 				}
@@ -123,7 +123,7 @@ public class SetPivotPosition extends Command {
 		//END
 		exit = inDangerOfIntakes || up && Robot.shooterPivot.pastMax() || !up
 				&& Robot.shooterPivot.lowerLimitsTriggered() || Robot.shooterPivot.isOnTarget(setpoint) ||
-				timer.get() > 1.0 || isStalling
+				timer.get() > 4.0 || isStalling
 				|| Robot.oi.driver.isManualOverride();
 		return exit;
 	}
@@ -132,7 +132,7 @@ public class SetPivotPosition extends Command {
 	@Override
 	protected void end() {
 		//do this to minimize time pivot has power of zero and prevent slip
-		pid.disable();
+		pid.disable(); 
 		double powerUpOrDown = 1.0;
 		if(Robot.shooterPivot.getPivotAngle() > 80) {
 			powerUpOrDown = -1.0;

@@ -38,6 +38,11 @@ public class ShooterSubsystem extends Subsystem {
 	public static final double BATTER_FLYWHEEL_MAX_SHOOT_POWER = 0.5;
 	public static final double BATTER_FLYWHEEL_MIN_SHOOT_POWER = 0.3;
 	public static final double BATTER_FLYWHEEL_TOLERANCE = 90;
+
+	public static final double DEFENSE_FLYWHEEL_TARGET_RPM = 2515;
+	public static final double DEFENSE_FLYWHEEL_MAX_SHOOT_POWER = 0.54;
+	public static final double DEFENSE_FLYWHEEL_MIN_SHOOT_POWER = 0.48;
+	public static final double DEFENSE_FLYWHEEL_TOLERANCE = 40;
 	
 	/*****EDITABLE FLYWHEEL RPM THAT IS UPDATED IN TELEOP*****/
 	public static double flywheelTargetRPM = 3500;
@@ -49,9 +54,9 @@ public class ShooterSubsystem extends Subsystem {
 	public static final double FLYWHEEL_INTAKE_POWER = -0.6;
 	
 	//intaking bang bang
-	public static final double INTAKE_TARGET_RPM = 2000;
-	public static final double INTAKE_MAX_SHOOT_POWER = -1.0;
-	public static final double INTAKE_MIN_SHOOT_POWER = -0.3;
+	public static final double INTAKE_TARGET_RPM = 2500;
+	public static final double INTAKE_MAX_SHOOT_POWER = -0.8;
+	public static final double INTAKE_MIN_SHOOT_POWER = -0.4;
 	
 	public ShooterSubsystem() {
 		super("shooter subsystem");
@@ -91,6 +96,7 @@ public class ShooterSubsystem extends Subsystem {
 	
 	//bang bang
 	public void setFlywheelPowerBangBang(double max_pwr, double min_pwr, double target_rpm) {
+//		System.out.println("TARGET RPM: " + target_rpm);
 		if(getLeftFlywheelRPM() <= target_rpm){
 			setLeftFlywheelPower(max_pwr);
 		}	
@@ -129,6 +135,13 @@ public class ShooterSubsystem extends Subsystem {
 			flywheelMinShootPower = BATTER_FLYWHEEL_MIN_SHOOT_POWER;
 			flywheelMaxShootPower = BATTER_FLYWHEEL_MAX_SHOOT_POWER;
 			flywheelTolerance =  BATTER_FLYWHEEL_TOLERANCE;
+		}
+		else if (Robot.shooterPivot.getPivotAngle() > PivotPID.ANTI_DEFENSE_POSITION - TOLERANCE 
+				&& Robot.shooterPivot.getPivotAngle() < PivotPID.ANTI_DEFENSE_POSITION + TOLERANCE){
+			flywheelTargetRPM = DEFENSE_FLYWHEEL_TARGET_RPM;
+			flywheelMinShootPower = DEFENSE_FLYWHEEL_MIN_SHOOT_POWER;
+			flywheelMaxShootPower = DEFENSE_FLYWHEEL_MAX_SHOOT_POWER;
+			flywheelTolerance =  DEFENSE_FLYWHEEL_TOLERANCE;
 		}
 		//else assume it is far shot
 		else{
