@@ -56,7 +56,7 @@ public class CameraSubsystem extends Subsystem {
 	public static double POS_3_CAM_X = 160; //pixels
 	public static double POS_4_CAM_X = 160; //pixels
 	public static double POS_5_CAM_X = 160; //pixels
-	
+	/*
 	public static String image_1 = "/home/lvuser/frc_images/from\\ position\\ 1.jpg";
 	public static String image_2 = "/home/lvuser/frc_images/from\\ position\\ 2.jpg";
 	public static String image_3 = "/home/lvuser/frc_images/from\\ position\\ 3.jpg";
@@ -66,12 +66,12 @@ public class CameraSubsystem extends Subsystem {
 	Mat image, imageHSV, erode, dilate, hierarchy;
 	List<MatOfPoint> contours;
 	
-	
+	*/
 	public CameraSubsystem(String ip){
-		camServo = new Servo(RobotMap.Drivetrain.CAM_SERVO);
+		//camServo = new Servo(RobotMap.Drivetrain.CAM_SERVO);
 		camPiston = new DoubleSolenoid(Drivetrain.SOLENOID_PORTS[0], Drivetrain.SOLENOID_PORTS[1], Drivetrain.SOLENOID_PORTS[2]);
 		
-		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
+		//System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
 		
 		
 		try{
@@ -80,7 +80,7 @@ public class CameraSubsystem extends Subsystem {
     		//vcap = new VideoCapture("http://root:admin@axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
     		
     		//FOR Axis M1011
-    		vcap = new VideoCapture("http://axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
+    //		vcap = new VideoCapture("http://axis-camera.local/axis-cgi/mjpg/video.cgi?user=root&password=admin&channel=0&.mjpg");
     		//vcap.open("http://169.254.110.201//mjpg/video.mjpg?user=root&password=admin&channel=0&.mjpg");
     		
     		//while (!vcap.isOpened()){}
@@ -96,7 +96,7 @@ public class CameraSubsystem extends Subsystem {
     		noOpencvErrors = false;
     	}
 	}
-	
+	/*
 	public void setServoAngle(double angle){
 		camServo.setAngle(angle);
 	}
@@ -132,7 +132,7 @@ public class CameraSubsystem extends Subsystem {
 	    	//DILATE ONCE MORE
 	    	Imgproc.dilate(imageHSV, imageHSV, dilate);
 	    	
-	    	/************/
+	    	/***********
 	    	//CONTOURS AND OBJECT DETECTION
 	    	contours = new ArrayList<>();
 	    	hierarchy = new Mat();
@@ -221,15 +221,15 @@ public class CameraSubsystem extends Subsystem {
 	        
 	        return center;
     }
-	 
+	 */
 	 public void setCamera(boolean up){
 		 camPiston.set(up ? Value.kForward : Value.kReverse);
 	 }
-	 
+	 /*
 	 public double calcDistAxis206(double obj_pix, double obj_in, double view_pix, double max_cam_angle){
     	return view_pix * obj_in / (2*Math.tan(max_cam_angle) * obj_pix);
     }
-	
+	*/
 	@Override
 	protected void initDefaultCommand() {
 		// TODO Auto-generated method stub
