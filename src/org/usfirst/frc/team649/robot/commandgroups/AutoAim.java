@@ -35,6 +35,11 @@ public class AutoAim extends CommandGroup {
     }
     
     @Override
+    protected boolean isFinished() {
+    	return !Robot.oi.autoAim() || super.isFinished(); //hold button for command
+    }
+    
+    @Override
     public void end(){
     	Robot.autoAiming = false;
     }
