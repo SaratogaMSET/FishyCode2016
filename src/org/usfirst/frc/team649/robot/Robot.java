@@ -12,7 +12,6 @@ import org.usfirst.frc.team649.robot.subsystems.ShooterSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.LeftDTPID;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.RightDTPID;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.AutoConstants;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.TurnConstants;
 import org.usfirst.frc.team649.robot.util.Center;
 
