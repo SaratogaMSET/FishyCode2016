@@ -1,49 +1,68 @@
 package org.usfirst.frc.team649.robot.commands.autonomous;
 
-import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
-import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
-import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.AutonomousSequences;
+import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.AutoConstants;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutoFullSequence extends CommandGroup {
 	public AutoFullSequence(int defense, int pos) {
 		//whatever initial commands there are;
+		System.out.println("\n");
+		
+		if (pos == AutoConstants.DO_NOTHING || defense == AutoConstants.DO_NOTHING){
+			System.out.println("DOING NOTHING");
+			Robot.logMessage("Running NO autonomous: POS:  " + pos + " , Defense: " + defense);
+			return;
+		}
+		
+		if (pos == AutoConstants.POS1 && defense != AutoConstants.LOW_BAR 
+				|| pos != AutoConstants.POS1 && defense == AutoConstants.LOW_BAR){
+			System.out.println("tried doing either -- pos 1 and not low bar, or -- low bar and not pos 1");
+			Robot.logMessage("Running NO autonomous: POS:  " + pos + " , Defense: " + defense);
+			return;
+		}
 		
 		//choose the pos
 		switch (defense){
 		case AutoConstants.LOW_BAR:
+			System.out.println("do Low Bar");
 			addSequential(new AutoCrossLowBar());
 			pos = AutoConstants.POS1;
 			break;
 		case AutoConstants.CHEVAL:
+			System.out.println("do Cheval");
 			addSequential(new AutoCrossChevalDeFrise());
 			break;
 		case AutoConstants.PORTCULLIS:
-			addSequential(new AutoCrossPortcullis());
+			System.out.println("do Portcullis");
+//			addSequential(new AutoCrossPortcullis());
 			break;
 		case AutoConstants.ROCK_WALL:
+			System.out.println("do Rock Wall");
 			addSequential(new AutoCrossRockWall());
 			break;
 		case AutoConstants.ROUGH_TERRAIN:
-		addSequential(new AutoCrossRoughTerrain());
+			System.out.println("do Rough terrain");
+			addSequential(new AutoCrossRoughTerrain());
 			break;
 		default:
-			addSequential(new AutoCrossLowBar());
-			pos = AutoConstants.POS1;
+			pos = AutoConstants.DO_NOTHING; // redundancy
+			System.out.println("Would do NNOTHIINNGG???? why it should've ended already wtf");
 			return;
 	}
 	
 	System.out.println("POS:  " + pos + " , Defense: " + defense);
+	Robot.logMessage("Running autonomous: POS:  " + pos + " , Defense: " + defense);
 		
 	//shoot from the pos
-	addSequential(new AutoShootSequence(pos));
+	if (pos != AutoConstants.DO_NOTHING){
+		addSequential(new AutoShootSequence(pos));
+		System.out.println("doing position " + pos + " with no problems");
+	}
+	
 		
-		
-		
+	System.out.println("\n");
 		
 		
 		//crossing defenses

@@ -41,7 +41,7 @@ public class SetPivotPosition extends Command {
 	@Override
 	protected void initialize() {
 		//oldState = Robot.shooterPivot.currentPivotState;
-		
+
 
 		up = setpoint > Robot.shooterPivot.getPosition();
 		
@@ -72,6 +72,9 @@ public class SetPivotPosition extends Command {
 				}
 			}
 		}
+		
+
+    	Robot.logMessage("START Setting Pivot POSITION, current pivot angle: " + Robot.shooterPivot.getClosestAngleToSetpoint(setpoint) + ", setpoint: " + setpoint);
 	
 		pid.enable();
 
@@ -145,6 +148,9 @@ public class SetPivotPosition extends Command {
 		// Robot.shooterPivot.setPower(0);
 		// Robot.shooterPivot.engageBrake(true);
 		System.out.println("inDangerOfIntakes: " + inDangerOfIntakes + ", EXIT: " + exit);
+		Robot.logMessage("FINISHED Setting Pivot POSITION, end pivot angle: " + Robot.shooterPivot.returnPIDInput() + ", setpoint: " + setpoint + ", isOnTarget: " + Robot.shooterPivot.isOnTarget(setpoint) + 
+				", inDangerOfIntakes: " + inDangerOfIntakes + ", EXIT: " + exit);
+		
 	}
 
 	// Called when another command which requires one or more of the same

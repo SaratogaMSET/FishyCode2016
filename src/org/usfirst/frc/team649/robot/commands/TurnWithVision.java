@@ -3,12 +3,7 @@ package org.usfirst.frc.team649.robot.commands;
 import java.text.DecimalFormat;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.PIDConstants;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.TurnConstants;
 import org.usfirst.frc.team649.robot.util.Center;
-
-import com.sun.javafx.css.CalculatedValue;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -114,13 +109,13 @@ public class TurnWithVision extends Command {
 		original_diff = Robot.currCenter.x - Robot.GOOD_X; //positive means turn right
 		SmartDashboard.putNumber("dff", original_diff);
 		//compenstate for tilted target
-//		if(original_diff > 0) {
-//			System.out.println("-comp");
-//			original_diff -= 10;
-//		} else {
-//			System.out.println("comp");
-//			original_diff +=10;
-//		}
+		if(original_diff > 0) {
+			System.out.println("-comp");
+			original_diff -= 1;
+		} else {
+			System.out.println("comp");
+			original_diff += 3;
+		}
 //		
 		diff = original_diff;
 
@@ -140,6 +135,7 @@ public class TurnWithVision extends Command {
 //			Robot.drivetrain.rawDrive(-coef * power, coef * power);
 //			
 //		}
+		Robot.logMessage("START TurnWithVision, originalDiff: " + df.format(original_diff) + ", calculated angle: " + df.format(angle) + ", noTarget: " + noTarget);
 	}
 
 	@Override
@@ -149,6 +145,13 @@ public class TurnWithVision extends Command {
 //		
 //		power = C_VAL * ( TurnConstants.VISION_TURN_POWER - Math.abs(TurnConstants.VISION_KP/diff) ) ; //as diff gets smaller, slow down slightly
 //		power = power > 0 ? power : 0; 
+//		double d = 0;
+		if (Math.abs(diff) < 30){
+			if (original_diff > 40){
+				l_velocity *= 0.6; //decrease speed by 30 % if
+				r_velocity *= 0.6;
+			}
+		}
 		
 //		if (Math.abs(diff) <= Math.abs(original_diff)){ ///only keep turning if we are getting closer
 			double eLeft = l_velocity - Robot.drivetrain.leftEncoder.getRate(), eRight = r_velocity - Robot.drivetrain.rightEncoder.getRate();
@@ -162,23 +165,17 @@ public class TurnWithVision extends Command {
 			
 			powerLeft += coef * powerToAddLeft; //+ coef * d;
 			powerRight += coef * powerToAddRight; //+ coef * d;
-
-			double d = 0;
-			if (Math.abs(diff) < 30){
-				if (original_diff > 40){
-					d = -0.32 * Math.abs(powerLeft); //decrease speed by 30 % if
-				}
-			}
 			
-			powerLeft = powerLeft > 0 ? powerLeft + d : powerLeft - d;
-			powerRight = powerRight > 0 ? powerRight + d : powerRight - d;
+//			powerLeft = powerLeft > 0 ? powerLeft: powerLeft;
+//			powerRight = powerRight > 0 ? powerRight: powerRight;
 			
-			
+			//capping the speed
 			powerLeft = Math.abs(powerLeft) > TURN_POWER_CAP ? 
 					(powerLeft > 0 ? TURN_POWER_CAP : -TURN_POWER_CAP) : powerLeft;
 			powerRight = Math.abs(powerRight) > TURN_POWER_CAP ? 
 					(powerRight > 0 ? TURN_POWER_CAP : -TURN_POWER_CAP) : powerRight;
 			
+			//setting the speeds
 			Robot.drivetrain.motors[0].set(coef * -powerRight);
 			Robot.drivetrain.motors[1].set(coef * -powerRight);
 			Robot.drivetrain.motors[2].set(coef * powerLeft);
@@ -202,6 +199,8 @@ public class TurnWithVision extends Command {
 		System.out.println("DIFF in execute: " + diff +", d: " + (0.01 * diff - 0.3));
 		
 		dtEncOnTarget = Math.abs((lDistance + initial_enc) - Robot.drivetrain.getDistanceDTLeft()) < 1.0;
+		
+		Robot.logMessage("EXECUTE TurnWithVision, diff: " + df.format(diff) + ", centerOnTarget " + centerOnTarget + ", countTimesOff: " + countTimesOffInARow + ", Power add: l > " + powerToAddLeft + ", r > " + powerToAddRight + " ... POWER: left > " + powerLeft + " right > " + powerRight);
 	}
 
 	@Override
@@ -220,10 +219,12 @@ public class TurnWithVision extends Command {
 		if (!noTarget && !lostTarget()){
 			System.out.println("Done Vision Turning: endedBCVision = " + centerOnTarget + ", FINAL DIFF: " + df.format(diff)
 								+ "\n  onTarget: " + dtEncOnTarget);
+			Robot.logMessage("ENDED TurnWithVision: endedBCVision = " + centerOnTarget + ", FINAL DIFF: " + df.format(diff) + "\n  onTarget: " + dtEncOnTarget);
 		}
 		else{
 			System.out.println("ERROR: TRIED turning vision, but FAILED"
 					+ "\nWas there no target: " + noTarget + ", did we lose target? :" + lostTarget());
+			Robot.logMessage("ERROR: TRIED TURNING VISION BUT FAILED, TurnWithVision -> Was there no target: " + noTarget + ", did we lose target :" + lostTarget());
 		}
 //		Robot.autoAiming = false;
 	}
@@ -231,6 +232,7 @@ public class TurnWithVision extends Command {
 	@Override
 	protected void interrupted() {
 		System.out.println("turn interupted");
+		Robot.logMessage("INTERRUPTED TurnWithVision");
 		end();
 	}
 	

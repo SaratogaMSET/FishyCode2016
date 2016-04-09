@@ -11,6 +11,7 @@ public class EngageBrakes extends Command {
 	protected void initialize() {
 		// TODO Auto-generated method stub
 		Robot.shooterPivot.engageBrake(true);
+//    	Robot.logMessage("Engaging brakes ");
 		t = new Timer();
 		t.start();
 	}

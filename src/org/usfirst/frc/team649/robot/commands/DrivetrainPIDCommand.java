@@ -38,6 +38,8 @@ public class  DrivetrainPIDCommand extends Command {
     	drivePID.setSetpoint(setpoint);
     	//drivePIDRight.setSetpoint(setpoint);
     	System.out.println("DT PID: setpoint = " + setpoint);
+    	
+    	Robot.logMessage("DT driving with PID, initial Enc: " + Robot.drivetrain.getPosition() + ", moving to: " + setpoint);
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -62,6 +64,8 @@ public class  DrivetrainPIDCommand extends Command {
     	Robot.drivetrain.rawDrive(0, 0);
     	//drivePIDRight.disable();
     	Robot.isPIDActive = false;
+
+    	Robot.logMessage("DT ended at: " + Robot.drivetrain.getDistanceDTBoth());
     }
 
     // Called when another command which requires one or more of the same

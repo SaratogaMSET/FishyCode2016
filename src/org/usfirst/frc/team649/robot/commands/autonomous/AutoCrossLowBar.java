@@ -1,18 +1,12 @@
 package org.usfirst.frc.team649.robot.commands.autonomous;
 
-import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
 import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
 import org.usfirst.frc.team649.robot.commands.ResetDTEncoders;
 import org.usfirst.frc.team649.robot.commands.SetCameraPiston;
 import org.usfirst.frc.team649.robot.commands.ShiftDrivetrain;
-import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
-import org.usfirst.frc.team649.robot.commands.TurnWithVision;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.ResetPivot;
-import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPosition;
-import org.usfirst.frc.team649.robot.shootercommands.BangBangFlywheels;
 import org.usfirst.frc.team649.robot.subsystems.CameraSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 
@@ -22,6 +16,7 @@ public class AutoCrossLowBar extends CommandGroup {
 		addSequential(new ResetDTEncoders());
 		addSequential(new SetCameraPiston(!CameraSubsystem.CAM_UP));
 		addSequential(new SetIntakePosition(true));
+		addSequential(new WaitCommand(1.0)); //new
 		addSequential(new ResetPivot());
 		addSequential(new ShiftDrivetrain(false));
 		addSequential(new DrivetrainPIDCommand(200)); 

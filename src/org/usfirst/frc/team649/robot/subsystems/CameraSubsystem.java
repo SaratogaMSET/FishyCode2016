@@ -1,38 +1,11 @@
 package org.usfirst.frc.team649.robot.subsystems;
 
-//import java.awt.Graphics;
-//import java.awt.Graphics2D;
-//import java.awt.Image;
-//import java.awt.Toolkit;
-//import java.awt.image.BufferedImage;
-//import java.awt.image.DataBufferByte;
-//import java.io.IOException;
-//import java.io.InputStream;
-//import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.highgui.VideoCapture;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.imgproc.Moments;
-import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.RobotMap;
 import org.usfirst.frc.team649.robot.RobotMap.Drivetrain;
-import org.usfirst.frc.team649.robot.util.Center;
-
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.vision.AxisCamera;
 
 public class CameraSubsystem extends Subsystem {
 	public VideoCapture vcap;

@@ -33,6 +33,7 @@ public class RunAllRollers extends Command {
     @Override
 	protected void initialize() {
     	intakeTimer = new Timer();
+    	Robot.logMessage("Running Rollers, until IR: " + untilIR);
     	
     }
 

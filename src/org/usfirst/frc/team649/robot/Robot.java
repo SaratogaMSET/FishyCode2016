@@ -1,22 +1,14 @@
 package org.usfirst.frc.team649.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.image.ColorImage;
-import edu.wpi.first.wpilibj.image.NIVisionException;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-
 import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 import org.usfirst.frc.team649.robot.subsystems.ShooterSubsystem;
-import org.usfirst.frc.team649.robot.subsystems.drivetrain.AutonomousSequences;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.LeftDTPID;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.RightDTPID;
@@ -24,18 +16,13 @@ import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.A
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.TurnConstants;
 import org.usfirst.frc.team649.robot.util.Center;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
-import org.usfirst.frc.team649.robot.RobotMap.ShooterPivot;
 import org.usfirst.frc.team649.robot.commandgroups.AutoAim;
 import org.usfirst.frc.team649.robot.commandgroups.SemiAutoLoadBall;
 import org.usfirst.frc.team649.robot.commandgroups.SetDefenseMode;
@@ -43,20 +30,9 @@ import org.usfirst.frc.team649.robot.commandgroups.ShootTheShooter;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
 import org.usfirst.frc.team649.robot.commands.DrivePIDLeft;
 import org.usfirst.frc.team649.robot.commands.DrivePIDRight;
-import org.usfirst.frc.team649.robot.commands.DrivetrainPIDCommand;
-import org.usfirst.frc.team649.robot.commands.MatchAutoDrive;
 import org.usfirst.frc.team649.robot.commands.SetCameraPiston;
 import org.usfirst.frc.team649.robot.commands.SetCompressorCommand;
-import org.usfirst.frc.team649.robot.commands.TurnVelocityPID;
-import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
-import org.usfirst.frc.team649.robot.commands.TurnWithGyro;
-import org.usfirst.frc.team649.robot.commands.TurnWithVision;
-import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossChevalDeFrise;
-import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossLowBar;
-import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossRockWall;
-import org.usfirst.frc.team649.robot.commands.autonomous.AutoCrossRoughTerrain;
 import org.usfirst.frc.team649.robot.commands.autonomous.AutoFullSequence;
-import org.usfirst.frc.team649.robot.commands.autonomous.AutoShootSequence;
 import org.usfirst.frc.team649.robot.commands.intakecommands.RunAllRollers;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakeSpeed;
@@ -65,19 +41,15 @@ import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.ResetPivot;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPosition;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPower;
 import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
-import org.usfirst.frc.team649.robot.runnables.EndAppThread;
 import org.usfirst.frc.team649.robot.runnables.InitializeServerSocketThread;
-import org.usfirst.frc.team649.robot.runnables.PullVisionTxtThread;
 import org.usfirst.frc.team649.robot.runnables.SystemCheckThread;
 import org.usfirst.frc.team649.robot.shootercommands.BangBangFlywheels;
 import org.usfirst.frc.team649.robot.shootercommands.SetFlywheels;
-import org.usfirst.frc.team649.robot.shootercommands.ShooterSet;
 import org.usfirst.frc.team649.robot.subsystems.CameraSubsystem;
 import org.usfirst.frc.team649.robot.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import jdk.nashorn.internal.codegen.ClassEmitter;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -104,6 +76,8 @@ public class Robot extends IterativeRobot {
 	public static final double DEAD_ZONE_TOLERANCE = 0.043;
 	boolean manual;
 	public static boolean isManualPressed;
+	
+	public static List<String> printLog = new ArrayList<>();
 	
 	//DT	
 	public static boolean isPIDActive;
@@ -135,10 +109,11 @@ public class Robot extends IterativeRobot {
 	public static String pullPath = "/home/admin/pullTextFile.sh";
 	public static String endPath = "/home/admin/endApp.sh";
 	public static String visionFile = "/home/admin/vision.txt";
-	public static int PULL_PERIOD = 20;
 	//good new socket stuff
 	public static Center currCenter;
-	public static int PORT = 5050;
+	public static double prevTimeCenterUpdated = 0;
+	public static double rateCenterUpdated = 0;
+	public static int PORT = 5805;
 	public static boolean isRIOServerStarted; //makes sure we are connected
 	public static boolean isReceivingData; //makes sure data is being sent regularly
 	public static double VISION_INIT_TIME_OUT = 6; //seconds
@@ -155,11 +130,14 @@ public class Robot extends IterativeRobot {
 	//LOGGING
 	public ArrayList<ArrayList<Double>> log;
 	public static Timer timer;
+	public static String logFilePath = "/home/admin/logFile.txt"; //to authorize, need to run chmod o+x /home/admin
+	public static String centerDataPath = "/home/admin/logCenterData.txt"; //TODO: create this file
 	
 	//MISC
 	public static boolean semiAutoIsRunning = false; //semi auto indicator
 	public static boolean robotEnabled = false; //indicator
 	public static boolean autoAiming = false;
+	public static String droidIP;
 	public SendableChooser chooser; //autonomous selector
 	public Thread systemCheck; //thread stuff
 	
@@ -203,6 +181,7 @@ public class Robot extends IterativeRobot {
 		isReceivingData = false;
 		comp = new Compressor();
 		log = new ArrayList<>();
+		printLog = new ArrayList<>();
 		timer = new Timer();
 		pivotTimer = new Timer();
 		pdp = new PowerDistributionPanel();
@@ -247,30 +226,24 @@ public class Robot extends IterativeRobot {
 		
 		new SetCameraPiston(CameraSubsystem.CAM_UP);
 		
-//		new AutoFullSequence(drivetrain.getAutoDefense(), drivetrain.getAutoPosition()).start();	
-		new AutoFullSequence(AutoConstants.ROUGH_TERRAIN, AutoConstants.POS3).start();	
-//		new AutoShootSequence(DrivetrainSubsystem.AutoConstants.POS4).start();
-//		new AutoCrossRockWall().start();
-//		new AutoCrossLowBar().start(); //this is actually low bar now, instead of cheval being low bar
-//		new TurnWithEncoders(60).start();
-		//new TurnWithVision().start();
-//		new AutoCrossChevalDeFrise().start();
-//		new DrivetrainPIDCommand(-4).start();
 		
-//		System.out.println(drivetrain.gyro.getAngle());
+		////**********************AUTO SEQUENCE BASED ON POTS*******************////
+		new AutoFullSequence(drivetrain.getAutoDefense(), drivetrain.getAutoPosition()).start();	
+
 		shooterPivot.currentPivotState = -1;
 
 		//VERY IMPORTANT
 		robotEnabled = true;
-		
 		autoAiming = false;
 		
+		prevTimeCenterUpdated = 0;
 		isRIOServerStarted = false; //these should be changed by the call below
 		isReceivingData = false;
 		//start pulling txt and updating it
 		startVisionThreads();
 		
-		
+		printLog.clear();
+		printLog.add("\n<-------- AUTONOMOUS -------->\n");
 	}
 
 	@Override
@@ -334,6 +307,9 @@ public class Robot extends IterativeRobot {
 		
 		isRIOServerStarted = false; //should be updated if call below succeeds
 		isReceivingData = false;
+		prevTimeCenterUpdated = 0;
+
+		printLog.add("\n\n<-------- TELEOP -------->\n");
 		//start pulling txt and updating it
 		startVisionThreads();	
 	}
@@ -347,8 +323,9 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putString("INTAKE Current Command", " ");
 		
 		Scheduler.getInstance().run();
-		
-		
+//		
+//		Robot.drivetrain.leftLED.set(true);
+//		Robot.drivetrain.rightLED.set(false);
 
 		if(!autoAiming) {
 			new DriveForwardRotate(correctForDeadZone(oi.driver.getForward()), correctForDeadZone(oi.driver.getRotation())).start();
@@ -379,20 +356,20 @@ public class Robot extends IterativeRobot {
 		//CAMERA PISTON
 		
 		//move up
-//		if (oi.driver.isCameraUpPressed()){
-//			new SetCameraPiston(CameraSubsystem.CAM_UP).start();
-//		}
-//		else{
-//			new SetCameraPiston(!CameraSubsystem.CAM_UP).start();
-//		}
-		
-		if (oi.driver.isCameraUpPressed() && !prevStateCameraUp){
-			new SetCameraPiston(cameraUp ? !CameraSubsystem.CAM_UP : CameraSubsystem.CAM_UP).start();
-			cameraUp = !cameraUp;
+		if (oi.driver.isCameraUpPressed()){
+			new SetCameraPiston(CameraSubsystem.CAM_UP).start();
 		}
 		else{
-			new SetCameraPiston(cameraUp ? CameraSubsystem.CAM_UP : !CameraSubsystem.CAM_UP).start();
+			new SetCameraPiston(!CameraSubsystem.CAM_UP).start();
 		}
+		
+//		if (oi.driver.isCameraUpPressed() && !prevStateCameraUp){
+//			new SetCameraPiston(cameraUp ? !CameraSubsystem.CAM_UP : CameraSubsystem.CAM_UP).start();
+//			cameraUp = !cameraUp;
+//		}
+//		else{
+//			new SetCameraPiston(cameraUp ? CameraSubsystem.CAM_UP : !CameraSubsystem.CAM_UP).start();
+//		}
 		
 		
 		if (oi.operator.isSemiAutonomousIntakePressed() && !prevStateSemiAutoIntake){
@@ -494,7 +471,7 @@ public class Robot extends IterativeRobot {
 		}
 		
 		
-		if(oi.driver.isDrivetrainLowGearButtonPressed()){
+		if(oi.driver.isDrivetrainHighGearButtonPressed()){
 			drivetrain.shift(DrivetrainSubsystem.HIGH_GEAR);
 			currentGear = DrivetrainSubsystem.HIGH_GEAR;
 		} else {
@@ -527,7 +504,7 @@ public class Robot extends IterativeRobot {
 		//PREV STATES
 		prevStateIntakeUp = oi.operator.intakeUp();
 		prevStateIntakeDeployed = oi.operator.intakeDeploy();
-		prevStateDriveShifter = oi.driver.isDrivetrainLowGearButtonPressed();
+		prevStateDriveShifter = oi.driver.isDrivetrainHighGearButtonPressed();
 		prevStateShootButton = oi.operator.shoot();
 		
 		prevStatePivotCloseShot = oi.operator.pivotCloseShot();
@@ -672,6 +649,8 @@ public class Robot extends IterativeRobot {
 			initThread.interrupt();
 		}
 		
+		saveLog();
+		
 	}
 
 	@Override
@@ -685,14 +664,26 @@ public class Robot extends IterativeRobot {
 	//////////////***************MISC***************//////////////
 	
 	public void saveLog(){
-		if (log != null){
-			for (int i = 0; i < log.size(); i++) {
-				ArrayList<Double> d = log.get(i);
-				System.out.println("BEGINNING_TAG " + d.get(0) + ", " + d.get(1)
-						+ ", " + d.get(2) + ", " + d.get(3) + ", " + d.get(4)
-						+ ", " + d.get(4) + " ENDING_TAG"); //change from 4 to 5 when gyro works
+		if (printLog != null){
+			try {
+				PrintWriter writer = new PrintWriter("/home/admin/logFile.txt", "UTF-8");
+				for (String s : printLog){
+					writer.println(s);
+				}
+				writer.close();
+				
+				
+			} catch (FileNotFoundException | UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			System.out.println("FINISHED PRINT");
+//			for (int i = 0; i < log.size(); i++) {
+//				ArrayList<Double> d = log.get(i);
+//				System.out.println("BEGINNING_TAG " + d.get(0) + ", " + d.get(1)
+//						+ ", " + d.get(2) + ", " + d.get(3) + ", " + d.get(4)
+//						+ ", " + d.get(4) + " ENDING_TAG"); //change from 4 to 5 when gyro works
+//			}
+//			System.out.println("FINISHED PRINT");
 		}
 		else {
 			System.out.println("PRINT FAILED: Log is null");
@@ -731,16 +722,25 @@ public class Robot extends IterativeRobot {
 	public void logAndDashboard(){
 		log.add(drivetrain.getLoggingData());
 		
+		String currLogData = "";
+		
 		if (isRIOServerStarted && isReceivingData){
+
 			DecimalFormat df = new DecimalFormat("#.##");
 			String formattedX = df.format(currCenter.x), formattedY = df.format(currCenter.y);
+			
+			currLogData += "Center: (" + formattedX + ", " + formattedY + ") |[]| ";
 			SmartDashboard.putString("CENTER OF VISION", "(" + formattedX + ", " + formattedY + ")");
 			SmartDashboard.putString("IS TARGET IN CENTER", ""+isCenterWithinTolerance(true, false)); //just x
 		}
 		else{
+
+			currLogData += "Center: (Receiving Data " + isReceivingData + ") |[]| ";
 			SmartDashboard.putString("CENTER OF VISION", "VISION NOT ACTIVE");
 			SmartDashboard.putString("IS TARGET IN CENTER", "VISION NOT ACTIVE"); //just x
 		}
+		
+//		logMessage(currLogData);
 		SmartDashboard.putBoolean("Is receiving data regularly?", isReceivingData);
 		
 		SmartDashboard.putData("Shooter Pivot left", shooterPivot.encoderLeft);
@@ -792,12 +792,16 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Left Centering Module Current", pdp.getCurrent(5));
 		SmartDashboard.putNumber("Left Centering Module Current", pdp.getCurrent(10));
 		
-		SmartDashboard.putData("Auto Defense Pot", drivetrain.autoDefenseSelector);
-		SmartDashboard.putData("Auto Position Pot", drivetrain.autoPositionSelector);
+		SmartDashboard.putNumber("Auto Defense Pot", drivetrain.getDefensePot());
+		SmartDashboard.putNumber("Auto Position Pot", drivetrain.getPositionPot());
 		SmartDashboard.putNumber("Pot defense state", drivetrain.getAutoDefense());
 		SmartDashboard.putNumber("Pot position state", drivetrain.getAutoPosition());
 	
 		SmartDashboard.putNumber("Accel Z", Robot.drivetrain.accel.getZ());
+		
+		SmartDashboard.putNumber("Rate of center updating", rateCenterUpdated);
+		
+//		SmartDashboard.putString("PHONE IP", droidIP);
 	}
 	
 	public double correctForDeadZone(double joyVal){
@@ -826,4 +830,19 @@ public class Robot extends IterativeRobot {
 		return false;
 	}
 	
+	public static synchronized void logMessage(String s){
+		printLog.add("" + timer.get() + " >>> " + s);
+	}
+	
+	public static synchronized void updateCenter(Center c){
+		if (c != null){
+			currCenter = new Center(c.x,c.y);
+			rateCenterUpdated = 1/(timer.get() - prevTimeCenterUpdated); //seconds
+			prevTimeCenterUpdated = timer.get();
+			
+		}
+		else{
+			System.out.println("ERROR: passed in null center");
+		}
+	}
 }

@@ -18,6 +18,7 @@ public class ResetPivot extends Command {
     @Override
 	protected void initialize() {
     	Robot.shooterPivot.currentPivotState = PivotPID.PICKUP_STATE;
+    	Robot.logMessage("Resetting Pivot");
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -50,6 +51,7 @@ public class ResetPivot extends Command {
 	protected void end() {
     	//Robot.shooterPivot.resetCounter();
     	Robot.shooterPivot.setPower(0);
+    	Robot.logMessage("FINISHED Pivot reset");
     	System.out.println(Robot.shooterPivot.getPivotAngle());
     	try {
 			Thread.sleep(300);

@@ -45,23 +45,28 @@ public class SetPivotState extends Command {
 		//oldState = Robot.shooterPivot.currentPivotState;
 		Robot.shooterPivot.currentPivotState = state;
 		
+		String st;
+		
 		if (state == ShooterPivotSubsystem.PivotPID.PICKUP_STATE) {
 			setPoint = ShooterPivotSubsystem.PivotPID.PICKUP_POSITION;
+			st = "Pickup State";
 			
 		} else if (state == ShooterPivotSubsystem.PivotPID.STORING_STATE) {
 			setPoint = ShooterPivotSubsystem.PivotPID.STORE_POSITION;
+			st = "Store State";
 			
 		} else if (state == ShooterPivotSubsystem.PivotPID.FAR_SHOOT_STATE) {
 			setPoint = ShooterPivotSubsystem.PivotPID.FAR_SHOOT_POSITION;
-			
+			st = "Far shoot State";
 		} else if (state == ShooterPivotSubsystem.PivotPID.CLOSE_SHOOT_STATE) {
 			setPoint = ShooterPivotSubsystem.PivotPID.CLOSE_SHOOT_POSITION;
-			
+			st = "Batter Shoot State";
 		} else if (state == ShooterPivotSubsystem.PivotPID.BACK_SHOOT_STATE) {
 			setPoint = ShooterPivotSubsystem.PivotPID.BACK_SHOOT_POSITION;
-			
+			st = "Back Shoot State";
 		} else {
 			setPoint = Robot.shooterPivot.getPosition();
+			st = "Current State";
 		}
 
 		up = setPoint > Robot.shooterPivot.getPosition();
@@ -95,6 +100,8 @@ public class SetPivotState extends Command {
 		}
 	
 		pid.enable();
+		
+		Robot.logMessage("START Setting Pivot STATE --> state to set: " + st + ", current pivot angle: " + Robot.shooterPivot.getClosestAngleToSetpoint(setPoint) + ", setpoint: " + setPoint);
 
 		if (up && setPoint == PivotPID.STORE_POSITION){
 			PivotPID.max_motor_up_power = PivotPID.MIDDLE_STATE_MAX_UP_POWER;
@@ -166,6 +173,9 @@ public class SetPivotState extends Command {
 		// Robot.shooterPivot.setPower(0);
 		// Robot.shooterPivot.engageBrake(true);
 		System.out.println("inDangerOfIntakes: " + inDangerOfIntakes + ", EXIT: " + exit);
+		
+		Robot.logMessage("FINISHED Setting Pivot STATE, end pivot angle: " + Robot.shooterPivot.returnPIDInput() + ", setpoint: " + setPoint + ", isOnTarget: " + Robot.shooterPivot.isOnTarget(setPoint) + 
+				", inDangerOfIntakes: " + inDangerOfIntakes + ", EXIT: " + exit);
 	}
 
 	// Called when another command which requires one or more of the same

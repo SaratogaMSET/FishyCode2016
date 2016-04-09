@@ -46,7 +46,7 @@ public class PullVisionTxtThread implements Runnable {
             String[] line1 = str1.split(",");
             
             if (line1.length >= 2){
-            	Robot.currCenter = new Center(Double.parseDouble(line1[0]), Double.parseDouble(line1[1]));
+            	Robot.updateCenter(new Center(Double.parseDouble(line1[0]), Double.parseDouble(line1[1])));
             }
             
             updateLEDs();
@@ -54,7 +54,7 @@ public class PullVisionTxtThread implements Runnable {
         catch (Exception e){
             System.out.println("Exception: File READ failed: " + e.toString());
             //default
-            Robot.currCenter = new Center(-1,-1);
+            Robot.updateCenter(new Center(-1,-1));
         }
 	}
 

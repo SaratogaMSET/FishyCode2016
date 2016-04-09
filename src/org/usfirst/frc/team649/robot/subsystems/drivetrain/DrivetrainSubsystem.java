@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.usfirst.frc.team649.robot.Robot;
 import org.usfirst.frc.team649.robot.RobotMap;
 import edu.wpi.first.wpilibj.AnalogGyro;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.CANTalon;
@@ -15,6 +14,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -31,7 +31,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public BuiltInAccelerometer accel;
 	public DoubleSolenoid driveSol;
 	public AnalogGyro gyro;//ADXRS450_Gyro gyro;
-	public AnalogPotentiometer autoDefenseSelector, autoPositionSelector;
+	private AnalogPotentiometer autoDefenseSelector, autoPositionSelector;
 	
 	
 	public static final double GYRO_SENSITIVITY = 10;
@@ -46,8 +46,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public static final boolean RED = false;
 	public static final boolean GREEN = true;
 	public PIDController encoderDrivePID;
-	private DigitalOutput leftLED;
-	private DigitalOutput rightLED;
+	public DigitalOutput leftLED;
+	public DigitalOutput rightLED;
 	
 	public static boolean HIGH_GEAR = true;
 	
@@ -61,16 +61,20 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	}
 	
 	public static class PotConstants {
-		public static double[] POS_5_POT_RANGE = {0,0.2};
-		public static double[] POS_4_POT_RANGE = {0.2,0.4};
-		public static double[] POS_3_POT_RANGE = {0.4, 0.6};
-		public static double[] POS_2_POT_RANGE = {0.6,0.8};
-		public static double[] POS_1_POT_RANGE = {0.8,1.0};
+		public static double[] DO_NOTHING_POS_POT_RANGE = {-0.1,0.23};
+		public static double[] POS_1_POT_RANGE = {0.25,1.0};
+		public static double[] POS_2_POT_RANGE = {1.1, 1.9};
+		public static double[] POS_3_POT_RANGE = {2.0,2.9};
+		public static double[] POS_4_POT_RANGE = {3.0,4.0};
+		public static double[] POS_5_POT_RANGE = {4.1,4.6};
 		
 
-		public static double[] LOW_BAR_POT_RANGE = {0.6, 1.0};
-		public static double[] ROUGH_TERRAIN_POT_RANGE = {0.3,0.6};
-		public static double[] ROCK_WALL_POT_RANGE = {0,0.3};
+		public static double[] DO_NOTHING_DEFENSE_POT_RANGE = {-0.1,0.8};
+		public static double[] ROUGH_TERRAIN_POT_RANGE = {0.9, 2.0};
+		public static double[] ROCK_WALL_POT_RANGE = {2.1,3.4};
+		public static double[] LOW_BAR_POT_RANGE = {3.5,4.6};
+		
+		public static double SCALE = 4.5 / 0.916;
 	}
 	
 	public static class TurnConstants { 
@@ -115,6 +119,8 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		public static final int POS3 = 3;
 		public static final int POS4 = 4;
 		public static final int POS5 = 5;
+		
+		public static final int DO_NOTHING = -1;
 		
 		//CHEVAL CONSTANTS
 		public static final double DISTANCE_START_TO_RAMP_CHEVAL = 68.0;
@@ -167,7 +173,7 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		
 		encoderDrivePID = this.getPIDController();
 		encoderDrivePID.setAbsoluteTolerance(PIDConstants.PID_ABSOLUTE_TOLERANCE);
-		encoderDrivePID.setOutputRange(-.5, .5);
+		encoderDrivePID.setOutputRange(-.65, .65);
 		
 		autoDefenseSelector = new AnalogPotentiometer(RobotMap.Drivetrain.AUTO_DEFENSE_SELECTOR);
 		autoPositionSelector = new AnalogPotentiometer(RobotMap.Drivetrain.AUTO_POSITION_SELECTOR);
@@ -292,18 +298,20 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 	public int getAutoDefense() {
 		// TODO Auto-generated method stub
 		//return (int)Math.round(autoDefenseSelector.get());
-		if (isPotWithinRange(autoDefenseSelector, PotConstants.LOW_BAR_POT_RANGE)){
-			return AutoConstants.LOW_BAR;
-		}
-		else if (isPotWithinRange(autoDefenseSelector, PotConstants.ROUGH_TERRAIN_POT_RANGE)){
+		
+		
+		if (isPotWithinRange(autoDefenseSelector, PotConstants.ROUGH_TERRAIN_POT_RANGE)){
 			return AutoConstants.ROUGH_TERRAIN;
 		}
 		else if (isPotWithinRange(autoDefenseSelector, PotConstants.ROCK_WALL_POT_RANGE)){
 			return AutoConstants.ROCK_WALL;
 		}
+		else if (isPotWithinRange(autoDefenseSelector, PotConstants.LOW_BAR_POT_RANGE)){
+			return AutoConstants.LOW_BAR;
+		}
 		else{
 			//default
-			return AutoConstants.LOW_BAR;
+			return AutoConstants.DO_NOTHING;
 		}
 	}
 
@@ -321,15 +329,26 @@ public class DrivetrainSubsystem extends PIDSubsystem {
 		else if (isPotWithinRange(autoPositionSelector, PotConstants.POS_4_POT_RANGE)){
 			return AutoConstants.POS4;
 		}
+		else if (isPotWithinRange(autoPositionSelector, PotConstants.POS_5_POT_RANGE)){
+			return AutoConstants.POS5;
+		}
 		else{
 			//default
-			return AutoConstants.POS1;
+			return AutoConstants.DO_NOTHING;
 		}
+	}
+	
+	public double getDefensePot(){
+		return autoDefenseSelector.get() * PotConstants.SCALE;
+	}
+	
+	public double getPositionPot(){
+		return autoPositionSelector.get() * PotConstants.SCALE;
 	}
 	
     public boolean isPotWithinRange(AnalogPotentiometer pot, double[] range){
     	if (range.length == 2){
-    		return pot.get() > range[0] && pot.get() < range[1];
+    		return pot.get() * PotConstants.SCALE > range[0] && pot.get() * PotConstants.SCALE < range[1];
     	}
     	return false;
     }

@@ -21,6 +21,7 @@ public class InitializeServerSocketThread extends Thread {
 	public ServerSocket serverSocket;
 	
 	@Override
+	
 	public void run() {
 		// TODO Auto-generated method stub
 
@@ -28,6 +29,20 @@ public class InitializeServerSocketThread extends Thread {
 		
 		t.reset();
 		t.start();
+		
+		try {
+			Process p = Runtime.getRuntime().exec(Robot.initPath);
+//			p.waitFor();
+			System.out.println("ADB SET UP DONE");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			Robot.logMessage("ADB SET UP FAILED");
+		} 
+//		catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		try{
 			serverSocket = new ServerSocket();
@@ -37,9 +52,12 @@ public class InitializeServerSocketThread extends Thread {
 			} catch (BindException e){
 				System.out.println("Caught a bind exception: SERVER ALREADY UP"); // <--- that is very bad and will cause quits
 				//server
+				Robot.logMessage("Caught a bind exception: SERVER ALREADY UP");
 			}
 			
 			System.out.println("Server is running and listening...Boot Up Time: " + t.get());
+			Robot.logMessage("Server is running and listening...Boot Up Time: " + t.get());
+			
 			Robot.isRIOServerStarted = true; //must be called before starting RateChecker
 			
 			RateChecker rateChecker = new RateChecker();
@@ -50,6 +68,7 @@ public class InitializeServerSocketThread extends Thread {
 			while (Robot.robotEnabled){
 				
 				Socket socket = serverSocket.accept();
+//				System.out.println("Recieved accept");
 				rateChecker.alertPackageReceived();
 				
 				//READ ONCE MESSAGE RECIEVED
@@ -58,17 +77,17 @@ public class InitializeServerSocketThread extends Thread {
 				//System.out.println("Recieved: " + s);
 				String[] message = s.split(",");
 				//UPDATE CENTER
-				Robot.currCenter = new Center(Double.parseDouble(message[0]), Double.parseDouble(message[1]));
+				Robot.updateCenter(  new Center(Double.parseDouble( message[0]), Double.parseDouble(message[1]) )  );
+//				Robot.droidIP = message[2];
 //				System.out.println("Received from Client: " + dis.readUTF());
 				dis.close();
 				socket.close();
 				
-			
-			
 			}
 			
 			System.out.println("Socket about to be closed");
 			serverSocket.close();
+			Robot.logMessage("Socket Closed");
 			Robot.isRIOServerStarted = false;
 
 		}
@@ -114,6 +133,7 @@ public class InitializeServerSocketThread extends Thread {
 			while (!Robot.isRIOServerStarted){
 				if (t.get() > 15){
 					System.out.println("RATE CHECKER: CONNECTION TIMED OUT");
+					Robot.logMessage("Initialize socket: CHECKER > CONNECTION TIMED OUT");
 					return; //end thread if its taking too long for server to boot
 				}
 			}
@@ -124,6 +144,7 @@ public class InitializeServerSocketThread extends Thread {
 			while (Robot.isRIOServerStarted){
 				if (t.get() - timeSinceLastAlert > Robot.MAX_PERIOD_BETWEEN_RECIEVING_DATA){
 					Robot.isReceivingData = false;
+					Robot.rateCenterUpdated = 0;
 				}
 				else{
 					Robot.isReceivingData = true;

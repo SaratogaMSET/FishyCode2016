@@ -29,6 +29,8 @@ public class SetIntakePosition extends Command {
     		Robot.intake.setSolenoids(deploy); 
     		Robot.intakeState = deploy;
     	}
+    	
+    	Robot.logMessage("START SetIntakePosition, set to: " + (deploy ? "Deployed" : "Up"));
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -49,6 +51,9 @@ public class SetIntakePosition extends Command {
     // Called once after isFinished returns true
     @Override
 	protected void end() {
+    	if (deploy){
+        	Robot.logMessage("----Intakes successfully deployed----");
+    	}
     }
 
     // Called when another command which requires one or more of the same

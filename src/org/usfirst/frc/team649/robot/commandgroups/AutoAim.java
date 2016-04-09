@@ -1,15 +1,10 @@
 package org.usfirst.frc.team649.robot.commandgroups;
 
 import org.usfirst.frc.team649.robot.Robot;
-import org.usfirst.frc.team649.robot.commands.SetCameraPiston;
 import org.usfirst.frc.team649.robot.commands.TurnWithVision;
-import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotPosition;
-import org.usfirst.frc.team649.robot.commands.shooterpivotcommands.SetPivotState;
-import org.usfirst.frc.team649.robot.subsystems.ShooterPivotSubsystem.PivotPID;
 import org.usfirst.frc.team649.robot.subsystems.drivetrain.DrivetrainSubsystem.TurnConstants;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.WaitCommand;
 
 /**
  *

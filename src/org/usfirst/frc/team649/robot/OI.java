@@ -112,7 +112,7 @@ public class OI {
 			return -driveJoystickHorizontal.getX();
 		}
 		
-		public boolean isDrivetrainLowGearButtonPressed() {
+		public boolean isDrivetrainHighGearButtonPressed() {
             return driveJoystickHorizontal.getRawButton(1) || driveJoystickVertical.getRawButton(1);
         }
 		

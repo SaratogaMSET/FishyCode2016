@@ -3,7 +3,6 @@ package org.usfirst.frc.team649.robot.commands.autonomous;
 import org.usfirst.frc.team649.robot.commands.DriveForwardRotate;
 import org.usfirst.frc.team649.robot.commands.ResetDTEncoders;
 import org.usfirst.frc.team649.robot.commands.SetCameraPiston;
-import org.usfirst.frc.team649.robot.commands.SetCompressorCommand;
 import org.usfirst.frc.team649.robot.commands.TurnWithEncoders;
 import org.usfirst.frc.team649.robot.commands.TurnWithVision;
 import org.usfirst.frc.team649.robot.commands.intakecommands.SetIntakePosition;
